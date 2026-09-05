@@ -25,10 +25,9 @@ for tr in tabela.find_all('tr'):
     if cols:
         linhas.append(cols)
 
-# Cria o DataFrame
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Mapeamento dinâmico sem depender de espaços ou pontos
+# Mapeamento dinâmico sem depender de pontos, traços ou espaços
 mapa_colunas = {}
 for col in df.columns:
     col_limpa = str(col).lower().replace('.', '').replace(' ', '').replace('\xa0', '')
@@ -50,11 +49,9 @@ for col in df.columns:
         mapa_colunas[col] = "Liquidez Diária"
 
 df.rename(columns=mapa_colunas, inplace=True)
-
-# Remove colunas duplicadas
 df = df.loc[:, ~df.columns.duplicated()].copy()
 
-# Função ultra-robusta com Regex para conversão numérica
+# Função de conversão numérica com suporte a porcentagens e números grandes
 def converter_para_numero(valor):
     if pd.isna(valor) or valor is None:
         return 0.0
@@ -140,7 +137,6 @@ def obter_setor_oficial(ticker):
 df["Empresa"] = df["Ticker"].map(obter_nome_empresa)
 df["Segmento"] = df["Ticker"].map(obter_setor_oficial)
 
-# Reordena apenas as colunas que realmente existem
 colunas_ordenadas = ["Ticker", "Empresa", "Tipo", "Cotação", "Segmento", "Patrimônio Líquido", "Liquidez Diária", "Margem EBIT", "Margem Líquida", "ROIC", "ROE"]
 colunas_presentes = [col for col in colunas_ordenadas if col in df.columns]
 df = df[colunas_presentes]
@@ -149,7 +145,6 @@ df.to_excel("acoes_b3.xlsx", index=False)
 
 print(f"✅ SUCESSO! Planilha gerada com {len(df)} ações.")
 
-# Validação segura (não trava caso alguma coluna falhe)
 wege = df[df['Ticker'] == 'WEGE3']
 if not wege.empty:
     mrg_liq = wege['Margem Líquida'].values[0] if 'Margem Líquida' in wege.columns else 0.0
