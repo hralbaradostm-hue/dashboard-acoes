@@ -8,7 +8,7 @@ import urllib3
 urllib3.disable_warnings()
 
 # --- CONFIGURAÇÃO DA CHAVE BOLSAI ---
-CHAVE_BOLSAI = "sk_334af5471f8bfe2b40766868785911c76da78f0157879bb9"
+CHAVE_BOLSAI = st.secrets["CHAVE_BOLSAI"]
 
 # Configuração da página
 st.set_page_config(page_title="Painel de Ações B3", page_icon="📊", layout="wide")
