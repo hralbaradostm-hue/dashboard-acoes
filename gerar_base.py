@@ -24,14 +24,18 @@ for tr in tabela.find_all('tr'):
     if cols:
         linhas.append(cols)
 
-# Cria o DataFrame usando a primeira linha como cabeçalho
+# Cria o DataFrame
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Mapeia os nomes das colunas de forma segura
+# Mapeia os nomes das colunas limpando espaços e pontos
 mapa_colunas = {}
 for col in df.columns:
     col_limpa = str(col).lower().replace('.', '').replace(' ', '')
-    if 'patrim' in col_limpa or 'pl' in col_limpa:
+    if 'mrgliq' in col_limpa:
+        mapa_colunas[col] = "Margem Líquida"
+    elif 'mrgebit' in col_limpa:
+        mapa_colunas[col] = "Margem EBIT"
+    elif 'patrim' in col_limpa or 'pl' in col_limpa:
         mapa_colunas[col] = "Patrimônio Líquido"
     elif 'papel' in col_limpa:
         mapa_colunas[col] = "Ticker"
@@ -41,24 +45,21 @@ for col in df.columns:
         mapa_colunas[col] = "ROIC"
     elif 'roe' in col_limpa:
         mapa_colunas[col] = "ROE"
-    elif 'mrgebit' in col_limpa:
-        mapa_colunas[col] = "Margem EBIT"
-    elif 'mrgliq' in col_limpa:
-        mapa_colunas[col] = "Margem Líquida"
     elif 'liq' in col_limpa and '2m' in col_limpa:
         mapa_colunas[col] = "Liquidez Diária"
 
 df.rename(columns=mapa_colunas, inplace=True)
 
-# Elimina eventuais colunas com nomes duplicados
+# Remove colunas duplicadas que possam surgir da raspagem
 df = df.loc[:, ~df.columns.duplicated()].copy()
 
-# Função para converter qualquer formato numérico/moeda em float
+# Função para converter taxas/porcentagens e valores monetários para float
 def converter_para_numero(valor):
     try:
         val_str = str(valor).strip().replace('%', '')
         if not val_str or val_str in ['-', 'None', 'nan']:
             return 0.0
+        # Substitui ponto de milhar por nada e vírgula decimal por ponto
         val_str = val_str.replace('.', '').replace(',', '.')
         return float(val_str)
     except Exception:
@@ -66,7 +67,6 @@ def converter_para_numero(valor):
 
 colunas_financeiras = ["Cotação", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"]
 
-# Aplica a conversão coluna por coluna de forma segura
 for col in colunas_financeiras:
     if col in df.columns:
         df[col] = df[col].astype(str).map(converter_para_numero)
@@ -117,11 +117,11 @@ def obter_setor_oficial(ticker):
         "RADL": "Saúde e Farmácia", "FLRY": "Saúde e Farmácia", "HYPE": "Saúde e Farmácia", 
         "RDOR": "Saúde e Farmácia", "ONCO3": "Saúde e Farmácia",
         "JBSS": "Agro e Alimentos", "MRFG": "Agro e Alimentos", "BRFS": "Agro e Alimentos", 
-        "BEEF": "Agro e Alimentos", "MDIA": "Agro e Alimentos", "SLCE": "Agro e Alimentos",
+        "BEEF": "Agro e Alimentos", "MDIA": "M. Dias Branco", "SLCE": "SLC Agrícola",
         "RENT": "Transporte e Logística", "RAIL": "Transporte e Logística", 
         "CCRO": "Transporte e Logística", "AZUL": "Transporte e Logística", 
         "GOLL": "Transporte e Logística", "STBP": "Transporte e Logística",
-        "BBSE": "Seguradoras", "CXSE": "Seguradoras", "PSSA": "Seguradoras", "IRBR": "Seguradoras",
+        "BBSE": "Seguradoras", "CXSE": "Seguradoras", "PSSA": "Porto Seguro", "IRBR": "Seguradoras",
         "SUZB": "Papel e Celulose", "KLBN": "Papel e Celulose", "RANI": "Papel e Celulose",
         "CYRE": "Construção Civil", "EZTC": "Construção Civil", "MRVE": "Construção Civil", 
         "TEND": "Construção Civil", "DIRR": "Construção Civil", "JHSF": "Construção Civil",
@@ -138,10 +138,10 @@ df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações.")
+print(f"✅ SUCESSO! Planilha gerada com {len(df)} ações.")
 
-if "Patrimônio Líquido" in df.columns:
+if "Margem Líquida" in df.columns:
     wege = df[df['Ticker'] == 'WEGE3']
     if not wege.empty:
-        pl_val = wege['Patrimônio Líquido'].values[0]
-        print(f"   Exemplo WEGE3 - Patrimônio Líquido: R$ {pl_val:,.2f}")
+        mrg_liq = wege['Margem Líquida'].values[0]
+        print(f"   Exemplo WEGE3 - Margem Líquida: {mrg_liq:.2f}%")
