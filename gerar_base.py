@@ -25,33 +25,35 @@ for tr in tabela.find_all('tr'):
     if cols:
         linhas.append(cols)
 
+# Cria o DataFrame
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Mapeamento dinâmico sem depender de pontos, traços ou espaços
+# Mapeamento ultra-abrangente para as colunas do Fundamentus
 mapa_colunas = {}
 for col in df.columns:
-    col_limpa = str(col).lower().replace('.', '').replace(' ', '').replace('\xa0', '')
-    if 'mrgliq' in col_limpa or 'margemliquida' in col_limpa:
+    c = str(col).lower().strip()
+    # Verifica variação de Margem Líquida
+    if 'mrg' in c and 'liq' in c:
         mapa_colunas[col] = "Margem Líquida"
-    elif 'mrgebit' in col_limpa or 'margemebit' in col_limpa:
+    elif 'mrg' in c and 'ebit' in c:
         mapa_colunas[col] = "Margem EBIT"
-    elif 'patrim' in col_limpa or 'pl' in col_limpa:
+    elif 'patrim' in c or 'pl' in c:
         mapa_colunas[col] = "Patrimônio Líquido"
-    elif 'papel' in col_limpa:
+    elif 'papel' in c:
         mapa_colunas[col] = "Ticker"
-    elif 'cotacao' in col_limpa:
+    elif 'cotacao' in c:
         mapa_colunas[col] = "Cotação"
-    elif 'roic' in col_limpa:
+    elif 'roic' in c:
         mapa_colunas[col] = "ROIC"
-    elif 'roe' in col_limpa:
+    elif 'roe' in c:
         mapa_colunas[col] = "ROE"
-    elif 'liq' in col_limpa and '2m' in col_limpa:
+    elif 'liq' in c and '2m' in c:
         mapa_colunas[col] = "Liquidez Diária"
 
 df.rename(columns=mapa_colunas, inplace=True)
 df = df.loc[:, ~df.columns.duplicated()].copy()
 
-# Função de conversão numérica com suporte a porcentagens e números grandes
+# Função de conversão
 def converter_para_numero(valor):
     if pd.isna(valor) or valor is None:
         return 0.0
