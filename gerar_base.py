@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("Baixando dados da B3...")
+print("Baixando dados da B3 e tratando valores financeiros...")
 
 url = "https://www.fundamentus.com.br/resultado.php"
 
@@ -26,30 +26,37 @@ for tr in tabela.find_all('tr'):
 
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Renomeia colunas do Fundamentus
-df.rename(columns={
+# Mapeamento exato das colunas vindas do HTML do Fundamentus
+mapa_colunas = {
     "Papel": "Ticker", 
     "Cotacao": "Cotação", 
     "ROIC": "ROIC", 
     "ROE": "ROE",
     "Mrg.Ebit": "Margem EBIT", 
     "Mrg.Liq": "Margem Líquida",
-    "Patrim.Liq": "Patrimônio Líquido", 
+    "Patrim. Liq": "Patrimônio Líquido",
+    "Patrim.Liq": "Patrimônio Líquido",
     "Liq.2meses": "Liquidez Diária"
-}, inplace=True)
+}
 
-# Tratamento numérico para todas as métricas financeiras
-colunas_numericas = ["Cotação", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"]
-for col in colunas_numericas:
+df.rename(columns=mapa_colunas, inplace=True)
+
+# Função para converter textos financeiros da B3 em números reais
+def converter_para_numero(valor):
+    try:
+        val_str = str(valor).strip().replace('%', '')
+        if not val_str or val_str == '-':
+            return 0.0
+        val_str = val_str.replace('.', '').replace(',', '.')
+        return float(val_str)
+    except Exception:
+        return 0.0
+
+colunas_financeiras = ["Cotação", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"]
+
+for col in colunas_financeiras:
     if col in df.columns:
-        df[col] = (
-            df[col]
-            .astype(str)
-            .str.replace("%", "", regex=False)
-            .str.replace(".", "", regex=False)
-            .str.replace(",", ".", regex=False)
-        )
-        df[col] = pd.to_numeric(df[col], errors='coerce').fillna(0)
+        df[col] = df[col].apply(converter_para_numero)
 
 df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
 
@@ -117,4 +124,10 @@ colunas_presentes = [col for col in colunas_ordenadas if col in df.columns]
 df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
-print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações contendo o Patrimônio Líquido.")
+
+print(f"✅ SUCESSO! Planilha gerada com {len(df)} ações.")
+if "Patrimônio Líquido" in df.columns:
+    wege = df[df['Ticker'] == 'WEGE3']
+    if not wege.empty:
+        val_pl = wege['Patrimônio Líquido'].values[0]
+        print(f"   Exemplo WEGE3 - Patrimônio Líquido: R$ {val_pl:,.2f}")
