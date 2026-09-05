@@ -24,28 +24,40 @@ for tr in tabela.find_all('tr'):
     if cols:
         linhas.append(cols)
 
+# Cria o DataFrame usando a primeira linha como cabeçalho
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Mapeamento exato das colunas vindas do HTML do Fundamentus
-mapa_colunas = {
-    "Papel": "Ticker", 
-    "Cotacao": "Cotação", 
-    "ROIC": "ROIC", 
-    "ROE": "ROE",
-    "Mrg.Ebit": "Margem EBIT", 
-    "Mrg.Liq": "Margem Líquida",
-    "Patrim. Liq": "Patrimônio Líquido",
-    "Patrim.Liq": "Patrimônio Líquido",
-    "Liq.2meses": "Liquidez Diária"
-}
+# Mapeia os nomes das colunas de forma segura
+mapa_colunas = {}
+for col in df.columns:
+    col_limpa = str(col).lower().replace('.', '').replace(' ', '')
+    if 'patrim' in col_limpa or 'pl' in col_limpa:
+        mapa_colunas[col] = "Patrimônio Líquido"
+    elif 'papel' in col_limpa:
+        mapa_colunas[col] = "Ticker"
+    elif 'cotacao' in col_limpa:
+        mapa_colunas[col] = "Cotação"
+    elif 'roic' in col_limpa:
+        mapa_colunas[col] = "ROIC"
+    elif 'roe' in col_limpa:
+        mapa_colunas[col] = "ROE"
+    elif 'mrgebit' in col_limpa:
+        mapa_colunas[col] = "Margem EBIT"
+    elif 'mrgliq' in col_limpa:
+        mapa_colunas[col] = "Margem Líquida"
+    elif 'liq' in col_limpa and '2m' in col_limpa:
+        mapa_colunas[col] = "Liquidez Diária"
 
 df.rename(columns=mapa_colunas, inplace=True)
 
-# Função para converter textos financeiros da B3 em números reais
+# Elimina eventuais colunas com nomes duplicados
+df = df.loc[:, ~df.columns.duplicated()].copy()
+
+# Função para converter qualquer formato numérico/moeda em float
 def converter_para_numero(valor):
     try:
         val_str = str(valor).strip().replace('%', '')
-        if not val_str or val_str == '-':
+        if not val_str or val_str in ['-', 'None', 'nan']:
             return 0.0
         val_str = val_str.replace('.', '').replace(',', '.')
         return float(val_str)
@@ -54,9 +66,10 @@ def converter_para_numero(valor):
 
 colunas_financeiras = ["Cotação", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"]
 
+# Aplica a conversão coluna por coluna de forma segura
 for col in colunas_financeiras:
     if col in df.columns:
-        df[col] = df[col].apply(converter_para_numero)
+        df[col] = df[col].astype(str).map(converter_para_numero)
 
 df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
 
@@ -93,9 +106,9 @@ def obter_setor_oficial(ticker):
         "ELET": "Energia Elétrica", "CMIG": "Energia Elétrica", "CPLE": "Energia Elétrica", 
         "TAEE": "Energia Elétrica", "TRPL": "Energia Elétrica", "EGIE": "Energia Elétrica", 
         "EQTL": "Energia Elétrica", "ALUP": "Energia Elétrica", "ENEV": "Energia Elétrica",
-        "SBSP": "Saneamento", "SAPR": "Saneamento", "CSMG": "Saneamento",
+        "SBSP": "Saneamento", "SAPR": "Sanepar", "CSMG": "Saneamento",
         "PETR": "Petróleo e Gás", "PRIO": "Petróleo e Gás", "RECV": "Petróleo e Gás", 
-        "RRRP": "Petróleo e Gás", "UGPA": "Petróleo e Gás", "CSAN": "Petróleo e Gás",
+        "RRRP": "Petróleo e Gás", "UGPA": "Ultrapar", "CSAN": "Petróleo e Gás",
         "VALE": "Mineração e Siderurgia", "GGBR": "Mineração e Siderurgia", 
         "GOAU": "Mineração e Siderurgia", "CSNA": "Mineração e Siderurgia", 
         "USIM": "Mineração e Siderurgia", "CMIN": "Mineração e Siderurgia",
@@ -125,9 +138,10 @@ df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"✅ SUCESSO! Planilha gerada com {len(df)} ações.")
+print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações.")
+
 if "Patrimônio Líquido" in df.columns:
     wege = df[df['Ticker'] == 'WEGE3']
     if not wege.empty:
-        val_pl = wege['Patrimônio Líquido'].values[0]
-        print(f"   Exemplo WEGE3 - Patrimônio Líquido: R$ {val_pl:,.2f}")
+        pl_val = wege['Patrimônio Líquido'].values[0]
+        print(f"   Exemplo WEGE3 - Patrimônio Líquido: R$ {pl_val:,.2f}")
