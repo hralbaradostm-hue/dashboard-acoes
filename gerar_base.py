@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("Baixando dados da B3 e tratando valores financeiros...")
+print("Baixando dados da B3 e gerando base completa...")
 
 url = "https://www.fundamentus.com.br/resultado.php"
 
@@ -25,54 +25,45 @@ for tr in tabela.find_all('tr'):
     if cols:
         linhas.append(cols)
 
-# Cria o DataFrame
+# Cria o DataFrame a partir da extração HTML
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Mapeamento ultra-abrangente para as colunas do Fundamentus
-mapa_colunas = {}
-for col in df.columns:
-    c = str(col).lower().strip()
-    # Verifica variação de Margem Líquida
-    if 'mrg' in c and 'liq' in c:
-        mapa_colunas[col] = "Margem Líquida"
-    elif 'mrg' in c and 'ebit' in c:
-        mapa_colunas[col] = "Margem EBIT"
-    elif 'patrim' in c or 'pl' in c:
-        mapa_colunas[col] = "Patrimônio Líquido"
-    elif 'papel' in c:
-        mapa_colunas[col] = "Ticker"
-    elif 'cotacao' in c:
-        mapa_colunas[col] = "Cotação"
-    elif 'roic' in c:
-        mapa_colunas[col] = "ROIC"
-    elif 'roe' in c:
-        mapa_colunas[col] = "ROE"
-    elif 'liq' in c and '2m' in c:
-        mapa_colunas[col] = "Liquidez Diária"
+# Mapeamento exato das colunas conforme diagnóstico
+mapa_exato = {
+    "Papel": "Ticker",
+    "Cotacao": "Cotação",
+    "P/L": "P/L",
+    "P/VP": "P/VP",
+    "Div.Yield": "Dividend Yield",
+    "Mrg Ebit": "Margem EBIT",
+    "Mrg. Líq.": "Margem Líquida",
+    "ROIC": "ROIC",
+    "ROE": "ROE",
+    "Liq.2meses": "Liquidez Diária",
+    "Patrim. Líq": "Patrimônio Líquido"
+}
 
-df.rename(columns=mapa_colunas, inplace=True)
+df.rename(columns=mapa_exato, inplace=True)
 df = df.loc[:, ~df.columns.duplicated()].copy()
 
-# Função de conversão
+# Função de conversão numérica sem perda de precisão
 def converter_para_numero(valor):
     if pd.isna(valor) or valor is None:
         return 0.0
     
     val_str = str(valor).replace('\xa0', '').replace('%', '').strip()
-    
     if not val_str or val_str in ['-', '--', 'None', 'nan', 'null']:
         return 0.0
     
     try:
         if ',' in val_str:
             val_str = val_str.replace('.', '').replace(',', '.')
-        
         val_limpo = re.sub(r'[^0-9.-]', '', val_str)
         return float(val_limpo) if val_limpo else 0.0
     except Exception:
         return 0.0
 
-colunas_financeiras = ["Cotação", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"]
+colunas_financeiras = ["Cotação", "P/L", "P/VP", "Dividend Yield", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"]
 
 for col in colunas_financeiras:
     if col in df.columns:
@@ -139,13 +130,13 @@ def obter_setor_oficial(ticker):
 df["Empresa"] = df["Ticker"].map(obter_nome_empresa)
 df["Segmento"] = df["Ticker"].map(obter_setor_oficial)
 
-colunas_ordenadas = ["Ticker", "Empresa", "Tipo", "Cotação", "Segmento", "Patrimônio Líquido", "Liquidez Diária", "Margem EBIT", "Margem Líquida", "ROIC", "ROE"]
+colunas_ordenadas = ["Ticker", "Empresa", "Tipo", "Cotação", "Segmento", "P/L", "P/VP", "Dividend Yield", "Patrimônio Líquido", "Liquidez Diária", "Margem EBIT", "Margem Líquida", "ROIC", "ROE"]
 colunas_presentes = [col for col in colunas_ordenadas if col in df.columns]
 df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"✅ SUCESSO! Planilha gerada com {len(df)} ações.")
+print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações.")
 
 wege = df[df['Ticker'] == 'WEGE3']
 if not wege.empty:
