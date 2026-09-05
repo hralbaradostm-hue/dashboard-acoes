@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("Baixando dados da B3 e mapeando nomes de empresas...")
+print("Baixando dados da B3...")
 
 url = "https://www.fundamentus.com.br/resultado.php"
 
@@ -26,14 +26,21 @@ for tr in tabela.find_all('tr'):
 
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
+# Renomeia colunas do Fundamentus
 df.rename(columns={
-    "Papel": "Ticker", "Cotacao": "Cotação", "ROIC": "ROIC", "ROE": "ROE",
-    "Mrg.Ebit": "Margem EBIT", "Mrg.Liq": "Margem Líquida",
-    "Patrim.Liq": "Patrimônio Líquido", "Liq.2meses": "Liquidez Diária"
+    "Papel": "Ticker", 
+    "Cotacao": "Cotação", 
+    "ROIC": "ROIC", 
+    "ROE": "ROE",
+    "Mrg.Ebit": "Margem EBIT", 
+    "Mrg.Liq": "Margem Líquida",
+    "Patrim.Liq": "Patrimônio Líquido", 
+    "Liq.2meses": "Liquidez Diária"
 }, inplace=True)
 
-# Tratamento numérico
-for col in ["Cotação", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"]:
+# Tratamento numérico para todas as métricas financeiras
+colunas_numericas = ["Cotação", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"]
+for col in colunas_numericas:
     if col in df.columns:
         df[col] = (
             df[col]
@@ -46,10 +53,8 @@ for col in ["Cotação", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patri
 
 df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
 
-# Dicionário de Mapeamento: Ticker -> Nome Comercial da Empresa
 def obter_nome_empresa(ticker):
     prefixo = str(ticker)[:4].upper()
-    
     nomes = {
         "WEGE": "WEG S.A.", "PETR": "Petrobras", "VALE": "Vale S.A.",
         "ITUB": "Itaú Unibanco", "BBDC": "Bradesco", "BBAS": "Banco do Brasil",
@@ -68,8 +73,6 @@ def obter_nome_empresa(ticker):
         "GOLL": "GOL Linhas Aéreas", "SUZB": "Suzano", "KLBN": "Klabin", "CYRE": "Cyrela",
         "EZTC": "EZTec", "MRVE": "MRV Engenharia", "MULT": "Multiplan", "IGTI": "Iguatemi"
     }
-    
-    # Se o nome específico não estiver cadastrado, usa o próprio ticker formatado
     return nomes.get(prefixo, f"Empresa {prefixo}")
 
 def obter_setor_oficial(ticker):
@@ -106,14 +109,12 @@ def obter_setor_oficial(ticker):
     }
     return setores_b3.get(prefixo, "Outros Setores")
 
-# Preenche a coluna Empresa com o nome amigável
 df["Empresa"] = df["Ticker"].map(obter_nome_empresa)
 df["Segmento"] = df["Ticker"].map(obter_setor_oficial)
 
-# Reorganiza a ordem das colunas para colocar Empresa logo após o Ticker
 colunas_ordenadas = ["Ticker", "Empresa", "Tipo", "Cotação", "Segmento", "Patrimônio Líquido", "Liquidez Diária", "Margem EBIT", "Margem Líquida", "ROIC", "ROE"]
 colunas_presentes = [col for col in colunas_ordenadas if col in df.columns]
 df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
-print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações e nomes de empresas atualizados.")
+print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações contendo o Patrimônio Líquido.")
