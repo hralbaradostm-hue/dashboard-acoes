@@ -1,11 +1,10 @@
 import pandas as pd
 import warnings
 import ssl
-import requests # <-- O nosso novo disfarce
+import requests
 
 warnings.filterwarnings('ignore')
 
-# Ignorar o erro de SSL do Fundamentus
 try:
     _create_unverified_https_context = ssl._create_unverified_context
 except AttributeError:
@@ -17,25 +16,19 @@ print("Baixando dados e classificando setores...")
 
 url = "https://www.fundamentus.com.br/resultado.php"
 
-# --- DISFARCE ATIVADO ---
-# Simulando exatamente um navegador Google Chrome no Windows 11
 cabecalho = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 }
 
-# O requests acessa o site "vestido" de Chrome
 resposta = requests.get(url, headers=cabecalho, timeout=20)
 
-# O pandas agora apenas lê o texto que o requests já baixou (sem tentar acessar a internet sozinho)
 df = pd.read_html(
     resposta.text, 
     decimal=',', 
     thousands='.',
     encoding='latin1'
 )[0]
-# --- FIM DO DISFARCE ---
 
-# Renomeando as colunas
 df.rename(columns={
     "Papel": "Ticker", "Cotacao": "Cotação", "ROIC": "ROIC", "ROE": "ROE",
     "Mrg.Ebit": "Margem EBIT", "Mrg.Liq": "Margem Líquida",
@@ -52,7 +45,6 @@ df["Tag Along"] = 100
 df["Free Float"] = 30.0
 df["Governo Majoritário"] = "Não"
 
-# --- INTELIGÊNCIA PARA DEFINIR O SEGMENTO DA AÇÃO ---
 def definir_segmento(ticker):
     prefixo = str(ticker)[:4].upper()
     
@@ -92,9 +84,6 @@ def definir_segmento(ticker):
     
     return "Outros"
 
-# Aplica a inteligência na tabela
 df["Segmento"] = df["Ticker"].map(definir_segmento)
-
-# Exportando a planilha
 df.to_excel("acoes_b3.xlsx", index=False)
 print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações e os segmentos classificados.")
