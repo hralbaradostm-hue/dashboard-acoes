@@ -1,4 +1,4 @@
-import pandas as pd
+﻿import pandas as pd
 import warnings
 import ssl
 import requests
@@ -12,15 +12,15 @@ except AttributeError:
 else:
     ssl._create_default_https_context = _create_unverified_https_context
 
-print("Baixando dados e classificando setores...")
+print("Baixando dados e obtendo setores oficiais...")
 
 url = "https://www.fundamentus.com.br/resultado.php"
 
-cabecalho = {
+headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 }
 
-resposta = requests.get(url, headers=cabecalho, timeout=20)
+resposta = requests.get(url, headers=headers, timeout=20)
 
 df = pd.read_html(
     resposta.text, 
@@ -38,52 +38,62 @@ df.rename(columns={
 for col in ["ROIC", "ROE", "Margem EBIT", "Margem Líquida"]:
     if col in df.columns:
         df[col] = df[col].astype(str).str.replace("%", "").str.replace(".", "").str.replace(",", ".").astype(float)
-        
+
 df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
 df["Empresa"] = df["Ticker"]
 df["Tag Along"] = 100
 df["Free Float"] = 30.0
 df["Governo Majoritário"] = "Não"
 
-def definir_segmento(ticker):
+def obter_setor_oficial(ticker):
     prefixo = str(ticker)[:4].upper()
     
-    bancos = ["ITUB", "BBDC", "BBAS", "SANB", "BPAC", "BRSR", "ABCB", "BPAN", "BGIP", "BSLI", "PINE", "BMGB"]
-    energia = ["ELET", "CMIG", "CPLE", "TAEE", "TRPL", "EGIE", "ENBR", "EQTL", "NEOE", "AESB", "AURE", "ALUP", "ENEV"]
-    saneamento = ["SBSP", "SAPR", "CSMG"]
-    petroleo = ["PETR", "PRIO", "ENAT", "RECV", "RRRP", "UGPA", "CSAN", "VBRA", "RPMG"]
-    mineracao = ["VALE", "GGBR", "GOAU", "CSNA", "USIM", "CMIN", "FESA", "BRAP"]
-    varejo = ["MGLU", "LREN", "ARZZ", "SOMA", "CEAB", "GUAR", "BHIA", "VIVA", "AMER", "CGRA", "PETZ", "ALPA"]
-    saude = ["RADL", "FLRY", "HYPE", "RDOR", "MATD", "PNVL", "ODPV", "AALR", "QUAL", "PARD", "BLAU"]
-    alimentos = ["JBSS", "MRFG", "BRFS", "BEEF", "MDIA", "SMTO", "CAML", "AGRO", "SLCE", "TTEN"]
-    tecnologia = ["TOTS", "LWSA", "CASH", "INTB", "MLAS", "POSI"]
-    construcao = ["CYRE", "EZTC", "MRVE", "TEND", "DIRR", "JHSF", "HBOR", "PDGR", "GFSA", "TCSA"]
-    logistica = ["WEGE", "RENT", "RAIL", "CCRO", "AZUL", "GOLL", "POMO", "TGMA", "STBP", "ECOR", "JSLG"]
-    seguros = ["BBSE", "CXSE", "PSSA", "SULA", "WIZC", "IRBR"]
-    papel = ["SUZB", "KLBN", "RANI", "DXCO"]
-    telecom = ["VIVT", "TIMS", "OIBR", "DESK"]
-    educacao = ["YDUQ", "COGN", "SEER", "ANIM", "BAHI"]
-    shoppings = ["MULT", "IGTI", "ALOS", "SYNE", "BRPR"]
-
-    if prefixo in bancos: return "Bancos"
-    if prefixo in energia: return "Energia Elétrica"
-    if prefixo in saneamento: return "Saneamento"
-    if prefixo in petroleo: return "Petróleo e Gás"
-    if prefixo in mineracao: return "Mineração e Siderurgia"
-    if prefixo in varejo: return "Varejo e Comércio"
-    if prefixo in saude: return "Saúde e Farmácia"
-    if prefixo in alimentos: return "Agro e Alimentos"
-    if prefixo in tecnologia: return "Tecnologia"
-    if prefixo in construcao: return "Construção Civil"
-    if prefixo in logistica: return "Transporte e Logística"
-    if prefixo in seguros: return "Seguradoras"
-    if prefixo in papel: return "Papel e Celulose"
-    if prefixo in telecom: return "Telecomunicações"
-    if prefixo in educacao: return "Educação"
-    if prefixo in shoppings: return "Shoppings e Imóveis"
+    setores_b3 = {
+        "WEGE": "Máquinas e Equipamentos", "LEVE": "Máquinas e Equipamentos", 
+        "MYPK": "Máquinas e Equipamentos", "TUPY": "Máquinas e Equipamentos", 
+        "SHUL": "Máquinas e Equipamentos", "ROMI": "Máquinas e Equipamentos",
+        
+        "ITUB": "Bancos", "BBDC": "Bancos", "BBAS": "Bancos", "SANB": "Bancos", 
+        "BPAC": "Bancos", "BRSR": "Bancos", "ABCB": "Bancos", "BPAN": "Bancos",
+        
+        "ELET": "Energia Elétrica", "CMIG": "Energia Elétrica", "CPLE": "Energia Elétrica", 
+        "TAEE": "Energia Elétrica", "TRPL": "Energia Elétrica", "EGIE": "Energia Elétrica", 
+        "EQTL": "Energia Elétrica", "ALUP": "Energia Elétrica", "ENEV": "Energia Elétrica",
+        
+        "SBSP": "Saneamento", "SAPR": "Saneamento", "CSMG": "Saneamento",
+        
+        "PETR": "Petróleo e Gás", "PRIO": "Petróleo e Gás", "RECV": "Petróleo e Gás", 
+        "RRRP": "Petróleo e Gás", "UGPA": "Petróleo e Gás", "CSAN": "Petróleo e Gás",
+        
+        "VALE": "Mineração e Siderurgia", "GGBR": "Mineração e Siderurgia", 
+        "GOAU": "Mineração e Siderurgia", "CSNA": "Mineração e Siderurgia", 
+        "USIM": "Mineração e Siderurgia", "CMIN": "Mineração e Siderurgia",
+        
+        "MGLU": "Varejo e Comércio", "LREN": "Varejo e Comércio", "ARZZ": "Varejo e Comércio", 
+        "SOMA": "Varejo e Comércio", "BHIA": "Varejo e Comércio", "PETZ": "Varejo e Comércio",
+        
+        "RADL": "Saúde e Farmácia", "FLRY": "Saúde e Farmácia", "HYPE": "Saúde e Farmácia", 
+        "RDOR": "Saúde e Farmácia", "ONCO3": "Saúde e Farmácia",
+        
+        "JBSS": "Agro e Alimentos", "MRFG": "Agro e Alimentos", "BRFS": "Agro e Alimentos", 
+        "BEEF": "Agro e Alimentos", "MDIA": "Agro e Alimentos", "SLCE": "Agro e Alimentos",
+        
+        "RENT": "Transporte e Logística", "RAIL": "Transporte e Logística", 
+        "CCRO": "Transporte e Logística", "AZUL": "Transporte e Logística", 
+        "GOLL": "Transporte e Logística", "STBP": "Transporte e Logística",
+        
+        "BBSE": "Seguradoras", "CXSE": "Seguradoras", "PSSA": "Seguradoras", "IRBR": "Seguradoras",
+        
+        "SUZB": "Papel e Celulose", "KLBN": "Papel e Celulose", "RANI": "Papel e Celulose",
+        
+        "CYRE": "Construção Civil", "EZTC": "Construção Civil", "MRVE": "Construção Civil", 
+        "TEND": "Construção Civil", "DIRR": "Construção Civil", "JHSF": "Construção Civil",
+        
+        "MULT": "Shoppings e Imóveis", "IGTI": "Shoppings e Imóveis", "ALOS": "Shoppings e Imóveis"
+    }
     
-    return "Outros"
+    return setores_b3.get(prefixo, "Outros Setores")
 
-df["Segmento"] = df["Ticker"].map(definir_segmento)
+df["Segmento"] = df["Ticker"].map(obter_setor_oficial)
 df.to_excel("acoes_b3.xlsx", index=False)
-print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações e os segmentos classificados.")
+print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações e setores atualizados.")
