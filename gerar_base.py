@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 import warnings
+import re
 from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
@@ -27,13 +28,13 @@ for tr in tabela.find_all('tr'):
 # Cria o DataFrame
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Mapeia os nomes das colunas limpando espaços e pontos
+# Mapeamento dinâmico sem depender de espaços ou pontos
 mapa_colunas = {}
 for col in df.columns:
-    col_limpa = str(col).lower().replace('.', '').replace(' ', '')
-    if 'mrgliq' in col_limpa:
+    col_limpa = str(col).lower().replace('.', '').replace(' ', '').replace('\xa0', '')
+    if 'mrgliq' in col_limpa or 'margemliquida' in col_limpa:
         mapa_colunas[col] = "Margem Líquida"
-    elif 'mrgebit' in col_limpa:
+    elif 'mrgebit' in col_limpa or 'margemebit' in col_limpa:
         mapa_colunas[col] = "Margem EBIT"
     elif 'patrim' in col_limpa or 'pl' in col_limpa:
         mapa_colunas[col] = "Patrimônio Líquido"
@@ -50,18 +51,25 @@ for col in df.columns:
 
 df.rename(columns=mapa_colunas, inplace=True)
 
-# Remove colunas duplicadas que possam surgir da raspagem
+# Remove colunas duplicadas
 df = df.loc[:, ~df.columns.duplicated()].copy()
 
-# Função para converter taxas/porcentagens e valores monetários para float
+# Função ultra-robusta com Regex para conversão numérica
 def converter_para_numero(valor):
+    if pd.isna(valor) or valor is None:
+        return 0.0
+    
+    val_str = str(valor).replace('\xa0', '').replace('%', '').strip()
+    
+    if not val_str or val_str in ['-', '--', 'None', 'nan', 'null']:
+        return 0.0
+    
     try:
-        val_str = str(valor).strip().replace('%', '')
-        if not val_str or val_str in ['-', 'None', 'nan']:
-            return 0.0
-        # Substitui ponto de milhar por nada e vírgula decimal por ponto
-        val_str = val_str.replace('.', '').replace(',', '.')
-        return float(val_str)
+        if ',' in val_str:
+            val_str = val_str.replace('.', '').replace(',', '.')
+        
+        val_limpo = re.sub(r'[^0-9.-]', '', val_str)
+        return float(val_limpo) if val_limpo else 0.0
     except Exception:
         return 0.0
 
@@ -69,7 +77,7 @@ colunas_financeiras = ["Cotação", "ROIC", "ROE", "Margem EBIT", "Margem Líqui
 
 for col in colunas_financeiras:
     if col in df.columns:
-        df[col] = df[col].astype(str).map(converter_para_numero)
+        df[col] = df[col].apply(converter_para_numero)
 
 df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
 
@@ -110,8 +118,8 @@ def obter_setor_oficial(ticker):
         "PETR": "Petróleo e Gás", "PRIO": "Petróleo e Gás", "RECV": "Petróleo e Gás", 
         "RRRP": "Petróleo e Gás", "UGPA": "Ultrapar", "CSAN": "Petróleo e Gás",
         "VALE": "Mineração e Siderurgia", "GGBR": "Mineração e Siderurgia", 
-        "GOAU": "Mineração e Siderurgia", "CSNA": "Mineração e Siderurgia", 
-        "USIM": "Mineração e Siderurgia", "CMIN": "Mineração e Siderurgia",
+        "GOAU": "Mineração e Siderurgia", "CSNA": "Siderúrgica Nacional", 
+        "USIM": "Mineração e Siderurgia", "CMIN": "CSN Mineração",
         "MGLU": "Varejo e Comércio", "LREN": "Varejo e Comércio", "ARZZ": "Varejo e Comércio", 
         "SOMA": "Varejo e Comércio", "BHIA": "Varejo e Comércio", "PETZ": "Varejo e Comércio",
         "RADL": "Saúde e Farmácia", "FLRY": "Saúde e Farmácia", "HYPE": "Saúde e Farmácia", 
@@ -132,6 +140,7 @@ def obter_setor_oficial(ticker):
 df["Empresa"] = df["Ticker"].map(obter_nome_empresa)
 df["Segmento"] = df["Ticker"].map(obter_setor_oficial)
 
+# Reordena apenas as colunas que realmente existem
 colunas_ordenadas = ["Ticker", "Empresa", "Tipo", "Cotação", "Segmento", "Patrimônio Líquido", "Liquidez Diária", "Margem EBIT", "Margem Líquida", "ROIC", "ROE"]
 colunas_presentes = [col for col in colunas_ordenadas if col in df.columns]
 df = df[colunas_presentes]
@@ -140,8 +149,9 @@ df.to_excel("acoes_b3.xlsx", index=False)
 
 print(f"✅ SUCESSO! Planilha gerada com {len(df)} ações.")
 
-if "Margem Líquida" in df.columns:
-    wege = df[df['Ticker'] == 'WEGE3']
-    if not wege.empty:
-        mrg_liq = wege['Margem Líquida'].values[0]
-        print(f"   Exemplo WEGE3 - Margem Líquida: {mrg_liq:.2f}%")
+# Validação segura (não trava caso alguma coluna falhe)
+wege = df[df['Ticker'] == 'WEGE3']
+if not wege.empty:
+    mrg_liq = wege['Margem Líquida'].values[0] if 'Margem Líquida' in wege.columns else 0.0
+    pl_val = wege['Patrimônio Líquido'].values[0] if 'Patrimônio Líquido' in wege.columns else 0.0
+    print(f"   WEGE3 -> Margem Líquida: {mrg_liq:.2f}% | Patrimônio Líquido: R$ {pl_val:,.2f}")
