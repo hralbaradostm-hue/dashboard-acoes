@@ -1,0 +1,36 @@
+name: Atualizar Base de Dados
+
+on:
+  schedule:
+    # Roda todos os dias às 10:00 UTC (07:00 da manhã no Brasil)
+    - cron: '0 10 * * 1-5'
+  workflow_dispatch: # Permite rodar manualmente clicando em um botão
+
+jobs:
+  atualizar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # Dá permissão para o robô salvar a planilha
+
+    steps:
+      - name: 1. Puxar os arquivos do repositório
+        uses: actions/checkout@v4
+
+      - name: 2. Configurar o Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: 3. Instalar bibliotecas
+        run: pip install -r requirements.txt
+
+      - name: 4. Rodar o script (Fundamentus)
+        run: python gerar_base.py
+
+      - name: 5. Salvar e enviar a nova planilha
+        run: |
+          git config --global user.name 'github-actions[bot]'
+          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+          git add acoes_b3.xlsx
+          git commit -m "Atualização automática dos dados da B3" || echo "Nenhuma mudança hoje"
+          git push
