@@ -127,49 +127,88 @@ if ticker_selecionado:
 st.divider()
 
 # =========================================================
-# SEÇÃO 2: GRÁFICOS INTERATIVOS
+# SEÇÃO 2: GRÁFICOS INTERATIVOS (Dinâmicos por Filtro)
 # =========================================================
-st.subheader("📈 Análise Gráfica Setorial")
+st.subheader("📈 Análise Gráfica Dinâmica")
 
 if not df_filtrado.empty:
     col_graf1, col_graf2 = st.columns(2)
     
-    # Filtra dados especificamente para o gráfico scatter (somente P/L positivo e < 100)
-    df_graf = df_filtrado[
+    # Prepara dados limpos para o Scatter Plot (remove outliers de P/L e ROE)
+    df_graf_scatter = df_filtrado[
         (df_filtrado["P/L"] > 0) & 
         (df_filtrado["P/L"] <= 100) & 
         (df_filtrado["ROE"] >= -50) & 
         (df_filtrado["ROE"] <= 100)
-    ]
-    
+    ].copy()
+
+    # LÓGICA DINÂMICA: Define se colorimos por Setor ou por Ticker
+    tem_setor_selecionado = len(setores_selecionados) > 0
+    coluna_colorir = "Ticker" if tem_setor_selecionado else "Segmento"
+    titulo_legenda = "Ação" if tem_setor_selecionado else "Setor"
+
+    # --- GRÁFICO 1: Scatter Plot (P/L vs ROE) ---
     with col_graf1:
-        if not df_graf.empty:
-            fig_roe = px.scatter(
-                df_graf,
+        if not df_graf_scatter.empty:
+            # Garante que as bolhas tenham tamanho mínimo visível
+            s_min, s_max = df_graf_scatter["Liquidez Diária"].min(), df_graf_scatter["Liquidez Diária"].max()
+            if s_min == s_max: # Evita erro se todas as ações tiverem a mesma liquidez
+                sizes = [20] * len(df_graf_scatter)
+            else:
+                sizes = df_graf_scatter["Liquidez Diária"]
+
+            fig_scatter = px.scatter(
+                df_graf_scatter,
                 x="P/L",
                 y="ROE",
-                size="Liquidez Diária",
-                color="Segmento",
+                size=sizes,
+                color=coluna_colorir, # <--- COLORI DINAMICAMENTE
                 hover_name="Ticker",
-                title="Relação P/L vs. ROE (Ações Lucrativas)",
-                labels={"P/L": "Preço / Lucro", "ROE": "ROE (%)"}
+                title=f"Relação P/L vs. ROE (Colorido por {titulo_legenda})",
+                labels={"P/L": "Preço / Lucro", "ROE": "ROE (%)", coluna_colorir: titulo_legenda}
             )
-            st.plotly_chart(fig_roe, use_container_width=True)
+            # Melhora a visualização do Scatter
+            fig_scatter.update_traces(marker=dict(line=dict(width=1, color='DarkSlateGrey')))
+            st.plotly_chart(fig_scatter, use_container_width=True)
         else:
-            st.info("Nenhuma ação com P/L positivo encontrada para os filtros atuais.")
+            st.info("Ações insuficientes para o Scatter Plot com os filtros atuais.")
         
+    # --- GRÁFICO 2: Bar Chart (Dividend Yield) ---
     with col_graf2:
-        df_setor = df_filtrado[df_filtrado["Dividend Yield"] < 100].groupby("Segmento")["Dividend Yield"].mean().reset_index().sort_values(by="Dividend Yield", ascending=False)
-        fig_dy = px.bar(
-            df_setor,
-            x="Segmento",
-            y="Dividend Yield",
-            title="Dividend Yield Médio por Setor (%)",
-            labels={"Dividend Yield": "DY Médio (%)", "Segmento": "Setor"},
-            color="Dividend Yield",
-            color_continuous_scale="Viridis"
-        )
-        st.plotly_chart(fig_dy, use_container_width=True)
+        # Prepara dados para o gráfico de barras (remove DY distorcido > 100%)
+        df_graf_bar = df_filtrado[df_filtrado["Dividend Yield"] < 100].copy()
+
+        if tem_setor_selecionado:
+            # SE HÁ FILTRO DE SETOR: Mostra barras individuais por Ação
+            df_bar_data = df_graf_bar.sort_values(by="Dividend Yield", ascending=False)
+            fig_bar = px.bar(
+                df_bar_data,
+                x="Ticker", # <--- MOSTRA TICKERS NO EIXO X
+                y="Dividend Yield",
+                color="Dividend Yield",
+                title=f"Dividend Yield Individual das Ações ({', '.join(setores_selecionados)})",
+                labels={"Dividend Yield": "DY (%)", "Ticker": "Ação"},
+                color_continuous_scale="Viridis"
+            )
+            # Rotaciona rótulos do eixo X se houver muitas ações
+            fig_bar.update_layout(xaxis_tickangle=-45)
+            
+        else:
+            # SE NÃO HÁ FILTRO: Mantém o gráfico original de média por Setor
+            df_setor_média = df_graf_bar.groupby("Segmento")["Dividend Yield"].mean().reset_index().sort_values(by="Dividend Yield", ascending=False)
+            fig_bar = px.bar(
+                df_setor_média,
+                x="Segmento",
+                y="Dividend Yield",
+                color="Dividend Yield",
+                title="Dividend Yield Médio por Setor (%)",
+                labels={"Dividend Yield": "DY Médio (%)", "Segmento": "Setor"},
+                color_continuous_scale="Viridis"
+            )
+            
+        st.plotly_chart(fig_bar, use_container_width=True)
+
+st.divider()
 
 # =========================================================
 # SEÇÃO 3: TABELA DE RESULTADOS
