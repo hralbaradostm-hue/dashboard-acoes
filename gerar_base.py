@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("⏳ Conectando ao Fundamentus para baixar dados e aplicar nomenclatura oficial da B3...")
+print("⏳ Conectando ao Fundamentus para baixar dados e aplicar mapeamento expandido B3...")
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -110,25 +110,8 @@ for col in colunas_financeiras:
 
 df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
 
-# 4. DICIONÁRIO COM A NOMENCLATURA SETORIAL OFICIAL DA B3
+# 4. DICIONÁRIO EXHAUSTIVO COM NOMENCLATURA SETORIAL OFICIAL B3
 SETORES_OFICIAIS_B3 = {
-    # Financeiro / Exploração de Imóveis (Shopping Centers / Edifícios Comerciais)
-    "ALOS": "Exploração de Imóveis", "MULT": "Exploração de Imóveis", "IGTI": "Exploração de Imóveis",
-    "LOGG": "Exploração de Imóveis", "SYNE": "Exploração de Imóveis", "HBOR": "Exploração de Imóveis",
-    "ALLD": "Exploração de Imóveis", "LPSB": "Exploração de Imóveis", "SCAR": "Exploração de Imóveis",
-
-    # Financeiro / Bancos
-    "ITUB": "Bancos", "BBDC": "Bancos", "BBAS": "Bancos", "SANB": "Bancos", "BPAC": "Bancos",
-    "BRSR": "Bancos", "ABCB": "Bancos", "BPAN": "Bancos", "BAZA": "Bancos", "BMIN": "Bancos",
-    "BNBR": "Bancos", "BSLI": "Bancos", "PINE": "Bancos",
-
-    # Financeiro / Previdência e Seguros
-    "BBSE": "Previdência e Seguros", "CXSE": "Previdência e Seguros", "PSSA": "Previdência e Seguros",
-    "IRBR": "Previdência e Seguros", "WIZC": "Previdência e Seguros",
-
-    # Financeiro / Serviços Financeiros Diversos
-    "B3SA": "Serviços Financeiros Diversos", "CIEL": "Serviços Financeiros Diversos", "CASH": "Serviços Financeiros Diversos",
-
     # Utilidade Pública / Energia Elétrica
     "ELET": "Energia Elétrica", "CMIG": "Energia Elétrica", "CPLE": "Energia Elétrica", "TAEE": "Energia Elétrica",
     "TRPL": "Energia Elétrica", "EGIE": "Energia Elétrica", "EQTL": "Energia Elétrica", "ALUP": "Energia Elétrica",
@@ -136,77 +119,92 @@ SETORES_OFICIAIS_B3 = {
     "LIGT": "Energia Elétrica", "AESB": "Energia Elétrica", "ENGI": "Energia Elétrica", "MEGA": "Energia Elétrica",
     "GEPA": "Energia Elétrica", "CLSA": "Energia Elétrica", "COCE": "Energia Elétrica", "CSRN": "Energia Elétrica",
     "EKTR": "Energia Elétrica", "ELEK": "Energia Elétrica", "EMAE": "Energia Elétrica", "RNEW": "Energia Elétrica",
-    "TRAN": "Energia Elétrica", "CEEB": "Energia Elétrica", "CEED": "Energia Elétrica",
+    "TRAN": "Energia Elétrica", "CEEB": "Energia Elétrica", "CEED": "Energia Elétrica", "CEBR": "Energia Elétrica",
+    "LPSB": "Energia Elétrica", "ENMT": "Energia Elétrica", "ENBR": "Energia Elétrica", "CBEE": "Energia Elétrica",
 
     # Utilidade Pública / Água e Saneamento
     "SBSP": "Água e Saneamento", "SAPR": "Água e Saneamento", "CSMG": "Água e Saneamento",
-    "AMBP": "Água e Saneamento", "ORVR": "Água e Saneamento",
+    "AMBP": "Água e Saneamento", "ORVR": "Água e Saneamento", "CASN": "Água e Saneamento",
+
+    # Financeiro / Bancos
+    "ITUB": "Bancos", "BBDC": "Bancos", "BBAS": "Bancos", "SANB": "Bancos", "BPAC": "Bancos",
+    "BRSR": "Bancos", "ABCB": "Bancos", "BPAN": "Bancos", "BAZA": "Bancos", "BMIN": "Bancos",
+    "BNBR": "Bancos", "BSLI": "Bancos", "PINE": "Bancos", "BMEB": "Bancos", "BEES": "Bancos",
+    "BGIP": "Bancos", "RPAD": "Bancos",
+
+    # Financeiro / Exploração de Imóveis
+    "ALOS": "Exploração de Imóveis", "MULT": "Exploração de Imóveis", "IGTI": "Exploração de Imóveis",
+    "LOGG": "Exploração de Imóveis", "SYNE": "Exploração de Imóveis", "HBOR": "Exploração de Imóveis",
+    "ALLD": "Exploração de Imóveis", "SCAR": "Exploração de Imóveis", "CORR": "Exploração de Imóveis",
+
+    # Financeiro / Previdência e Seguros
+    "BBSE": "Previdência e Seguros", "CXSE": "Previdência e Seguros", "PSSA": "Previdência e Seguros",
+    "IRBR": "Previdência e Seguros", "WIZC": "Previdência e Seguros", "CSAB": "Previdência e Seguros",
+
+    # Financeiro / Serviços Financeiros Diversos
+    "B3SA": "Serviços Financeiros Diversos", "CIEL": "Serviços Financeiros Diversos", "CASH": "Serviços Financeiros Diversos",
+    "CLEI": "Serviços Financeiros Diversos",
 
     # Petróleo, Gás e Biocombustíveis
     "PETR": "Petróleo, Gás e Biocombustíveis", "PRIO": "Petróleo, Gás e Biocombustíveis",
     "RECV": "Petróleo, Gás e Biocombustíveis", "RRRP": "Petróleo, Gás e Biocombustíveis",
     "UGPA": "Petróleo, Gás e Biocombustíveis", "CSAN": "Petróleo, Gás e Biocombustíveis",
     "VBBR": "Petróleo, Gás e Biocombustíveis", "OPCT": "Petróleo, Gás e Biocombustíveis",
-    "RAIZ": "Petróleo, Gás e Biocombustíveis",
+    "RAIZ": "Petróleo, Gás e Biocombustíveis", "DMMO": "Petróleo, Gás e Biocombustíveis",
 
-    # Materiais Básicos / Mineração
-    "VALE": "Mineração", "CMIN": "Mineração", "BRAP": "Mineração",
-
-    # Materiais Básicos / Siderurgia e Metalurgia
+    # Materiais Básicos / Mineração, Siderurgia e Papel
+    "VALE": "Mineração", "CMIN": "Mineração", "BRAP": "Mineração", "MNSA": "Mineração",
     "GGBR": "Siderurgia e Metalurgia", "GOAU": "Siderurgia e Metalurgia", "CSNA": "Siderurgia e Metalurgia",
-    "USIM": "Siderurgia e Metalurgia", "FESA": "Siderurgia e Metalurgia",
-
-    # Materiais Básicos / Papel e Celulose
+    "USIM": "Siderurgia e Metalurgia", "FESA": "Siderurgia e Metalurgia", "TKNO": "Siderurgia e Metalurgia",
     "SUZB": "Papel e Celulose", "KLBN": "Papel e Celulose", "RANI": "Papel e Celulose", "DXCO": "Papel e Celulose",
+    "EUCA": "Papel e Celulose", "CRPG": "Químicos", "UNIP": "Químicos", "BRKM": "Químicos", "FHER": "Químicos",
 
-    # Bens Industriais / Máquinas e Equipamentos
+    # Bens Industriais
     "WEGE": "Máquinas e Equipamentos", "LEVE": "Máquinas e Equipamentos", "MYPK": "Máquinas e Equipamentos",
     "TUPY": "Máquinas e Equipamentos", "SHUL": "Máquinas e Equipamentos", "ROMI": "Máquinas e Equipamentos",
     "KEPL": "Máquinas e Equipamentos", "EALT": "Máquinas e Equipamentos", "BALM": "Máquinas e Equipamentos",
-
-    # Bens Industriais / Transporte e Logística
     "RENT": "Transporte e Logística", "RAIL": "Transporte e Logística", "CCRO": "Transporte e Logística",
     "AZUL": "Transporte e Logística", "GOLL": "Transporte e Logística", "STBP": "Transporte e Logística",
     "POMO": "Transporte e Logística", "JSLG": "Transporte e Logística", "SIMH": "Transporte e Logística",
     "TGMA": "Transporte e Logística", "VAMO": "Transporte e Logística", "PORT": "Transporte e Logística",
-    "ECOR": "Transporte e Logística", "LUXM": "Transporte e Logística",
+    "ECOR": "Transporte e Logística", "LUXM": "Transporte e Logística", "RAPT": "Material de Transporte",
+    "FRAS": "Material de Transporte", "TOTS": "Serviços Diversos",
 
-    # Consumo Cíclico / Comércio e Varejo
+    # Consumo Cíclico / Comércio, Varejo e Construção Civil
     "MGLU": "Comércio / Varejo", "LREN": "Comércio / Varejo", "ARZZ": "Comércio / Varejo",
     "SOMA": "Comércio / Varejo", "BHIA": "Comércio / Varejo", "PETZ": "Comércio / Varejo",
     "VULC": "Comércio / Varejo", "ALPA": "Comércio / Varejo", "ASAI": "Comércio / Varejo",
     "CRFB": "Comércio / Varejo", "GMAT": "Comércio / Varejo", "LJQQ": "Comércio / Varejo",
     "SBFG": "Comércio / Varejo", "AMER": "Comércio / Varejo", "GUAR": "Comércio / Varejo",
-    "CEAB": "Comércio / Varejo", "VLID": "Comércio / Varejo",
-
-    # Consumo Cíclico / Construção Civil
+    "CEAB": "Comércio / Varejo", "VLID": "Comércio / Varejo", "AMAR": "Comércio / Varejo",
     "CYRE": "Construção Civil", "EZTC": "Construção Civil", "MRVE": "Construção Civil",
     "TEND": "Construção Civil", "DIRR": "Construção Civil", "JHSF": "Construção Civil",
     "EVEN": "Construção Civil", "CURY": "Construção Civil", "PLPL": "Construção Civil",
     "LAVV": "Construção Civil", "MELK": "Construção Civil", "TRIS": "Construção Civil",
     "GFSA": "Construção Civil", "PDGR": "Construção Civil", "RDNI": "Construção Civil",
+    "TCNO": "Construção Civil", "HOOT": "Hotelaria e Restaurantes", "BKBR": "Hotelaria e Restaurantes",
+    "ZAMP": "Hotelaria e Restaurantes", "CNEW": "Viagens e Lazer", "SHOW": "Viagens e Lazer",
 
     # Consumo Não Cíclico / Alimentos Processados e Agropecuária
     "JBSS": "Alimentos Processados", "MRFG": "Alimentos Processados", "BRFS": "Alimentos Processados",
     "BEEF": "Alimentos Processados", "MDIA": "Alimentos Processados", "CAML": "Alimentos Processados",
+    "MNPR": "Alimentos Processados", "BAHI": "Alimentos Processados",
     "ABEV": "Bebidas", "SLCE": "Agropecuária", "SMTO": "Agropecuária", "AGRO": "Agropecuária",
-    "JALL": "Agropecuária", "SOJA": "Agropecuária", "TTEN": "Agropecuária",
+    "JALL": "Agropecuária", "SOJA": "Agropecuária", "TTEN": "Agropecuária", "FRTA": "Agropecuária",
 
-    # Saúde / Serviços Médico-Hospitalares e Análises
+    # Saúde e Farmácia
     "RADL": "Comércio / Varejo", "FLRY": "Serviços Médico-Hospitalares", "HYPE": "Medicamentos",
     "RDOR": "Serviços Médico-Hospitalares", "ONCO": "Serviços Médico-Hospitalares",
     "VVEO": "Serviços Médico-Hospitalares", "MATD": "Serviços Médico-Hospitalares",
     "PARD": "Serviços Médico-Hospitalares", "QUAL": "Serviços Médico-Hospitalares",
     "BLAU": "Medicamentos", "PNVL": "Comércio / Varejo", "ODPV": "Serviços Médico-Hospitalares",
-    "HAPV": "Serviços Médico-Hospitalares",
+    "HAPV": "Serviços Médico-Hospitalares", "DMVF": "Serviços Médico-Hospitalares",
 
-    # Tecnologia da Informação
+    # Tecnologia e Telecom
     "TOTS": "Tecnologia da Informação", "LWSA": "Tecnologia da Informação", "POSI": "Tecnologia da Informação",
-    "INTB": "Tecnologia da Informação", "NVTTS": "Tecnologia da Informação",
-
-    # Telecomunicações
+    "INTB": "Tecnologia da Informação", "NVTTS": "Tecnologia da Informação", "IFCM": "Tecnologia da Informação",
     "VIVT": "Telecomunicações", "TIMS": "Telecomunicações", "FIQE": "Telecomunicações",
-    "DESK": "Telecomunicações", "OIBR": "Telecomunicações"
+    "DESK": "Telecomunicações", "OIBR": "Telecomunicações", "TELB": "Telecomunicações"
 }
 
 def atribuir_setor(ticker):
@@ -230,6 +228,6 @@ df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"\n✅ SUCESSO! Base atualizada com a Nomenclatura Oficial da B3 e salva em 'acoes_b3.xlsx'.")
-print("\n--- Distribuição por Nomenclatura Oficial B3 ---")
+print(f"\n✅ SUCESSO! Base atualizada e salva em 'acoes_b3.xlsx'.")
+print("\n--- Nova Distribuição dos Setores ---")
 print(df["Segmento"].value_counts())
