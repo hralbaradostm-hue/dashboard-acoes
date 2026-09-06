@@ -6,16 +6,15 @@ from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("Baixando dados da B3 e gerando base completa...")
-
-url = "https://www.fundamentus.com.br/resultado.php"
+print("Baixando dados da B3 e reclassificando setores automaticamente...")
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 }
 
-resposta = requests.get(url, headers=headers, timeout=20)
-
+# 1. Raspagem da Tabela Principal de Indicadores
+url_resultado = "https://www.fundamentus.com.br/resultado.php"
+resposta = requests.get(url_resultado, headers=headers, timeout=20)
 soup = BeautifulSoup(resposta.text, 'html.parser')
 tabela = soup.find('table', {'id': 'resultado'})
 
@@ -25,10 +24,9 @@ for tr in tabela.find_all('tr'):
     if cols:
         linhas.append(cols)
 
-# Cria o DataFrame a partir da extração HTML
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Mapeamento exato das colunas conforme o diagnóstico
+# Mapeamento de Colunas
 mapa_exato = {
     "Papel": "Ticker",
     "Cotacao": "Cotação",
@@ -40,21 +38,41 @@ mapa_exato = {
     "ROIC": "ROIC",
     "ROE": "ROE",
     "Liq.2meses": "Liquidez Diária",
-    "Patrim. Líq": "Patrimônio Líquido"
+    "Patrim. Líq": "Patrimônio Líquido",
+    "Cresc. Rec.5a": "Cresc. 5 Anos (%)"
 }
 
 df.rename(columns=mapa_exato, inplace=True)
 df = df.loc[:, ~df.columns.duplicated()].copy()
 
-# Função de conversão numérica sem perda de precisão
+# 2. Raspagem Automática de Setores Globais do Fundamentus
+print("Mapeando setores oficiais da B3...")
+mapa_setores_auto = {}
+
+try:
+    url_setores = "https://www.fundamentus.com.br/busca_resultado.php"
+    resp_setores = requests.get(url_setores, headers=headers, timeout=20)
+    soup_setores = BeautifulSoup(resp_setores.text, 'html.parser')
+    tabela_setores = soup_setores.find('table', {'id': 'resultado'})
+    
+    if tabela_setores:
+        for tr in tabela_setores.find_all('tr')[1:]:
+            tds = tr.find_all('td')
+            if len(tds) >= 2:
+                ticker_cod = tds[0].text.strip()
+                setor_nome = tds[1].text.strip()
+                if ticker_cod and setor_nome:
+                    mapa_setores_auto[ticker_cod] = setor_nome
+except Exception as e:
+    print(f"Aviso ao buscar setores automáticos: {e}")
+
+# 3. Conversão Numérica
 def converter_para_numero(valor):
     if pd.isna(valor) or valor is None:
         return 0.0
-    
     val_str = str(valor).replace('\xa0', '').replace('%', '').strip()
     if not val_str or val_str in ['-', '--', 'None', 'nan', 'null']:
         return 0.0
-    
     try:
         if ',' in val_str:
             val_str = val_str.replace('.', '').replace(',', '.')
@@ -63,7 +81,10 @@ def converter_para_numero(valor):
     except Exception:
         return 0.0
 
-colunas_financeiras = ["Cotação", "P/L", "P/VP", "Dividend Yield", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"]
+colunas_financeiras = [
+    "Cotação", "P/L", "P/VP", "Dividend Yield", "ROIC", "ROE", 
+    "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária", "Cresc. 5 Anos (%)"
+]
 
 for col in colunas_financeiras:
     if col in df.columns:
@@ -71,104 +92,43 @@ for col in colunas_financeiras:
 
 df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
 
-def obter_nome_empresa(ticker):
+# Dicionário Auxiliar para Nomes de Empresas Principais
+nomes_base = {
+    "WEGE": "WEG S.A.", "PETR": "Petrobras", "VALE": "Vale S.A.",
+    "ITUB": "Itaú Unibanco", "BBDC": "Bradesco", "BBAS": "Banco do Brasil",
+    "SANB": "Santander Brasil", "BPAC": "BTG Pactual", "BBSE": "BB Seguridade",
+    "ELET": "Eletrobras", "CMIG": "Cemig", "CPLE": "Copel", "TAEE": "Taesa",
+    "RENT": "Localiza", "SUZB": "Suzano", "KLBN": "Klabin", "MGLU": "Magazine Luiza"
+}
+
+def atribuir_nome(ticker):
     prefixo = str(ticker)[:4].upper()
-    nomes = {
-        "WEGE": "WEG S.A.", "PETR": "Petrobras", "VALE": "Vale S.A.",
-        "ITUB": "Itaú Unibanco", "BBDC": "Bradesco", "BBAS": "Banco do Brasil",
-        "SANB": "Santander Brasil", "BPAC": "BTG Pactual", "BBSE": "BB Seguridade",
-        "CXSE": "Caixa Seguridade", "PSSA": "Porto Seguro", "IRBR": "IRB Brasil",
-        "ELET": "Eletrobras", "CMIG": "Cemig", "CPLE": "Copel", "TAEE": "Taesa",
-        "TRPL": "ISA CTEEP", "EGIE": "Engie Brasil", "EQTL": "Equatorial Energia",
-        "SBSP": "Sabesp", "SAPR": "Sanepar", "CSMG": "Copasa", "PRIO": "Prio",
-        "UGPA": "Ultrapar", "CSAN": "Cosan", "GGBR": "Gerdau", "GOAU": "Metalúrgica Gerdau",
-        "CSNA": "Siderúrgica Nacional", "USIM": "Usiminas", "CMIN": "CSN Mineração",
-        "MGLU": "Magazine Luiza", "LREN": "Lojas Renner", "BHIA": "Casas Bahia",
-        "PETZ": "Petz", "RADL": "Raia Drogasil", "FLRY": "Fleury", "HYPE": "Hypera",
-        "RDOR": "Rede D'Or", "JBSS": "JBS", "MRFG": "Marfrig", "BRFS": "BRF",
-        "BEEF": "Minerva", "MDIA": "M. Dias Branco", "SLCE": "SLC Agrícola",
-        "RENT": "Localiza", "RAIL": "Rumo Logística", "CCRO": "CCR", "AZUL": "Azul Linhas Aéreas",
-        "GOLL": "GOL Linhas Aéreas", "SUZB": "Suzano", "KLBN": "Klabin", "CYRE": "Cyrela",
-        "EZTC": "EZTec", "MRVE": "MRV Engenharia", "MULT": "Multiplan", "IGTI": "Iguatemi",
-        "ALLD": "Allos", "RIAA": "Riauto", "JHSF": "JHSF Participações", "RSUL": "Riosulense",
-        "BRSR": "Banrisul", "EVEN": "Even Construtora", "BAZA": "Banco da Amazônia",
-        "POMO": "Marcopolo", "VULC": "Vulcabras"
-    }
-    return nomes.get(prefixo, f"Empresa {prefixo}")
+    return nomes_base.get(prefixo, f"Empresa {prefixo}")
 
-def obter_setor_oficial(ticker):
+def atribuir_setor(ticker):
+    # Tenta obter do mapeamento automático do Fundamentus
+    if ticker in mapa_setores_auto:
+        return mapa_setores_auto[ticker]
+    
+    # Caso seja código ON/PN derivado (ex: PETR4 busca PETR3)
     prefixo = str(ticker)[:4].upper()
-    setores_b3 = {
-        # Máquinas e Equipamentos
-        "WEGE": "Máquinas e Equipamentos", "LEVE": "Máquinas e Equipamentos", 
-        "MYPK": "Máquinas e Equipamentos", "TUPY": "Máquinas e Equipamentos", 
-        "SHUL": "Máquinas e Equipamentos", "ROMI": "Máquinas e Equipamentos",
-        
-        # Bancos
-        "ITUB": "Bancos", "BBDC": "Bancos", "BBAS": "Bancos", "SANB": "Bancos", 
-        "BPAC": "Bancos", "BRSR": "Bancos", "ABCB": "Bancos", "BPAN": "Bancos",
-        "BAZA": "Bancos",
-        
-        # Energia Elétrica
-        "ELET": "Energia Elétrica", "CMIG": "Energia Elétrica", "CPLE": "Energia Elétrica", 
-        "TAEE": "Energia Elétrica", "TRPL": "Energia Elétrica", "EGIE": "Energia Elétrica", 
-        "EQTL": "Energia Elétrica", "ALUP": "Energia Elétrica", "ENEV": "Energia Elétrica",
-        
-        # Saneamento
-        "SBSP": "Saneamento", "SAPR": "Saneamento", "CSMG": "Saneamento",
-        
-        # Petróleo e Gás
-        "PETR": "Petróleo e Gás", "PRIO": "Petróleo e Gás", "RECV": "Petróleo e Gás", 
-        "RRRP": "Petróleo e Gás", "UGPA": "Petróleo e Gás", "CSAN": "Petróleo e Gás",
-        
-        # Mineração e Siderurgia
-        "VALE": "Mineração e Siderurgia", "GGBR": "Mineração e Siderurgia", 
-        "GOAU": "Mineração e Siderurgia", "CSNA": "Mineração e Siderurgia", 
-        "USIM": "Mineração e Siderurgia", "CMIN": "Mineração e Siderurgia",
-        
-        # Varejo e Comércio
-        "MGLU": "Varejo e Comércio", "LREN": "Varejo e Comércio", "ARZZ": "Varejo e Comércio", 
-        "SOMA": "Varejo e Comércio", "BHIA": "Varejo e Comércio", "PETZ": "Varejo e Comércio",
-        "VULC": "Varejo e Comércio",
-        
-        # Saúde e Farmácia
-        "RADL": "Saúde e Farmácia", "FLRY": "Saúde e Farmácia", "HYPE": "Saúde e Farmácia", 
-        "RDOR": "Saúde e Farmácia", "ONCO": "Saúde e Farmácia",
-        
-        # Agro e Alimentos
-        "JBSS": "Agro e Alimentos", "MRFG": "Agro e Alimentos", "BRFS": "Agro e Alimentos", 
-        "BEEF": "Agro e Alimentos", "MDIA": "Agro e Alimentos", "SLCE": "Agro e Alimentos",
-        
-        # Transporte e Logística
-        "RENT": "Transporte e Logística", "RAIL": "Transporte e Logística", 
-        "CCRO": "Transporte e Logística", "AZUL": "Transporte e Logística", 
-        "GOLL": "Transporte e Logística", "STBP": "Transporte e Logística",
-        "POMO": "Transporte e Logística",
-        
-        # Seguradoras
-        "BBSE": "Seguradoras", "CXSE": "Seguradoras", "PSSA": "Seguradoras", "IRBR": "Seguradoras",
-        
-        # Papel e Celulose
-        "SUZB": "Papel e Celulose", "KLBN": "Papel e Celulose", "RANI": "Papel e Celulose",
-        
-        # Construção Civil
-        "CYRE": "Construção Civil", "EZTC": "Construção Civil", "MRVE": "Construção Civil", 
-        "TEND": "Construção Civil", "DIRR": "Construção Civil", "JHSF": "Construção Civil",
-        "EVEN": "Construção Civil",
-        
-        # Shoppings e Imóveis
-        "MULT": "Shoppings e Imóveis", "IGTI": "Shoppings e Imóveis", "ALOS": "Shoppings e Imóveis",
-        "ALLD": "Shoppings e Imóveis"
-    }
-    return setores_b3.get(prefixo, "Outros Setores")
+    for t_cod, s_nome in mapa_setores_auto.items():
+        if t_cod.startswith(prefixo):
+            return s_nome
+            
+    return "Outros Setores"
 
-df["Empresa"] = df["Ticker"].map(obter_nome_empresa)
-df["Segmento"] = df["Ticker"].map(obter_setor_oficial)
+df["Empresa"] = df["Ticker"].apply(atribuir_nome)
+df["Segmento"] = df["Ticker"].apply(atribuir_setor)
 
-colunas_ordenadas = ["Ticker", "Empresa", "Tipo", "Cotação", "Segmento", "P/L", "P/VP", "Dividend Yield", "Patrimônio Líquido", "Liquidez Diária", "Margem EBIT", "Margem Líquida", "ROIC", "ROE"]
+colunas_ordenadas = [
+    "Ticker", "Empresa", "Tipo", "Cotação", "Segmento", "P/L", "P/VP", 
+    "Dividend Yield", "Patrimônio Líquido", "Liquidez Diária", "Margem EBIT", 
+    "Margem Líquida", "ROIC", "ROE", "Cresc. 5 Anos (%)"
+]
 colunas_presentes = [col for col in colunas_ordenadas if col in df.columns]
 df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações.")
+print(f"✅ SUCESSO! Base atualizada com {len(df)} ações e setores categorizados.")
