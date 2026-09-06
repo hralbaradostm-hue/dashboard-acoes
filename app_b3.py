@@ -134,24 +134,29 @@ st.subheader("📈 Análise Gráfica Setorial")
 if not df_filtrado.empty:
     col_graf1, col_graf2 = st.columns(2)
     
+    # Filtra dados especificamente para o gráfico scatter (somente P/L positivo e < 100)
     df_graf = df_filtrado[
+        (df_filtrado["P/L"] > 0) & 
         (df_filtrado["P/L"] <= 100) & 
         (df_filtrado["ROE"] >= -50) & 
         (df_filtrado["ROE"] <= 100)
     ]
     
     with col_graf1:
-        fig_roe = px.scatter(
-            df_graf,
-            x="P/L",
-            y="ROE",
-            size="Liquidez Diária",
-            color="Segmento",
-            hover_name="Ticker",
-            title="Relação P/L vs. ROE (Filtrado de Outliers)",
-            labels={"P/L": "Preço / Lucro", "ROE": "ROE (%)"}
-        )
-        st.plotly_chart(fig_roe, use_container_width=True)
+        if not df_graf.empty:
+            fig_roe = px.scatter(
+                df_graf,
+                x="P/L",
+                y="ROE",
+                size="Liquidez Diária",
+                color="Segmento",
+                hover_name="Ticker",
+                title="Relação P/L vs. ROE (Ações Lucrativas)",
+                labels={"P/L": "Preço / Lucro", "ROE": "ROE (%)"}
+            )
+            st.plotly_chart(fig_roe, use_container_width=True)
+        else:
+            st.info("Nenhuma ação com P/L positivo encontrada para os filtros atuais.")
         
     with col_graf2:
         df_setor = df_filtrado[df_filtrado["Dividend Yield"] < 100].groupby("Segmento")["Dividend Yield"].mean().reset_index().sort_values(by="Dividend Yield", ascending=False)
@@ -165,8 +170,6 @@ if not df_filtrado.empty:
             color_continuous_scale="Viridis"
         )
         st.plotly_chart(fig_dy, use_container_width=True)
-
-st.divider()
 
 # =========================================================
 # SEÇÃO 3: TABELA DE RESULTADOS
