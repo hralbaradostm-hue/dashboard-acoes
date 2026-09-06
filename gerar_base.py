@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("⏳ Conectando ao Fundamentus para baixar dados e aplicar mapeamento expandido B3...")
+print("⏳ Conectando ao Fundamentus para baixar dados e aplicar mapeamento oficial da B3...")
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -21,13 +21,14 @@ try:
     resposta.raise_for_status()
 except requests.exceptions.RequestException as e:
     print(f"\n❌ ERRO DE CONEXÃO: Não foi possível acessar o Fundamentus.")
+    print(f"👉 Detalhe: {e}")
     sys.exit(1)
 
 soup = BeautifulSoup(resposta.text, 'html.parser')
 tabela = soup.find('table', {'id': 'resultado'})
 
 if not tabela:
-    print("\n⚠️ ALERTA DE MUDANÇA DE LAYOUT: Tabela resultado não encontrada.")
+    print("\n⚠️ ALERTA DE MUDANÇA DE LAYOUT: A tabela 'resultado' não foi encontrada.")
     sys.exit(1)
 
 linhas = []
@@ -78,7 +79,7 @@ for nome_final, alternativas in mapa_desejado.items():
         colunas_faltantes.append(nome_final)
 
 if colunas_faltantes:
-    print(f"\n⚠️ ALERTA DE MUDANÇA NAS COLUNAS: {colunas_faltantes}")
+    print(f"\n⚠️ ALERTA DE MUDANÇA NAS COLUNAS: Colunas não encontradas: {colunas_faltantes}")
     sys.exit(1)
 
 df.rename(columns=renomear_dict, inplace=True)
@@ -108,9 +109,21 @@ for col in colunas_financeiras:
     if col in df.columns:
         df[col] = df[col].apply(converter_para_numero)
 
-df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
+# IDENTIFICAÇÃO DOS TIPOS DE AÇÃO (ON, PN, UNT)
+def identificar_tipo_acao(ticker):
+    t_str = str(ticker).strip().upper()
+    if t_str.endswith("11"):
+        return "UNT"  # Unit
+    elif t_str.endswith(("3", "7")):
+        return "ON"   # Ordinária
+    elif t_str.endswith(("4", "5", "6", "8")):
+        return "PN"   # Preferencial
+    else:
+        return "Outros"
 
-# 4. DICIONÁRIO EXHAUSTIVO COM NOMENCLATURA SETORIAL OFICIAL B3
+df["Tipo"] = df["Ticker"].apply(identificar_tipo_acao)
+
+# 4. DICIONÁRIO EXAUSTIVO COM NOMENCLATURA SETORIAL OFICIAL DA B3
 SETORES_OFICIAIS_B3 = {
     # Utilidade Pública / Energia Elétrica
     "ELET": "Energia Elétrica", "CMIG": "Energia Elétrica", "CPLE": "Energia Elétrica", "TAEE": "Energia Elétrica",
@@ -168,7 +181,7 @@ SETORES_OFICIAIS_B3 = {
     "POMO": "Transporte e Logística", "JSLG": "Transporte e Logística", "SIMH": "Transporte e Logística",
     "TGMA": "Transporte e Logística", "VAMO": "Transporte e Logística", "PORT": "Transporte e Logística",
     "ECOR": "Transporte e Logística", "LUXM": "Transporte e Logística", "RAPT": "Material de Transporte",
-    "FRAS": "Material de Transporte", "TOTS": "Serviços Diversos",
+    "FRAS": "Material de Transporte",
 
     # Consumo Cíclico / Comércio, Varejo e Construção Civil
     "MGLU": "Comércio / Varejo", "LREN": "Comércio / Varejo", "ARZZ": "Comércio / Varejo",
@@ -228,6 +241,6 @@ df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"\n✅ SUCESSO! Base atualizada e salva em 'acoes_b3.xlsx'.")
-print("\n--- Nova Distribuição dos Setores ---")
+print(f"\n✅ SUCESSO! Base atualizada com a Nomenclatura Oficial da B3 e salva em 'acoes_b3.xlsx'.")
+print("\n--- Distribuição por Nomenclatura Oficial B3 ---")
 print(df["Segmento"].value_counts())
