@@ -21,7 +21,7 @@ def carregar_dados():
 df_raw = carregar_dados()
 
 st.title("📊 Dashboard Fundamentalista da B3")
-st.markdown("Analise e filtre ações brasileiras por fundamentos, rentabilidade e valoração.")
+st.markdown("Analise e filtre ações brasileiras por fundamentos, rentabilidade, crescimento e valoração.")
 
 # =========================================================
 # BARRA LATERAL (SIDEBAR) - FILTROS
@@ -45,6 +45,7 @@ st.sidebar.divider()
 pl_max = st.sidebar.slider("P/L Máximo:", min_value=0.0, max_value=200.0, value=100.0, step=1.0)
 dy_min = st.sidebar.slider("Dividend Yield Mínimo (%):", min_value=0.0, max_value=20.0, value=0.0, step=0.5)
 roe_min = st.sidebar.slider("ROE Mínimo (%):", min_value=-50.0, max_value=50.0, value=-50.0, step=1.0)
+cresc_min = st.sidebar.slider("Crescimento Mínimo 5A (%):", min_value=-20.0, max_value=50.0, value=-20.0, step=1.0)
 
 liquidez_min = st.sidebar.select_slider(
     "Liquidez Diária Mínima (R$):",
@@ -68,13 +69,16 @@ if setores_selecionados:
     df_filtrado = df_filtrado[df_filtrado["Segmento"].isin(setores_selecionados)]
 
 if "P/L" in df_filtrado.columns:
-    df_filtrado = df_filtrado[(df_filtrado["P/L"] > 0) & (df_filtrado["P/L"] <= pl_max)]
+    df_filtrado = df_filtrado[df_filtrado["P/L"] <= pl_max]
 
 if "Dividend Yield" in df_filtrado.columns:
     df_filtrado = df_filtrado[df_filtrado["Dividend Yield"] >= dy_min]
 
 if "ROE" in df_filtrado.columns:
     df_filtrado = df_filtrado[df_filtrado["ROE"] >= roe_min]
+
+if "Cresc. 5 Anos (%)" in df_filtrado.columns:
+    df_filtrado = df_filtrado[df_filtrado["Cresc. 5 Anos (%)"] >= cresc_min]
 
 if "Liquidez Diária" in df_filtrado.columns:
     df_filtrado = df_filtrado[df_filtrado["Liquidez Diária"] >= liquidez_min]
@@ -86,7 +90,6 @@ col1, col2, col3, col4 = st.columns(4)
 col1.metric("Ações Encontradas", len(df_filtrado))
 
 if not df_filtrado.empty:
-    # Filtra valores realistas para o cálculo das médias do topo
     dy_val = df_filtrado[df_filtrado["Dividend Yield"] < 100]["Dividend Yield"]
     pl_val = df_filtrado[(df_filtrado["P/L"] > 0) & (df_filtrado["P/L"] < 100)]["P/L"]
     roe_val = df_filtrado[(df_filtrado["ROE"] > -100) & (df_filtrado["ROE"] < 100)]["ROE"]
@@ -117,21 +120,20 @@ if ticker_selecionado:
     m3.metric("P/VP", f"{acao.get('P/VP', 0):.2f}")
     m4.metric("DY (%)", f"{acao.get('Dividend Yield', 0):.2f}%")
     m5.metric("ROE", f"{acao.get('ROE', 0):.2f}%")
-    m6.metric("Margem Líquida", f"{acao.get('Margem Líquida', 0):.2f}%")
+    m6.metric("Cresc. 5A (%)", f"{acao.get('Cresc. 5 Anos (%)', 0):.2f}%")
     
     st.info(f"**Empresa:** {acao.get('Empresa', '-')} | **Setor:** {acao.get('Segmento', '-')} | **Patrimônio Líquido:** R$ {acao.get('Patrimônio Líquido', 0):,.0f}")
 
 st.divider()
 
 # =========================================================
-# SEÇÃO 2: GRÁFICOS INTERATIVOS (SEM OUTLIERS DE ROE)
+# SEÇÃO 2: GRÁFICOS INTERATIVOS
 # =========================================================
 st.subheader("📈 Análise Gráfica Setorial")
 
 if not df_filtrado.empty:
     col_graf1, col_graf2 = st.columns(2)
     
-    # Filtra dados para o gráfico espalhado (P/L < 100 e ROE entre -50% e 100%)
     df_graf = df_filtrado[
         (df_filtrado["P/L"] <= 100) & 
         (df_filtrado["ROE"] >= -50) & 
@@ -182,6 +184,7 @@ st.dataframe(
         "Margem EBIT": st.column_config.NumberColumn("Margem EBIT (%)", format="%.2f%%"),
         "ROIC": st.column_config.NumberColumn("ROIC (%)", format="%.2f%%"),
         "ROE": st.column_config.NumberColumn("ROE (%)", format="%.2f%%"),
+        "Cresc. 5 Anos (%)": st.column_config.NumberColumn("Cresc. 5A (%)", format="%.2f%%"),
         "Patrimônio Líquido": st.column_config.NumberColumn("Patrimônio Líquido (R$)", format="R$ %,.0f"),
         "Liquidez Diária": st.column_config.NumberColumn("Liquidez Diária (R$)", format="R$ %,.0f"),
     },
