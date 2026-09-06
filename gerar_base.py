@@ -2,72 +2,94 @@ import pandas as pd
 import requests
 import warnings
 import re
+import sys
 from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("Baixando dados da B3 e reclassificando setores automaticamente por prefixo...")
+print("⏳ Conectando ao Fundamentus para baixar dados atualizados da B3...")
 
+url = "https://www.fundamentus.com.br/resultado.php"
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
 }
 
-# 1. Raspagem da Tabela Principal de Indicadores
-url_resultado = "https://www.fundamentus.com.br/resultado.php"
-resposta = requests.get(url_resultado, headers=headers, timeout=20)
+# 1. VALIDAÇÃO DE CONEXÃO
+try:
+    resposta = requests.get(url, headers=headers, timeout=15)
+    resposta.raise_for_status()
+except requests.exceptions.RequestException as e:
+    print(f"\n❌ ERRO DE CONEXÃO: Não foi possível acessar o Fundamentus.")
+    print(f"👉 Detalhe: {e}")
+    sys.exit(1)
+
+# 2. VALIDAÇÃO DE ESTRUTURA HTML (LAYOUT)
 soup = BeautifulSoup(resposta.text, 'html.parser')
 tabela = soup.find('table', {'id': 'resultado'})
 
+if not tabela:
+    print("\n⚠️ ALERTA DE MUDANÇA DE LAYOUT:")
+    print("❌ A tabela de resultados ('table id=resultado') não foi encontrada no HTML da página.")
+    sys.exit(1)
+
+# 3. EXTRAÇÃO DAS LINHAS
 linhas = []
 for tr in tabela.find_all('tr'):
     cols = [td.text.strip() for td in tr.find_all(['td', 'th'])]
     if cols:
         linhas.append(cols)
 
+if len(linhas) < 2:
+    print("\n⚠️ ALERTA DE DADOS VAZIOS:")
+    print("❌ A tabela foi encontrada, mas não contém linhas de dados das ações.")
+    sys.exit(1)
+
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Mapeamento de Colunas
-mapa_exato = {
-    "Papel": "Ticker",
-    "Cotacao": "Cotação",
-    "P/L": "P/L",
-    "P/VP": "P/VP",
-    "Div.Yield": "Dividend Yield",
-    "Mrg Ebit": "Margem EBIT",
-    "Mrg. Líq.": "Margem Líquida",
-    "ROIC": "ROIC",
-    "ROE": "ROE",
-    "Liq.2meses": "Liquidez Diária",
-    "Patrim. Líq": "Patrimônio Líquido",
-    "Cresc. Rec.5a": "Cresc. 5 Anos (%)"
+# 4. MAPEAMENTO DE COLUNAS FLEXÍVEL (Com ou sem acento)
+colunas_no_site = {col.strip().lower(): col for col in df.columns}
+
+def encontrar_coluna(alternativas):
+    for alt in alternativas:
+        alt_norm = alt.lower()
+        if alt_norm in colunas_no_site:
+            return colunas_no_site[alt_norm]
+    return None
+
+mapa_desejado = {
+    "Ticker": ["Papel"],
+    "Cotação": ["Cotação", "Cotacao"],
+    "P/L": ["P/L"],
+    "P/VP": ["P/VP"],
+    "Dividend Yield": ["Div.Yield", "Div. Yield"],
+    "Margem EBIT": ["Mrg Ebit", "Mrg. Ebit"],
+    "Margem Líquida": ["Mrg. Líq.", "Mrg. Liq.", "Mrg.Líq."],
+    "ROIC": ["ROIC"],
+    "ROE": ["ROE"],
+    "Liquidez Diária": ["Liq.2meses", "Liq. 2 meses"],
+    "Patrimônio Líquido": ["Patrim. Líq", "Patrim. Liq"],
+    "Cresc. 5 Anos (%)": ["Cresc. Rec.5a", "Cresc.Rec.5a"]
 }
 
-df.rename(columns=mapa_exato, inplace=True)
+renomear_dict = {}
+colunas_faltantes = []
+
+for nome_final, alternativas in mapa_desejado.items():
+    col_encontrada = encontrar_coluna(alternativas)
+    if col_encontrada:
+        renomear_dict[col_encontrada] = nome_final
+    else:
+        colunas_faltantes.append(nome_final)
+
+if colunas_faltantes:
+    print("\n⚠️ ALERTA DE MUDANÇA NAS COLUNAS:")
+    print(f"❌ As seguintes colunas essenciais não foram encontradas: {colunas_faltantes}")
+    sys.exit(1)
+
+df.rename(columns=renomear_dict, inplace=True)
 df = df.loc[:, ~df.columns.duplicated()].copy()
 
-# 2. Raspagem de Setores por Prefixo (Mapeia PETR, ITUB, VALE, etc.)
-print("Mapeando mapa de setores por raiz do ticker...")
-mapa_prefixo_setor = {}
-
-try:
-    url_setores = "https://www.fundamentus.com.br/busca_resultado.php"
-    resp_setores = requests.get(url_setores, headers=headers, timeout=20)
-    soup_setores = BeautifulSoup(resp_setores.text, 'html.parser')
-    tabela_setores = soup_setores.find('table', {'id': 'resultado'})
-    
-    if tabela_setores:
-        for tr in tabela_setores.find_all('tr')[1:]:
-            tds = tr.find_all('td')
-            if len(tds) >= 2:
-                ticker_cod = tds[0].text.strip().upper()
-                setor_nome = tds[1].text.strip()
-                if ticker_cod and setor_nome:
-                    prefixo = ticker_cod[:4]
-                    mapa_prefixo_setor[prefixo] = setor_nome
-except Exception as e:
-    print(f"Aviso ao buscar setores automáticos: {e}")
-
-# 3. Conversão Numérica
+# 5. CONVERSÃO NUMÉRICA
 def converter_para_numero(valor):
     if pd.isna(valor) or valor is None:
         return 0.0
@@ -93,25 +115,31 @@ for col in colunas_financeiras:
 
 df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
 
-# Dicionário de Nomes Conhecidos
-nomes_base = {
-    "WEGE": "WEG S.A.", "PETR": "Petrobras", "VALE": "Vale S.A.",
-    "ITUB": "Itaú Unibanco", "BBDC": "Bradesco", "BBAS": "Banco do Brasil",
-    "SANB": "Santander Brasil", "BPAC": "BTG Pactual", "BBSE": "BB Seguridade",
-    "ELET": "Eletrobras", "CMIG": "Cemig", "CPLE": "Copel", "TAEE": "Taesa",
-    "RENT": "Localiza", "SUZB": "Suzano", "KLBN": "Klabin", "MGLU": "Magazine Luiza"
+MAPA_SETORES_B3 = {
+    "ITUB": "Bancos", "BBDC": "Bancos", "BBAS": "Bancos", "SANB": "Bancos", "BPAC": "Bancos",
+    "ELET": "Energia Elétrica", "CMIG": "Energia Elétrica", "CPLE": "Energia Elétrica", "TAEE": "Energia Elétrica",
+    "PETR": "Petróleo e Gás", "PRIO": "Petróleo e Gás", "UGPA": "Petróleo e Gás",
+    "VALE": "Mineração e Siderurgia", "GGBR": "Mineração e Siderurgia", "CSNA": "Mineração e Siderurgia",
+    "SBSP": "Saneamento", "SAPR": "Saneamento", "CSMG": "Saneamento",
+    "BBSE": "Seguradoras", "CXSE": "Seguradoras", "PSSA": "Seguradoras",
+    "WEGE": "Máquinas e Equipamentos", "SUZB": "Papel e Celulose", "KLBN": "Papel e Celulose",
+    "RENT": "Transporte e Logística", "MGLU": "Varejo e Comércio", "LREN": "Varejo e Comércio"
 }
 
-def atribuir_nome(ticker):
+def obter_setor_oficial(ticker):
     prefixo = str(ticker)[:4].upper()
-    return nomes_base.get(prefixo, f"Empresa {prefixo}")
+    return MAPA_SETORES_B3.get(prefixo, "Outros Setores")
 
-def atribuir_setor(ticker):
+def obter_nome_empresa(ticker):
     prefixo = str(ticker)[:4].upper()
-    return mapa_prefixo_setor.get(prefixo, "Outros Setores")
+    nomes = {
+        "WEGE": "WEG S.A.", "PETR": "Petrobras", "VALE": "Vale S.A.",
+        "ITUB": "Itaú Unibanco", "BBDC": "Bradesco", "BBAS": "Banco do Brasil"
+    }
+    return nomes.get(prefixo, f"Empresa {prefixo}")
 
-df["Empresa"] = df["Ticker"].apply(atribuir_nome)
-df["Segmento"] = df["Ticker"].apply(atribuir_setor)
+df["Empresa"] = df["Ticker"].map(obter_nome_empresa)
+df["Segmento"] = df["Ticker"].map(obter_setor_oficial)
 
 colunas_ordenadas = [
     "Ticker", "Empresa", "Tipo", "Cotação", "Segmento", "P/L", "P/VP", 
@@ -123,4 +151,4 @@ df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"✅ SUCESSO! Base atualizada com {len(df)} ações e todos os setores categorizados.")
+print(f"✅ SUCESSO! Base validada e salva em 'acoes_b3.xlsx' com {len(df)} ações.")
