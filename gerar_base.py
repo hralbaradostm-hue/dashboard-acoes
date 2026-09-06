@@ -28,7 +28,7 @@ for tr in tabela.find_all('tr'):
 # Cria o DataFrame a partir da extração HTML
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# Mapeamento exato das colunas conforme diagnóstico
+# Mapeamento exato das colunas conforme o diagnóstico
 mapa_exato = {
     "Papel": "Ticker",
     "Cotacao": "Cotação",
@@ -89,41 +89,76 @@ def obter_nome_empresa(ticker):
         "BEEF": "Minerva", "MDIA": "M. Dias Branco", "SLCE": "SLC Agrícola",
         "RENT": "Localiza", "RAIL": "Rumo Logística", "CCRO": "CCR", "AZUL": "Azul Linhas Aéreas",
         "GOLL": "GOL Linhas Aéreas", "SUZB": "Suzano", "KLBN": "Klabin", "CYRE": "Cyrela",
-        "EZTC": "EZTec", "MRVE": "MRV Engenharia", "MULT": "Multiplan", "IGTI": "Iguatemi"
+        "EZTC": "EZTec", "MRVE": "MRV Engenharia", "MULT": "Multiplan", "IGTI": "Iguatemi",
+        "ALLD": "Allos", "RIAA": "Riauto", "JHSF": "JHSF Participações", "RSUL": "Riosulense",
+        "BRSR": "Banrisul", "EVEN": "Even Construtora", "BAZA": "Banco da Amazônia",
+        "POMO": "Marcopolo", "VULC": "Vulcabras"
     }
     return nomes.get(prefixo, f"Empresa {prefixo}")
 
 def obter_setor_oficial(ticker):
     prefixo = str(ticker)[:4].upper()
     setores_b3 = {
+        # Máquinas e Equipamentos
         "WEGE": "Máquinas e Equipamentos", "LEVE": "Máquinas e Equipamentos", 
         "MYPK": "Máquinas e Equipamentos", "TUPY": "Máquinas e Equipamentos", 
         "SHUL": "Máquinas e Equipamentos", "ROMI": "Máquinas e Equipamentos",
+        
+        # Bancos
         "ITUB": "Bancos", "BBDC": "Bancos", "BBAS": "Bancos", "SANB": "Bancos", 
         "BPAC": "Bancos", "BRSR": "Bancos", "ABCB": "Bancos", "BPAN": "Bancos",
+        "BAZA": "Bancos",
+        
+        # Energia Elétrica
         "ELET": "Energia Elétrica", "CMIG": "Energia Elétrica", "CPLE": "Energia Elétrica", 
         "TAEE": "Energia Elétrica", "TRPL": "Energia Elétrica", "EGIE": "Energia Elétrica", 
         "EQTL": "Energia Elétrica", "ALUP": "Energia Elétrica", "ENEV": "Energia Elétrica",
-        "SBSP": "Saneamento", "SAPR": "Sanepar", "CSMG": "Saneamento",
+        
+        # Saneamento
+        "SBSP": "Saneamento", "SAPR": "Saneamento", "CSMG": "Saneamento",
+        
+        # Petróleo e Gás
         "PETR": "Petróleo e Gás", "PRIO": "Petróleo e Gás", "RECV": "Petróleo e Gás", 
-        "RRRP": "Petróleo e Gás", "UGPA": "Ultrapar", "CSAN": "Petróleo e Gás",
+        "RRRP": "Petróleo e Gás", "UGPA": "Petróleo e Gás", "CSAN": "Petróleo e Gás",
+        
+        # Mineração e Siderurgia
         "VALE": "Mineração e Siderurgia", "GGBR": "Mineração e Siderurgia", 
-        "GOAU": "Mineração e Siderurgia", "CSNA": "Siderúrgica Nacional", 
-        "USIM": "Mineração e Siderurgia", "CMIN": "CSN Mineração",
+        "GOAU": "Mineração e Siderurgia", "CSNA": "Mineração e Siderurgia", 
+        "USIM": "Mineração e Siderurgia", "CMIN": "Mineração e Siderurgia",
+        
+        # Varejo e Comércio
         "MGLU": "Varejo e Comércio", "LREN": "Varejo e Comércio", "ARZZ": "Varejo e Comércio", 
         "SOMA": "Varejo e Comércio", "BHIA": "Varejo e Comércio", "PETZ": "Varejo e Comércio",
+        "VULC": "Varejo e Comércio",
+        
+        # Saúde e Farmácia
         "RADL": "Saúde e Farmácia", "FLRY": "Saúde e Farmácia", "HYPE": "Saúde e Farmácia", 
-        "RDOR": "Saúde e Farmácia", "ONCO3": "Saúde e Farmácia",
+        "RDOR": "Saúde e Farmácia", "ONCO": "Saúde e Farmácia",
+        
+        # Agro e Alimentos
         "JBSS": "Agro e Alimentos", "MRFG": "Agro e Alimentos", "BRFS": "Agro e Alimentos", 
-        "BEEF": "Agro e Alimentos", "MDIA": "M. Dias Branco", "SLCE": "SLC Agrícola",
+        "BEEF": "Agro e Alimentos", "MDIA": "Agro e Alimentos", "SLCE": "Agro e Alimentos",
+        
+        # Transporte e Logística
         "RENT": "Transporte e Logística", "RAIL": "Transporte e Logística", 
         "CCRO": "Transporte e Logística", "AZUL": "Transporte e Logística", 
         "GOLL": "Transporte e Logística", "STBP": "Transporte e Logística",
-        "BBSE": "Seguradoras", "CXSE": "Seguradoras", "PSSA": "Porto Seguro", "IRBR": "Seguradoras",
+        "POMO": "Transporte e Logística",
+        
+        # Seguradoras
+        "BBSE": "Seguradoras", "CXSE": "Seguradoras", "PSSA": "Seguradoras", "IRBR": "Seguradoras",
+        
+        # Papel e Celulose
         "SUZB": "Papel e Celulose", "KLBN": "Papel e Celulose", "RANI": "Papel e Celulose",
+        
+        # Construção Civil
         "CYRE": "Construção Civil", "EZTC": "Construção Civil", "MRVE": "Construção Civil", 
         "TEND": "Construção Civil", "DIRR": "Construção Civil", "JHSF": "Construção Civil",
-        "MULT": "Shoppings e Imóveis", "IGTI": "Shoppings e Imóveis", "ALOS": "Shoppings e Imóveis"
+        "EVEN": "Construção Civil",
+        
+        # Shoppings e Imóveis
+        "MULT": "Shoppings e Imóveis", "IGTI": "Shoppings e Imóveis", "ALOS": "Shoppings e Imóveis",
+        "ALLD": "Shoppings e Imóveis"
     }
     return setores_b3.get(prefixo, "Outros Setores")
 
@@ -137,9 +172,3 @@ df = df[colunas_presentes]
 df.to_excel("acoes_b3.xlsx", index=False)
 
 print(f"✅ SUCESSO! A planilha foi gerada com {len(df)} ações.")
-
-wege = df[df['Ticker'] == 'WEGE3']
-if not wege.empty:
-    mrg_liq = wege['Margem Líquida'].values[0] if 'Margem Líquida' in wege.columns else 0.0
-    pl_val = wege['Patrimônio Líquido'].values[0] if 'Patrimônio Líquido' in wege.columns else 0.0
-    print(f"   WEGE3 -> Margem Líquida: {mrg_liq:.2f}% | Patrimônio Líquido: R$ {pl_val:,.2f}")
