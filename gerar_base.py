@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("Baixando dados da B3 e reclassificando setores automaticamente...")
+print("Baixando dados da B3 e reclassificando setores automaticamente por prefixo...")
 
 headers = {
     'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
@@ -45,9 +45,9 @@ mapa_exato = {
 df.rename(columns=mapa_exato, inplace=True)
 df = df.loc[:, ~df.columns.duplicated()].copy()
 
-# 2. Raspagem Automática de Setores Globais do Fundamentus
-print("Mapeando setores oficiais da B3...")
-mapa_setores_auto = {}
+# 2. Raspagem de Setores por Prefixo (Mapeia PETR, ITUB, VALE, etc.)
+print("Mapeando mapa de setores por raiz do ticker...")
+mapa_prefixo_setor = {}
 
 try:
     url_setores = "https://www.fundamentus.com.br/busca_resultado.php"
@@ -59,10 +59,11 @@ try:
         for tr in tabela_setores.find_all('tr')[1:]:
             tds = tr.find_all('td')
             if len(tds) >= 2:
-                ticker_cod = tds[0].text.strip()
+                ticker_cod = tds[0].text.strip().upper()
                 setor_nome = tds[1].text.strip()
                 if ticker_cod and setor_nome:
-                    mapa_setores_auto[ticker_cod] = setor_nome
+                    prefixo = ticker_cod[:4]
+                    mapa_prefixo_setor[prefixo] = setor_nome
 except Exception as e:
     print(f"Aviso ao buscar setores automáticos: {e}")
 
@@ -92,7 +93,7 @@ for col in colunas_financeiras:
 
 df["Tipo"] = df["Ticker"].apply(lambda t: "ON" if str(t).endswith(("3","7")) else "PN")
 
-# Dicionário Auxiliar para Nomes de Empresas Principais
+# Dicionário de Nomes Conhecidos
 nomes_base = {
     "WEGE": "WEG S.A.", "PETR": "Petrobras", "VALE": "Vale S.A.",
     "ITUB": "Itaú Unibanco", "BBDC": "Bradesco", "BBAS": "Banco do Brasil",
@@ -106,17 +107,8 @@ def atribuir_nome(ticker):
     return nomes_base.get(prefixo, f"Empresa {prefixo}")
 
 def atribuir_setor(ticker):
-    # Tenta obter do mapeamento automático do Fundamentus
-    if ticker in mapa_setores_auto:
-        return mapa_setores_auto[ticker]
-    
-    # Caso seja código ON/PN derivado (ex: PETR4 busca PETR3)
     prefixo = str(ticker)[:4].upper()
-    for t_cod, s_nome in mapa_setores_auto.items():
-        if t_cod.startswith(prefixo):
-            return s_nome
-            
-    return "Outros Setores"
+    return mapa_prefixo_setor.get(prefixo, "Outros Setores")
 
 df["Empresa"] = df["Ticker"].apply(atribuir_nome)
 df["Segmento"] = df["Ticker"].apply(atribuir_setor)
@@ -131,4 +123,4 @@ df = df[colunas_presentes]
 
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"✅ SUCESSO! Base atualizada com {len(df)} ações e setores categorizados.")
+print(f"✅ SUCESSO! Base atualizada com {len(df)} ações e todos os setores categorizados.")
