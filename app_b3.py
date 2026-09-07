@@ -38,15 +38,23 @@ st.sidebar.header("🔍 Filtros Fundamentalistas")
 busca = st.sidebar.text_input("Filtrar Ticker ou Empresa:")
 
 # 2. Filtro por Setor
-setores_disponiveis = sorted(df["Segmento"].unique().tolist())
+setores_disponiveis = sorted(df["Setor"].dropna().unique().tolist()) if "Setor" in df.columns else []
 setores_selecionados = st.sidebar.multiselect("Filtrar por Setor:", setores_disponiveis)
 
 # 3. Filtro por Tipo de Ação (ON, PN, UNT)
-tipos_disponiveis = sorted(df["Tipo"].unique().tolist())
+tipos_disponiveis = sorted(df["Tipo"].dropna().unique().tolist())
 tipos_selecionados = st.sidebar.multiselect(
     "Filtrar por Tipo de Ação:", 
     tipos_disponiveis, 
     default=tipos_disponiveis
+)
+
+# 4. Filtro por Segmento de Listagem (Novo Mercado, Nível 2, Nível 1, Tradicional)
+seg_disponiveis = sorted(df["Segmento de Listagem"].dropna().unique().tolist()) if "Segmento de Listagem" in df.columns else []
+seg_selecionados = st.sidebar.multiselect(
+    "Filtrar por Segmento de Listagem:",
+    seg_disponiveis,
+    default=seg_disponiveis
 )
 
 # Sliders de Métricas Financeiras
@@ -66,11 +74,14 @@ if busca:
         df_filtrado["Empresa"].str.contains(busca, case=False, na=False)
     ]
 
-if setores_selecionados:
-    df_filtrado = df_filtrado[df_filtrado["Segmento"].isin(setores_selecionados)]
+if setores_selecionados and "Setor" in df_filtrado.columns:
+    df_filtrado = df_filtrado[df_filtrado["Setor"].isin(setores_selecionados)]
 
 if tipos_selecionados:
     df_filtrado = df_filtrado[df_filtrado["Tipo"].isin(tipos_selecionados)]
+
+if seg_selecionados and "Segmento de Listagem" in df_filtrado.columns:
+    df_filtrado = df_filtrado[df_filtrado["Segmento de Listagem"].isin(seg_selecionados)]
 
 df_filtrado = df_filtrado[
     (df_filtrado["P/L"] <= pl_max) &
@@ -98,7 +109,6 @@ st.subheader("📈 Análise Gráfica Dinâmica")
 if not df_filtrado.empty:
     col_graf1, col_graf2 = st.columns(2)
     
-    # Prepara dados limpos para Scatter Plot
     df_graf_scatter = df_filtrado[
         (df_filtrado["P/L"] > 0) & 
         (df_filtrado["P/L"] <= 100) & 
@@ -107,10 +117,9 @@ if not df_filtrado.empty:
     ].copy()
 
     tem_setor_selecionado = len(setores_selecionados) > 0
-    coluna_colorir = "Ticker" if tem_setor_selecionado else "Segmento"
+    coluna_colorir = "Ticker" if tem_setor_selecionado else "Setor"
     titulo_legenda = "Ação" if tem_setor_selecionado else "Setor"
 
-    # --- GRÁFICO 1: Scatter Plot (P/L vs ROE) ---
     with col_graf1:
         if not df_graf_scatter.empty:
             s_min, s_max = df_graf_scatter["Liquidez Diária"].min(), df_graf_scatter["Liquidez Diária"].max()
@@ -131,7 +140,6 @@ if not df_filtrado.empty:
         else:
             st.info("Ações insuficientes para o Scatter Plot com os filtros atuais.")
         
-    # --- GRÁFICO 2: Bar Chart (Dividend Yield) ---
     with col_graf2:
         df_graf_bar = df_filtrado[df_filtrado["Dividend Yield"] < 100].copy()
 
@@ -148,14 +156,14 @@ if not df_filtrado.empty:
             )
             fig_bar.update_layout(xaxis_tickangle=-45)
         else:
-            df_setor_media = df_graf_bar.groupby("Segmento")["Dividend Yield"].mean().reset_index().sort_values(by="Dividend Yield", ascending=False)
+            df_setor_media = df_graf_bar.groupby("Setor")["Dividend Yield"].mean().reset_index().sort_values(by="Dividend Yield", ascending=False)
             fig_bar = px.bar(
                 df_setor_media,
-                x="Segmento",
+                x="Setor",
                 y="Dividend Yield",
                 color="Dividend Yield",
                 title="Dividend Yield Médio por Setor (%)",
-                labels={"Dividend Yield": "DY Médio (%)", "Segmento": "Setor"},
+                labels={"Dividend Yield": "DY Médio (%)", "Setor": "Setor"},
                 color_continuous_scale="Viridis"
             )
             
@@ -170,6 +178,7 @@ st.subheader("📋 Tabela Complementar de Indicadores")
 
 formatos = {
     "Cotação": "R$ {:.2f}",
+    "Tag Along (%)": "{:.0f}%",
     "P/L": "{:.2f}",
     "P/VP": "{:.2f}",
     "Dividend Yield": "{:.2f}%",
@@ -188,14 +197,15 @@ st.dataframe(
     height=400
 )
 
-# Raio-X Individual
+# --- RAIO-X INDIVIDUAL DA AÇÃO ---
 st.subheader("🔍 Raio-X da Ação")
 ticker_escolhido = st.selectbox("Selecione um papel para análise detalhada:", options=[""] + df_filtrado["Ticker"].tolist())
 
 if ticker_escolhido:
     acao = df[df["Ticker"] == ticker_escolhido].iloc[0]
-    c1, c2, c3, c4 = st.columns(4)
+    c1, c2, c3, c4, c5 = st.columns(5)
     c1.metric("Preço Atual", f"R$ {acao['Cotação']:.2f}")
-    c2.metric("Setor Oficial B3", acao["Segmento"])
-    c3.metric("Tipo de Ação", acao["Tipo"])
-    c4.metric("Dividend Yield", f"{acao['Dividend Yield']:.2f}%")
+    c2.metric("Setor Oficial B3", acao["Setor"] if "Setor" in acao else "N/A")
+    c3.metric("Segmento de Listagem", acao["Segmento de Listagem"] if "Segmento de Listagem" in acao else "N/A")
+    c4.metric("Tag Along", f"{acao['Tag Along (%)']:.0f}%" if "Tag Along (%)" in acao else "N/A")
+    c5.metric("Dividend Yield", f"{acao['Dividend Yield']:.2f}%")
