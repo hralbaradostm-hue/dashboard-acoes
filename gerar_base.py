@@ -9,9 +9,8 @@ from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("⏳ Conectando ao Fundamentus para gerar base diária com Dados Profundos...")
+print("⏳ Gerando base limpa e corrigida...")
 
-# 1. CARREGAR DICIONÁRIO PROFUNDO (JSON)
 arquivo_json = "dados_profundos.json"
 dados_profundos = {}
 if os.path.exists(arquivo_json):
@@ -19,14 +18,12 @@ if os.path.exists(arquivo_json):
         dados_profundos = json.load(f)
 else:
     print(f"⚠️ ATENÇÃO: '{arquivo_json}' não encontrado!")
-    print("👉 Execute 'python atualizar_dados_profundos.py' primeiro.")
     sys.exit(1)
 
 headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
 }
 
-# 2. RASPAGEM RÁPIDA FUNDAMENTUS
 url = "https://www.fundamentus.com.br/resultado.php"
 try:
     resposta = requests.get(url, headers=headers, timeout=15)
@@ -40,7 +37,6 @@ tabela = soup.find('table', {'id': 'resultado'})
 linhas = [[td.text.strip() for td in tr.find_all(['td', 'th'])] for tr in tabela.find_all('tr') if tr.find_all(['td', 'th'])]
 df = pd.DataFrame(linhas[1:], columns=linhas[0])
 
-# MAPEAMENTO DE COLUNAS DO FUNDAMENTUS
 colunas_no_site = {col.strip().lower(): col for col in df.columns}
 mapa_desejado = {
     "Ticker": ["Papel"], "Cotação": ["Cotação", "Cotacao"], "P/L": ["P/L"], "P/VP": ["P/VP"],
@@ -54,10 +50,8 @@ renomear_dict = {colunas_no_site[alt.lower()]: nome_final for nome_final, altern
 df.rename(columns=renomear_dict, inplace=True)
 df = df.loc[:, ~df.columns.duplicated()].copy()
 
-# 3. FILTRO DE BDRs (Mantém apenas ações Nacionais)
 df = df[~df["Ticker"].astype(str).str.contains(r'(?:32|33|34|35|39)$', regex=True)].reset_index(drop=True)
 
-# 4. CONVERSÕES NUMÉRICAS
 def converter_para_numero(valor):
     if pd.isna(valor) or valor is None: return 0.0
     val_str = str(valor).replace('\xa0', '').replace('%', '').strip()
@@ -69,7 +63,7 @@ def converter_para_numero(valor):
     except: return 0.0
 
 def converter_dado_profundo(valor_str):
-    if not isinstance(valor_str, str) or valor_str in ["-", "N/A", "null"]: return 0.0
+    if not isinstance(valor_str, str) or valor_str.strip().lower() in ["-", "n/a", "null", "none", ""]: return 0.0
     v = valor_str.replace('%', '').replace('.', '').replace(',', '.').strip()
     try: return float(v)
     except: return 0.0
@@ -77,45 +71,48 @@ def converter_dado_profundo(valor_str):
 colunas_financeiras = ["Cotação", "P/L", "P/VP", "Dividend Yield", "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária", "Cresc. 5 Anos (%)"]
 for col in colunas_financeiras: df[col] = df[col].apply(converter_para_numero)
 
-# TIPO DE AÇÃO
 def identificar_tipo_acao(ticker):
     t_str = str(ticker).strip().upper()
     return "UNT" if t_str.endswith("11") else "ON" if t_str.endswith(("3", "7")) else "PN" if t_str.endswith(("4", "5", "6", "8")) else "Outros"
 df["Tipo"] = df["Ticker"].apply(identificar_tipo_acao)
 df["Empresa"] = df["Ticker"].map(lambda t: f"Empresa {str(t)[:4].upper()}")
 
-# 5. CRUZAMENTO DE DADOS PROFUNDOS (JSON) COM A BASE DIÁRIA
 def aplicar_dados_profundos(row):
     radical = str(row["Ticker"])[:4].upper()
     info = dados_profundos.get(radical, {})
     
-    # Extração Segura
-    segmento = info.get("Segmento", "Tradicional")
-    setor = info.get("Setor", "Outros")
+    # Tratamento contra valores 'None' e strings vazias
+    segmento = str(info.get("Segmento", "Tradicional")).strip()
+    if segmento.lower() in ["none", "-", "erro", ""]: 
+        segmento = "Tradicional"
+        
+    setor = str(info.get("Setor", "Outros")).strip()
+    if setor.lower() in ["none", "-", "erro", ""]:
+        setor = "Outros Setores"
+        
     ff_str = info.get("Free_Float", "0")
     div_str = info.get("DivLiq_EBIT", "0")
     gov = info.get("Governo_Majoritario", "Não")
     
-    # Validação de Segurança B3: Ações PN jamais são Novo Mercado
     if row["Tipo"] == "PN" and segmento == "Novo Mercado":
         segmento = "Nível 2"
 
-    return pd.Series([segmento, setor, converter_dado_profundo(ff_str), converter_dado_profundo(div_str), gov])
+    # Arredondando os números para limpar casas decimais visuais (ex: 36.650000 -> 36.65)
+    ff_num = round(converter_dado_profundo(ff_str), 2)
+    div_num = round(converter_dado_profundo(div_str), 2)
+
+    return pd.Series([segmento, setor, ff_num, div_num, gov])
 
 df[["Segmento de Listagem", "Setor", "Free Float (%)", "Dívida Líquida/EBIT", "Governo Majoritário"]] = df.apply(aplicar_dados_profundos, axis=1)
 
-# CORREÇÃO DO CÁLCULO DE TAG ALONG (Critério Regulatório)
 def calcular_tag_along(row):
     seg = row["Segmento de Listagem"]
-    # Regra: Se a empresa está no NM ou N2, TODAS as suas ações têm 100% de Tag Along.
     if seg in ["Novo Mercado", "Nível 2"]:
         return 100.0
-    # Regra: Se está fora, a Lei das S.A. garante 80% como piso.
     return 80.0
 
 df["Tag Along (%)"] = df.apply(calcular_tag_along, axis=1)
 
-# 6. EXPORTAÇÃO E ORDENAÇÃO
 colunas_ordenadas = [
     "Ticker", "Empresa", "Tipo", "Segmento de Listagem", "Cotação", "Setor", "Tag Along (%)", 
     "Free Float (%)", "Governo Majoritário", "Dívida Líquida/EBIT",
@@ -125,5 +122,4 @@ colunas_ordenadas = [
 df = df[[col for col in colunas_ordenadas if col in df.columns]]
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"\n✅ SUCESSO! Base super-enriquecida gerada instantaneamente.")
-print(f"Total de registros: {len(df)}")
+print(f"✅ Planilha salva com Sucesso: Setores preenchidos, 'None' removido e casas decimais limpas!")

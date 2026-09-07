@@ -1,0 +1,4503 @@
+{
+    "AALR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "40,16%",
+        "DivLiq_EBIT": "-0,40",
+        "Governo_Majoritario": "Não"
+    },
+    "ABCB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ABEV": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "26,11%",
+        "DivLiq_EBIT": "-0,44",
+        "Governo_Majoritario": "Não"
+    },
+    "ABYA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ACES": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ADHM": {
+        "Segmento": "Tradicional",
+        "Setor": "Saúde",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ADMF": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AEDU": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AELP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AERI": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "47,19%",
+        "DivLiq_EBIT": "-6,32",
+        "Governo_Majoritario": "Não"
+    },
+    "AESB": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "6,07",
+        "Governo_Majoritario": "Não"
+    },
+    "AESL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AFLT": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "1,33%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "AFLU": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AGEI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AGIN": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AGRO": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "61,65%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "AGXY": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "27,34%",
+        "DivLiq_EBIT": "1,09",
+        "Governo_Majoritario": "Não"
+    },
+    "AHEB": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "3,26%",
+        "DivLiq_EBIT": "-1,47",
+        "Governo_Majoritario": "Não"
+    },
+    "ALBA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ALLD": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "91,62%",
+        "DivLiq_EBIT": "0,05",
+        "Governo_Majoritario": "Não"
+    },
+    "ALLL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ALOS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "95,00%",
+        "DivLiq_EBIT": "-1,56",
+        "Governo_Majoritario": "Não"
+    },
+    "ALPA": {
+        "Segmento": "Nível 1",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "20,06%",
+        "DivLiq_EBIT": "0,47",
+        "Governo_Majoritario": "Não"
+    },
+    "ALPK": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "15,69%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ALSC": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-1,29",
+        "Governo_Majoritario": "Não"
+    },
+    "ALUP": {
+        "Segmento": "Nível 2",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "47,84%",
+        "DivLiq_EBIT": "2,94",
+        "Governo_Majoritario": "Não"
+    },
+    "AMAR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "7,08%",
+        "DivLiq_EBIT": "4,35",
+        "Governo_Majoritario": "Não"
+    },
+    "AMBP": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "47,88%",
+        "DivLiq_EBIT": "2,99",
+        "Governo_Majoritario": "Não"
+    },
+    "AMBV": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AMER": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "50,00%",
+        "DivLiq_EBIT": "1,14",
+        "Governo_Majoritario": "Não"
+    },
+    "AMIL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AMOB": {
+        "Segmento": "Tradicional",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "AMPI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ANIM": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "48,10%",
+        "DivLiq_EBIT": "3,78",
+        "Governo_Majoritario": "Não"
+    },
+    "APER": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "2,00%",
+        "DivLiq_EBIT": "1,30",
+        "Governo_Majoritario": "Não"
+    },
+    "APTI": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ARCE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ARCZ": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ARLA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ARML": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "49,66%",
+        "DivLiq_EBIT": "2,34",
+        "Governo_Majoritario": "Não"
+    },
+    "ARND": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "12,49%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ARPS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ARTE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ARTR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ASAI": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "98,62%",
+        "DivLiq_EBIT": "1,92",
+        "Governo_Majoritario": "Não"
+    },
+    "ASSM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ASTA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ATED": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AUAU": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "AURE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "30,26%",
+        "DivLiq_EBIT": "6,55",
+        "Governo_Majoritario": "Não"
+    },
+    "AUTM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AVIL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AVLL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "534,10%",
+        "DivLiq_EBIT": "13,80",
+        "Governo_Majoritario": "Não"
+    },
+    "AXIA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "96,20%",
+        "DivLiq_EBIT": "36,65",
+        "Governo_Majoritario": "Não"
+    },
+    "AZEV": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "18,42%",
+        "DivLiq_EBIT": "-3,66",
+        "Governo_Majoritario": "Não"
+    },
+    "AZTE": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "AZUL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "AZZA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "63,32%",
+        "DivLiq_EBIT": "2,10",
+        "Governo_Majoritario": "Não"
+    },
+    "B3SA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "98,80%",
+        "DivLiq_EBIT": "-0,15",
+        "Governo_Majoritario": "Não"
+    },
+    "BAHI": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "23,10%",
+        "DivLiq_EBIT": "-443,63",
+        "Governo_Majoritario": "Não"
+    },
+    "BALM": {
+        "Segmento": "Tradicional",
+        "Setor": "Saúde",
+        "Free_Float": "35,56%",
+        "DivLiq_EBIT": "-0,89",
+        "Governo_Majoritario": "Não"
+    },
+    "BAUH": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "28,89%",
+        "DivLiq_EBIT": "-2,88",
+        "Governo_Majoritario": "Não"
+    },
+    "BAZA": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "2,99%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Sim"
+    },
+    "BBAS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "49,60%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Sim"
+    },
+    "BBDC": {
+        "Segmento": "Nível 1",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "61,98%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BBSE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "31,74%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BBTG": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BCAL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BDLL": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-7,37",
+        "Governo_Majoritario": "Não"
+    },
+    "BECE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BEEF": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "44,49%",
+        "DivLiq_EBIT": "3,01",
+        "Governo_Majoritario": "Não"
+    },
+    "BEES": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "4,57%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BELG": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BEMA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BERG": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BESP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BFIT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BGIP": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "7,92%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Sim"
+    },
+    "BHGR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BHIA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "17,89%",
+        "DivLiq_EBIT": "12,38",
+        "Governo_Majoritario": "Não"
+    },
+    "BICB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BIDI": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BIED": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BIOM": {
+        "Segmento": "Nível 2",
+        "Setor": "Saúde",
+        "Free_Float": "72,38%",
+        "DivLiq_EBIT": "1,23",
+        "Governo_Majoritario": "Não"
+    },
+    "BISA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BLAU": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "16,55%",
+        "DivLiq_EBIT": "-0,07",
+        "Governo_Majoritario": "Não"
+    },
+    "BLUT": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BMEB": {
+        "Segmento": "Nível 1",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "47,05%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BMEF": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BMGB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BMIN": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "7,47%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BMKS": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "22,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BMOB": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "90,67%",
+        "DivLiq_EBIT": "-1,22",
+        "Governo_Majoritario": "Não"
+    },
+    "BMTO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BNBR": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "0,63%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Sim"
+    },
+    "BNCA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BOAS": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "100,20%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BOBR": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "0,52",
+        "Governo_Majoritario": "Não"
+    },
+    "BOVH": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BPAC": {
+        "Segmento": "Nível 2",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "30,71%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BPAN": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BPAR": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "0,02%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BPHA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,62",
+        "Governo_Majoritario": "Não"
+    },
+    "BPIA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BPNM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BRAP": {
+        "Segmento": "Nível 1",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "71,54%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BRAV": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "59,74%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BRBI": {
+        "Segmento": "Nível 2",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "44,99%",
+        "DivLiq_EBIT": "-69,01",
+        "Governo_Majoritario": "Não"
+    },
+    "BRFS": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,91",
+        "Governo_Majoritario": "Não"
+    },
+    "BRGE": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "16,80%",
+        "DivLiq_EBIT": "113,39",
+        "Governo_Majoritario": "Não"
+    },
+    "BRIT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BRIV": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "18,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BRKM": {
+        "Segmento": "Nível 1",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "29,53%",
+        "DivLiq_EBIT": "2,31",
+        "Governo_Majoritario": "Não"
+    },
+    "BRML": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "1,02",
+        "Governo_Majoritario": "Não"
+    },
+    "BRPR": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "142,02%",
+        "DivLiq_EBIT": "0,32",
+        "Governo_Majoritario": "Não"
+    },
+    "BRSR": {
+        "Segmento": "Nível 1",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "50,61%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Sim"
+    },
+    "BRST": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Comunicações",
+        "Free_Float": "20,55%",
+        "DivLiq_EBIT": "1,75",
+        "Governo_Majoritario": "Não"
+    },
+    "BRTP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BSCT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BSEV": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,86",
+        "Governo_Majoritario": "Não"
+    },
+    "BSGR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "BSLI": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "33,96%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "BUET": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CAFE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CALI": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "6,42%",
+        "DivLiq_EBIT": "1,73",
+        "Governo_Majoritario": "Não"
+    },
+    "CAMB": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "49,47%",
+        "DivLiq_EBIT": "-0,61",
+        "Governo_Majoritario": "Não"
+    },
+    "CAML": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "27,58%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CASH": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "78,50%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CASN": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "0,01%",
+        "DivLiq_EBIT": "2,93",
+        "Governo_Majoritario": "Sim"
+    },
+    "CBAV": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "31,40%",
+        "DivLiq_EBIT": "1,12",
+        "Governo_Majoritario": "Não"
+    },
+    "CBEE": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "0,11%",
+        "DivLiq_EBIT": "3,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CBMA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CCHI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CCIM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CCTU": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CCTY": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CCXC": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CEAB": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "66,26%",
+        "DivLiq_EBIT": "0,10",
+        "Governo_Majoritario": "Não"
+    },
+    "CEBR": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "19,85%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Sim"
+    },
+    "CEDO": {
+        "Segmento": "Nível 1",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "59,88%",
+        "DivLiq_EBIT": "7,37",
+        "Governo_Majoritario": "Não"
+    },
+    "CEEB": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "1,02%",
+        "DivLiq_EBIT": "3,62",
+        "Governo_Majoritario": "Não"
+    },
+    "CEED": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "4,88%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CEGR": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "0,16%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Sim"
+    },
+    "CELM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CEPE": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "3,81",
+        "Governo_Majoritario": "Sim"
+    },
+    "CESP": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "3,51",
+        "Governo_Majoritario": "Não"
+    },
+    "CFLU": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CGAS": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "0,86%",
+        "DivLiq_EBIT": "2,44",
+        "Governo_Majoritario": "Sim"
+    },
+    "CGOS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CGRA": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "48,41%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CIEL": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "3,07",
+        "Governo_Majoritario": "Não"
+    },
+    "CIQU": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CLAN": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CLSA": {
+        "Segmento": "Tradicional",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CLSC": {
+        "Segmento": "Nível 2",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "75,73%",
+        "DivLiq_EBIT": "2,73",
+        "Governo_Majoritario": "Sim"
+    },
+    "CMET": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CMIG": {
+        "Segmento": "Erro",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Sim"
+    },
+    "CMIN": {
+        "Segmento": "Nível 2",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "28,94%",
+        "DivLiq_EBIT": "0,14",
+        "Governo_Majoritario": "Não"
+    },
+    "CMMA": {
+        "Segmento": "Erro",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CNFB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "COCE": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "23,41%",
+        "DivLiq_EBIT": "3,12",
+        "Governo_Majoritario": "Sim"
+    },
+    "COGN": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "92,96%",
+        "DivLiq_EBIT": "2,79",
+        "Governo_Majoritario": "Não"
+    },
+    "CORR": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "72,66%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CPFE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "16,29%",
+        "DivLiq_EBIT": "2,03",
+        "Governo_Majoritario": "Não"
+    },
+    "CPFG": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CPFP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CPLE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "99,56%",
+        "DivLiq_EBIT": "3,61",
+        "Governo_Majoritario": "Não"
+    },
+    "CPNY": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CPRE": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,14",
+        "Governo_Majoritario": "Não"
+    },
+    "CPSL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CRBM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CREM": {
+        "Segmento": "Tradicional",
+        "Setor": "Saúde",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "2,87",
+        "Governo_Majoritario": "Não"
+    },
+    "CRFB": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "3,05",
+        "Governo_Majoritario": "Não"
+    },
+    "CRIV": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "16,07%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CRPG": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CRTP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CRUZ": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CSAB": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "52,69%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CSAN": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "57,44%",
+        "DivLiq_EBIT": "7,81",
+        "Governo_Majoritario": "Não"
+    },
+    "CSED": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "12,39%",
+        "DivLiq_EBIT": "4,44",
+        "Governo_Majoritario": "Não"
+    },
+    "CSMG": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "99,72%",
+        "DivLiq_EBIT": "1,91",
+        "Governo_Majoritario": "Sim"
+    },
+    "CSNA": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "54,86%",
+        "DivLiq_EBIT": "6,75",
+        "Governo_Majoritario": "Não"
+    },
+    "CSPC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CSRN": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "2,32",
+        "Governo_Majoritario": "Não"
+    },
+    "CSTB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CSUD": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "44,44%",
+        "DivLiq_EBIT": "0,27",
+        "Governo_Majoritario": "Não"
+    },
+    "CTAX": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-0,55",
+        "Governo_Majoritario": "Não"
+    },
+    "CTIP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CTKA": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "12,79%",
+        "DivLiq_EBIT": "2,75",
+        "Governo_Majoritario": "Não"
+    },
+    "CTNM": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "47,07%",
+        "DivLiq_EBIT": "-2,85",
+        "Governo_Majoritario": "Não"
+    },
+    "CTPC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CTSA": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "173,77%",
+        "DivLiq_EBIT": "-2,55",
+        "Governo_Majoritario": "Não"
+    },
+    "CTWR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "CURY": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "52,26%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CVCB": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "76,42%",
+        "DivLiq_EBIT": "0,31",
+        "Governo_Majoritario": "Não"
+    },
+    "CXSE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "20,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "CYRE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "67,15%",
+        "DivLiq_EBIT": "2,56",
+        "Governo_Majoritario": "Não"
+    },
+    "CZRS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DASA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "14,12%",
+        "DivLiq_EBIT": "1,94",
+        "Governo_Majoritario": "Não"
+    },
+    "DAYC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DESK": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Comunicações",
+        "Free_Float": "30,15%",
+        "DivLiq_EBIT": "1,65",
+        "Governo_Majoritario": "Não"
+    },
+    "DEXP": {
+        "Segmento": "Nível 1",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "97,84%",
+        "DivLiq_EBIT": "-0,37",
+        "Governo_Majoritario": "Não"
+    },
+    "DFVA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DHBI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DIRR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "62,77%",
+        "DivLiq_EBIT": "0,46",
+        "Governo_Majoritario": "Não"
+    },
+    "DJON": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DMFN": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DMMO": {
+        "Segmento": "Tradicional",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "DMVF": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "31,48%",
+        "DivLiq_EBIT": "0,24",
+        "Governo_Majoritario": "Não"
+    },
+    "DOCA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DOHL": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "11,65%",
+        "DivLiq_EBIT": "2,15",
+        "Governo_Majoritario": "Não"
+    },
+    "DOTZ": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "30,78%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "DPPI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DSUL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DTCY": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "2,03%",
+        "DivLiq_EBIT": "2,99",
+        "Governo_Majoritario": "Não"
+    },
+    "DUFB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DUQE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DURA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "DXCO": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "36,65%",
+        "DivLiq_EBIT": "1,93",
+        "Governo_Majoritario": "Não"
+    },
+    "DXTG": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "EALT": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "65,42%",
+        "DivLiq_EBIT": "2,17",
+        "Governo_Majoritario": "Não"
+    },
+    "EBCO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "EBEN": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "EBTP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ECIS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ECOM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ECOR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "47,24%",
+        "DivLiq_EBIT": "4,69",
+        "Governo_Majoritario": "Não"
+    },
+    "ECPR": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "EEEL": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "2,58",
+        "Governo_Majoritario": "Não"
+    },
+    "EGGY": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "EGIE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "31,28%",
+        "DivLiq_EBIT": "2,71",
+        "Governo_Majoritario": "Não"
+    },
+    "EKTR": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "0,32%",
+        "DivLiq_EBIT": "3,08",
+        "Governo_Majoritario": "Sim"
+    },
+    "ELCA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ELEK": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "3,56",
+        "Governo_Majoritario": "Não"
+    },
+    "ELET": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ELEV": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ELMD": {
+        "Segmento": "Tradicional",
+        "Setor": "Comunicações",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "1,87",
+        "Governo_Majoritario": "Não"
+    },
+    "ELPL": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "2,90",
+        "Governo_Majoritario": "Não"
+    },
+    "ELUM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "EMAE": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "14,22%",
+        "DivLiq_EBIT": "1,09",
+        "Governo_Majoritario": "Sim"
+    },
+    "EMBJ": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "96,13%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ENAT": {
+        "Segmento": "Tradicional",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ENBR": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ENER": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ENEV": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "98,57%",
+        "DivLiq_EBIT": "2,64",
+        "Governo_Majoritario": "Não"
+    },
+    "ENGI": {
+        "Segmento": "Nível 2",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "71,14%",
+        "DivLiq_EBIT": "3,37",
+        "Governo_Majoritario": "Não"
+    },
+    "ENJU": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "58,61%",
+        "DivLiq_EBIT": "14,41",
+        "Governo_Majoritario": "Não"
+    },
+    "ENMT": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "2,31%",
+        "DivLiq_EBIT": "4,31",
+        "Governo_Majoritario": "Não"
+    },
+    "EPAR": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "12,92%",
+        "DivLiq_EBIT": "4,78",
+        "Governo_Majoritario": "Não"
+    },
+    "EQMA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "EQPA": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "3,50%",
+        "DivLiq_EBIT": "0,31",
+        "Governo_Majoritario": "Não"
+    },
+    "EQTL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "98,93%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ESCE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ESPA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "68,72%",
+        "DivLiq_EBIT": "2,42",
+        "Governo_Majoritario": "Não"
+    },
+    "ESTC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ESTR": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "68,42%",
+        "DivLiq_EBIT": "0,95",
+        "Governo_Majoritario": "Não"
+    },
+    "ETER": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "99,77%",
+        "DivLiq_EBIT": "1,15",
+        "Governo_Majoritario": "Não"
+    },
+    "EUCA": {
+        "Segmento": "Nível 1",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "55,79%",
+        "DivLiq_EBIT": "0,63",
+        "Governo_Majoritario": "Não"
+    },
+    "EVEN": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "42,50%",
+        "DivLiq_EBIT": "3,34",
+        "Governo_Majoritario": "Não"
+    },
+    "EZTC": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "43,31%",
+        "DivLiq_EBIT": "0,01",
+        "Governo_Majoritario": "Não"
+    },
+    "FASA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "FBMC": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "FBRA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "FCAP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "FESA": {
+        "Segmento": "Nível 1",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "45,31%",
+        "DivLiq_EBIT": "-1,28",
+        "Governo_Majoritario": "Não"
+    },
+    "FFTL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "FGUI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "FHER": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "10,02%",
+        "DivLiq_EBIT": "0,59",
+        "Governo_Majoritario": "Não"
+    },
+    "FIBR": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "1,57",
+        "Governo_Majoritario": "Não"
+    },
+    "FIEI": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "FIGE": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "1,80%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "FIQE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Comunicações",
+        "Free_Float": "24,95%",
+        "DivLiq_EBIT": "0,40",
+        "Governo_Majoritario": "Não"
+    },
+    "FLCL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "FLRY": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "81,44%",
+        "DivLiq_EBIT": "1,25",
+        "Governo_Majoritario": "Não"
+    },
+    "FRAS": {
+        "Segmento": "Nível 1",
+        "Setor": "Bens Industriais",
+        "Free_Float": "38,21%",
+        "DivLiq_EBIT": "1,23",
+        "Governo_Majoritario": "Não"
+    },
+    "FRIO": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "66,54%",
+        "DivLiq_EBIT": "2,11",
+        "Governo_Majoritario": "Não"
+    },
+    "FRTA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "54,23%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "FTRX": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "GAFP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "GALO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "GAZO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "GEPA": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "3,81%",
+        "DivLiq_EBIT": "0,93",
+        "Governo_Majoritario": "Não"
+    },
+    "GETI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "GETT": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,47",
+        "Governo_Majoritario": "Não"
+    },
+    "GFSA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-5,04",
+        "Governo_Majoritario": "Não"
+    },
+    "GGBR": {
+        "Segmento": "Nível 1",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "63,61%",
+        "DivLiq_EBIT": "0,94",
+        "Governo_Majoritario": "Não"
+    },
+    "GGPS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "58,23%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "GLOB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "GMAT": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "19,88%",
+        "DivLiq_EBIT": "0,41",
+        "Governo_Majoritario": "Não"
+    },
+    "GNDI": {
+        "Segmento": "Tradicional",
+        "Setor": "Saúde",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "2,51",
+        "Governo_Majoritario": "Não"
+    },
+    "GOAU": {
+        "Segmento": "Nível 1",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "71,71%",
+        "DivLiq_EBIT": "0,96",
+        "Governo_Majoritario": "Não"
+    },
+    "GOLL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "GPAR": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "0,10%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "GRND": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "25,59%",
+        "DivLiq_EBIT": "-0,87",
+        "Governo_Majoritario": "Não"
+    },
+    "GRNL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "GSHP": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "74,05%",
+        "DivLiq_EBIT": "29,16",
+        "Governo_Majoritario": "Não"
+    },
+    "GUAR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "GVTT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "HAGA": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "75,75%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "HAPV": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "54,84%",
+        "DivLiq_EBIT": "2,93",
+        "Governo_Majoritario": "Não"
+    },
+    "HBOR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "49,01%",
+        "DivLiq_EBIT": "12,29",
+        "Governo_Majoritario": "Não"
+    },
+    "HBRE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "46,21%",
+        "DivLiq_EBIT": "4,17",
+        "Governo_Majoritario": "Não"
+    },
+    "HBSA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "39,95%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "HBTS": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "41,88%",
+        "DivLiq_EBIT": "20,17",
+        "Governo_Majoritario": "Não"
+    },
+    "HETA": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "28,33%",
+        "DivLiq_EBIT": "83,98",
+        "Governo_Majoritario": "Não"
+    },
+    "HGTX": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "2,16",
+        "Governo_Majoritario": "Não"
+    },
+    "HOOT": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "18,88%",
+        "DivLiq_EBIT": "-0,54",
+        "Governo_Majoritario": "Não"
+    },
+    "HYPE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "42,05%",
+        "DivLiq_EBIT": "2,28",
+        "Governo_Majoritario": "Não"
+    },
+    "ICPI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "IDVL": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "IENG": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "IFCM": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "24,19%",
+        "DivLiq_EBIT": "-9,11",
+        "Governo_Majoritario": "Não"
+    },
+    "IGBR": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "IGTA": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "1,17",
+        "Governo_Majoritario": "Não"
+    },
+    "IGTI": {
+        "Segmento": "Nível 1",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "56,68%",
+        "DivLiq_EBIT": "1,73",
+        "Governo_Majoritario": "Não"
+    },
+    "IGUA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ILLS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ILMD": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "IMBI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "IMCH": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "INEP": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "89,62%",
+        "DivLiq_EBIT": "-5,46",
+        "Governo_Majoritario": "Não"
+    },
+    "INHA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "INTB": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "34,75%",
+        "DivLiq_EBIT": "-0,89",
+        "Governo_Majoritario": "Não"
+    },
+    "IRBR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "99,04%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ISAE": {
+        "Segmento": "Nível 1",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "66,45%",
+        "DivLiq_EBIT": "3,08",
+        "Governo_Majoritario": "Não"
+    },
+    "ITEC": {
+        "Segmento": "Tradicional",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,70",
+        "Governo_Majoritario": "Não"
+    },
+    "ITSA": {
+        "Segmento": "Nível 1",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "65,73%",
+        "DivLiq_EBIT": "0,20",
+        "Governo_Majoritario": "Não"
+    },
+    "ITUB": {
+        "Segmento": "Nível 1",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "52,54%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "IVTT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "JALL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "31,97%",
+        "DivLiq_EBIT": "0,85",
+        "Governo_Majoritario": "Não"
+    },
+    "JBDU": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "JBSS": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "3,11",
+        "Governo_Majoritario": "Não"
+    },
+    "JFAB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "JFEN": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-1,85",
+        "Governo_Majoritario": "Não"
+    },
+    "JHSF": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "37,35%",
+        "DivLiq_EBIT": "0,75",
+        "Governo_Majoritario": "Não"
+    },
+    "JOPA": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "18,05%",
+        "DivLiq_EBIT": "4,31",
+        "Governo_Majoritario": "Não"
+    },
+    "JSLG": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "29,48%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "KEPL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "96,24%",
+        "DivLiq_EBIT": "-0,18",
+        "Governo_Majoritario": "Não"
+    },
+    "KLBN": {
+        "Segmento": "Nível 2",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "65,71%",
+        "DivLiq_EBIT": "3,59",
+        "Governo_Majoritario": "Não"
+    },
+    "KROT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "KRSA": {
+        "Segmento": "Tradicional",
+        "Setor": "Saúde",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "12,47",
+        "Governo_Majoritario": "Não"
+    },
+    "KSSA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LAME": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "1,93",
+        "Governo_Majoritario": "Não"
+    },
+    "LAND": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "50,79%",
+        "DivLiq_EBIT": "0,08",
+        "Governo_Majoritario": "Não"
+    },
+    "LATM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LATS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LAVV": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "37,79%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "LCAM": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-0,54",
+        "Governo_Majoritario": "Não"
+    },
+    "LCSA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LECO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LETO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LEVE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "39,00%",
+        "DivLiq_EBIT": "0,81",
+        "Governo_Majoritario": "Não"
+    },
+    "LFFE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LGLO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LIGH": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LIGT": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "99,56%",
+        "DivLiq_EBIT": "3,55",
+        "Governo_Majoritario": "Não"
+    },
+    "LINX": {
+        "Segmento": "Tradicional",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-1,86",
+        "Governo_Majoritario": "Não"
+    },
+    "LIPR": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "LIXC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "LJQQ": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "94,97%",
+        "DivLiq_EBIT": "-0,17",
+        "Governo_Majoritario": "Não"
+    },
+    "LOGG": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "59,99%",
+        "DivLiq_EBIT": "2,82",
+        "Governo_Majoritario": "Não"
+    },
+    "LOGN": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "25,07%",
+        "DivLiq_EBIT": "1,26",
+        "Governo_Majoritario": "Não"
+    },
+    "LPSB": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "69,81%",
+        "DivLiq_EBIT": "-13,53",
+        "Governo_Majoritario": "Não"
+    },
+    "LREN": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "94,14%",
+        "DivLiq_EBIT": "-0,26",
+        "Governo_Majoritario": "Não"
+    },
+    "LUPA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "67,75%",
+        "DivLiq_EBIT": "-1,56",
+        "Governo_Majoritario": "Não"
+    },
+    "LUXM": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "32,44%",
+        "DivLiq_EBIT": "-0,24",
+        "Governo_Majoritario": "Não"
+    },
+    "LWSA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "67,96%",
+        "DivLiq_EBIT": "5,60",
+        "Governo_Majoritario": "Não"
+    },
+    "MAGG": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "MAGS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MAPT": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "3,88%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "MARI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MATD": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "17,16%",
+        "DivLiq_EBIT": "1,11",
+        "Governo_Majoritario": "Não"
+    },
+    "MBRF": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "53,28%",
+        "DivLiq_EBIT": "4,11",
+        "Governo_Majoritario": "Não"
+    },
+    "MDIA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "19,18%",
+        "DivLiq_EBIT": "-0,42",
+        "Governo_Majoritario": "Não"
+    },
+    "MDNE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "64,27%",
+        "DivLiq_EBIT": "0,35",
+        "Governo_Majoritario": "Não"
+    },
+    "MEAL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "0,93",
+        "Governo_Majoritario": "Não"
+    },
+    "MEDI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MELK": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "72,66%",
+        "DivLiq_EBIT": "4,12",
+        "Governo_Majoritario": "Não"
+    },
+    "MEND": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MERC": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "4,69%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "MGEL": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "25,98%",
+        "DivLiq_EBIT": "4,13",
+        "Governo_Majoritario": "Não"
+    },
+    "MGLU": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "50,16%",
+        "DivLiq_EBIT": "1,01",
+        "Governo_Majoritario": "Não"
+    },
+    "MILS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "46,45%",
+        "DivLiq_EBIT": "1,08",
+        "Governo_Majoritario": "Não"
+    },
+    "MLAS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "46,39%",
+        "DivLiq_EBIT": "-0,97",
+        "Governo_Majoritario": "Não"
+    },
+    "MLFT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MLPA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MMAQ": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "MMXM": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "MNDL": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "64,95%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "MNPR": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "46,08%",
+        "DivLiq_EBIT": "-2,72",
+        "Governo_Majoritario": "Não"
+    },
+    "MNSA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MOAR": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "4,60%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "MODL": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "41,37%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "MOSI": {
+        "Segmento": "Tradicional",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-0,02",
+        "Governo_Majoritario": "Não"
+    },
+    "MOTV": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "49,61%",
+        "DivLiq_EBIT": "3,94",
+        "Governo_Majoritario": "Não"
+    },
+    "MOVI": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "45,90%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "MPLU": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-2,49",
+        "Governo_Majoritario": "Não"
+    },
+    "MRSA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MRSL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MRVE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "66,56%",
+        "DivLiq_EBIT": "5,42",
+        "Governo_Majoritario": "Não"
+    },
+    "MSAN": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MSPA": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "11,98%",
+        "DivLiq_EBIT": "-70,74",
+        "Governo_Majoritario": "Não"
+    },
+    "MTBR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MTIG": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-1,27",
+        "Governo_Majoritario": "Não"
+    },
+    "MTRE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "59,62%",
+        "DivLiq_EBIT": "4,50",
+        "Governo_Majoritario": "Não"
+    },
+    "MTSA": {
+        "Segmento": "Erro",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "MULT": {
+        "Segmento": "Nível 2",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "62,78%",
+        "DivLiq_EBIT": "1,79",
+        "Governo_Majoritario": "Não"
+    },
+    "MWET": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "49,08%",
+        "DivLiq_EBIT": "-3,19",
+        "Governo_Majoritario": "Não"
+    },
+    "MYPK": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "89,67%",
+        "DivLiq_EBIT": "2,54",
+        "Governo_Majoritario": "Não"
+    },
+    "NAFG": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,91",
+        "Governo_Majoritario": "Não"
+    },
+    "NATU": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "60,89%",
+        "DivLiq_EBIT": "15,11",
+        "Governo_Majoritario": "Não"
+    },
+    "NEOE": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "3,35",
+        "Governo_Majoritario": "Não"
+    },
+    "NETC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "NEXP": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "39,55%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "NGRD": {
+        "Segmento": "Tradicional",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "4,23%",
+        "DivLiq_EBIT": "-9,68",
+        "Governo_Majoritario": "Não"
+    },
+    "NORD": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "1,07%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "NTCO": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-0,72",
+        "Governo_Majoritario": "Não"
+    },
+    "NUTR": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "24,94%",
+        "DivLiq_EBIT": "6,46",
+        "Governo_Majoritario": "Não"
+    },
+    "OBTC": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "ODER": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "1,75%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "OFSA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "42,94%",
+        "DivLiq_EBIT": "0,66",
+        "Governo_Majoritario": "Não"
+    },
+    "OGXP": {
+        "Segmento": "Tradicional",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "OIBR": {
+        "Segmento": "Nível 1",
+        "Setor": "Comunicações",
+        "Free_Float": "98,04%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "OMGE": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ONCO": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "98,83%",
+        "DivLiq_EBIT": "-10,49",
+        "Governo_Majoritario": "Não"
+    },
+    "OPCT": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "63,38%",
+        "DivLiq_EBIT": "1,59",
+        "Governo_Majoritario": "Não"
+    },
+    "ORVR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "40,15%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "OSAO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "OSXB": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "50,58%",
+        "DivLiq_EBIT": "-31,59",
+        "Governo_Majoritario": "Não"
+    },
+    "PALF": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PARD": {
+        "Segmento": "Tradicional",
+        "Setor": "Saúde",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,37",
+        "Governo_Majoritario": "Não"
+    },
+    "PASS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "23,82%",
+        "DivLiq_EBIT": "2,72",
+        "Governo_Majoritario": "Não"
+    },
+    "PATI": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "4,78%",
+        "DivLiq_EBIT": "-0,03",
+        "Governo_Majoritario": "Não"
+    },
+    "PCAR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "94,67%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "PDGR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-2,76",
+        "Governo_Majoritario": "Não"
+    },
+    "PDTC": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "44,73%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "PEAB": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "35,40%",
+        "DivLiq_EBIT": "-0,01",
+        "Governo_Majoritario": "Não"
+    },
+    "PETR": {
+        "Segmento": "Nível 2",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "61,21%",
+        "DivLiq_EBIT": "0,79",
+        "Governo_Majoritario": "Sim"
+    },
+    "PETZ": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-0,10",
+        "Governo_Majoritario": "Não"
+    },
+    "PFRM": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "32,50%",
+        "DivLiq_EBIT": "1,50",
+        "Governo_Majoritario": "Não"
+    },
+    "PGMN": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "41,79%",
+        "DivLiq_EBIT": "0,79",
+        "Governo_Majoritario": "Não"
+    },
+    "PINE": {
+        "Segmento": "Nível 2",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "25,15%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "PITI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PLAS": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "35,73%",
+        "DivLiq_EBIT": "6,72",
+        "Governo_Majoritario": "Não"
+    },
+    "PLDN": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PLIM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PLPL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "27,24%",
+        "DivLiq_EBIT": "0,33",
+        "Governo_Majoritario": "Não"
+    },
+    "PLTO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PMAM": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "PMET": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PNOR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PNVL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "54,80%",
+        "DivLiq_EBIT": "1,42",
+        "Governo_Majoritario": "Não"
+    },
+    "POMO": {
+        "Segmento": "Nível 2",
+        "Setor": "Bens Industriais",
+        "Free_Float": "70,60%",
+        "DivLiq_EBIT": "1,10",
+        "Governo_Majoritario": "Não"
+    },
+    "POPR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PORP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PORT": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "2,35%",
+        "DivLiq_EBIT": "1,69",
+        "Governo_Majoritario": "Não"
+    },
+    "POSI": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "51,12%",
+        "DivLiq_EBIT": "1,76",
+        "Governo_Majoritario": "Não"
+    },
+    "POWE": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "PQUN": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PRBC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PRGA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PRIO": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "85,68%",
+        "DivLiq_EBIT": "1,68",
+        "Governo_Majoritario": "Não"
+    },
+    "PRML": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PRNR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "98,48%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "PRTX": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PRVI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PSSA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "27,66%",
+        "DivLiq_EBIT": "-4,12",
+        "Governo_Majoritario": "Sim"
+    },
+    "PTBL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "31,48%",
+        "DivLiq_EBIT": "2,50",
+        "Governo_Majoritario": "Não"
+    },
+    "PTIP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PTNT": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "1,08",
+        "Governo_Majoritario": "Não"
+    },
+    "PTPA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "PTQS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "QUAL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "97,73%",
+        "DivLiq_EBIT": "1,30",
+        "Governo_Majoritario": "Não"
+    },
+    "RADL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "74,92%",
+        "DivLiq_EBIT": "0,39",
+        "Governo_Majoritario": "Não"
+    },
+    "RAIA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RAIL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "75,68%",
+        "DivLiq_EBIT": "2,32",
+        "Governo_Majoritario": "Não"
+    },
+    "RAIZ": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RANI": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "43,78%",
+        "DivLiq_EBIT": "1,31",
+        "Governo_Majoritario": "Não"
+    },
+    "RAPT": {
+        "Segmento": "Nível 1",
+        "Setor": "Bens Industriais",
+        "Free_Float": "56,60%",
+        "DivLiq_EBIT": "3,55",
+        "Governo_Majoritario": "Não"
+    },
+    "RCSL": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "68,19%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RCTB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RDCD": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RDNI": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "RDOR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "45,98%",
+        "DivLiq_EBIT": "0,57",
+        "Governo_Majoritario": "Não"
+    },
+    "RDTR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RECV": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "93,66%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "REDE": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "0,36%",
+        "DivLiq_EBIT": "5,10",
+        "Governo_Majoritario": "Não"
+    },
+    "REEM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RENT": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "90,13%",
+        "DivLiq_EBIT": "2,18",
+        "Governo_Majoritario": "Não"
+    },
+    "REPA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RGEG": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RHDS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RIAA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "16,89%",
+        "DivLiq_EBIT": "0,45",
+        "Governo_Majoritario": "Não"
+    },
+    "RIOS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RIPI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RJCP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RLOG": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "3,66",
+        "Governo_Majoritario": "Não"
+    },
+    "RNEW": {
+        "Segmento": "Nível 2",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "13,01%",
+        "DivLiq_EBIT": "4,42",
+        "Governo_Majoritario": "Não"
+    },
+    "RNPT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "ROMI": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "50,83%",
+        "DivLiq_EBIT": "2,57",
+        "Governo_Majoritario": "Não"
+    },
+    "RPAD": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "18,95%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "RPMG": {
+        "Segmento": "Tradicional",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "30,43%",
+        "DivLiq_EBIT": "0,03",
+        "Governo_Majoritario": "Não"
+    },
+    "RPSA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RSID": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "98,79%",
+        "DivLiq_EBIT": "-7,12",
+        "Governo_Majoritario": "Não"
+    },
+    "RSIP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "RSUL": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "23,73%",
+        "DivLiq_EBIT": "-0,28",
+        "Governo_Majoritario": "Não"
+    },
+    "RVEE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SALM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SANB": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "9,87%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "SAPR": {
+        "Segmento": "Nível 2",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "79,97%",
+        "DivLiq_EBIT": "0,96",
+        "Governo_Majoritario": "Sim"
+    },
+    "SASG": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SAUD": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "8,61%",
+        "DivLiq_EBIT": "-9,23",
+        "Governo_Majoritario": "Não"
+    },
+    "SBFG": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "55,69%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "SBSP": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "1,65",
+        "Governo_Majoritario": "Sim"
+    },
+    "SCAR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "42,10%",
+        "DivLiq_EBIT": "0,36",
+        "Governo_Majoritario": "Não"
+    },
+    "SCLO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SDIA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SEBB": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SEDU": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-11,57",
+        "Governo_Majoritario": "Não"
+    },
+    "SEER": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "40,77%",
+        "DivLiq_EBIT": "0,51",
+        "Governo_Majoritario": "Não"
+    },
+    "SEMP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SEQL": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "11,05%",
+        "DivLiq_EBIT": "75,49",
+        "Governo_Majoritario": "Não"
+    },
+    "SFSA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SGEN": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SGPS": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "47,08%",
+        "DivLiq_EBIT": "-3,32",
+        "Governo_Majoritario": "Não"
+    },
+    "SHOW": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "4,93%",
+        "DivLiq_EBIT": "0,93",
+        "Governo_Majoritario": "Não"
+    },
+    "SHUL": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "56,17%",
+        "DivLiq_EBIT": "-0,48",
+        "Governo_Majoritario": "Não"
+    },
+    "SIMH": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "45,52%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "SJOS": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SLCE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "44,11%",
+        "DivLiq_EBIT": "3,05",
+        "Governo_Majoritario": "Não"
+    },
+    "SLCP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SLED": {
+        "Segmento": "Nível 2",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "331,26%",
+        "DivLiq_EBIT": "2,66",
+        "Governo_Majoritario": "Não"
+    },
+    "SMFT": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "90,15%",
+        "DivLiq_EBIT": "1,05",
+        "Governo_Majoritario": "Não"
+    },
+    "SMLE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SMLS": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-0,20",
+        "Governo_Majoritario": "Não"
+    },
+    "SMTO": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "35,00%",
+        "DivLiq_EBIT": "1,39",
+        "Governo_Majoritario": "Não"
+    },
+    "SNSY": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "42,66%",
+        "DivLiq_EBIT": "111,37",
+        "Governo_Majoritario": "Não"
+    },
+    "SOJA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "41,26%",
+        "DivLiq_EBIT": "3,88",
+        "Governo_Majoritario": "Não"
+    },
+    "SOMA": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "63,77%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "SOND": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "35,96%",
+        "DivLiq_EBIT": "-0,45",
+        "Governo_Majoritario": "Não"
+    },
+    "SPRI": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "SQIA": {
+        "Segmento": "Tradicional",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "81,19%",
+        "DivLiq_EBIT": "1,16",
+        "Governo_Majoritario": "Não"
+    },
+    "SRNA": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "0,08%",
+        "DivLiq_EBIT": "5,31",
+        "Governo_Majoritario": "Não"
+    },
+    "STBP": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "0,64",
+        "Governo_Majoritario": "Não"
+    },
+    "STRP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SUBA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SULA": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "21,61",
+        "Governo_Majoritario": "Não"
+    },
+    "SULT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SUZA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "SUZB": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "48,11%",
+        "DivLiq_EBIT": "1,79",
+        "Governo_Majoritario": "Não"
+    },
+    "SYNE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "38,89%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "SZPQ": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TAEE": {
+        "Segmento": "Nível 2",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "63,45%",
+        "DivLiq_EBIT": "4,08",
+        "Governo_Majoritario": "Não"
+    },
+    "TAMM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TANC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TARP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TASA": {
+        "Segmento": "Nível 2",
+        "Setor": "Bens Industriais",
+        "Free_Float": "59,13%",
+        "DivLiq_EBIT": "2,44",
+        "Governo_Majoritario": "Não"
+    },
+    "TBLE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TCNO": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "TCOC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TCSA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "60,32%",
+        "DivLiq_EBIT": "-2,60",
+        "Governo_Majoritario": "Não"
+    },
+    "TCSL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TDBH": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TECN": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "24,74%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "TEFC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TEKA": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "67,86%",
+        "DivLiq_EBIT": "-0,38",
+        "Governo_Majoritario": "Não"
+    },
+    "TELB": {
+        "Segmento": "Tradicional",
+        "Setor": "Comunicações",
+        "Free_Float": "3,22%",
+        "DivLiq_EBIT": "-3,28",
+        "Governo_Majoritario": "Não"
+    },
+    "TEMP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TEND": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "96,81%",
+        "DivLiq_EBIT": "0,43",
+        "Governo_Majoritario": "Não"
+    },
+    "TENE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TERI": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TESA": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "3,76",
+        "Governo_Majoritario": "Não"
+    },
+    "TFCO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TGMA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "48,47%",
+        "DivLiq_EBIT": "0,06",
+        "Governo_Majoritario": "Não"
+    },
+    "TIET": {
+        "Segmento": "Tradicional",
+        "Setor": "Utilidade Pública",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "5,78",
+        "Governo_Majoritario": "Não"
+    },
+    "TIMP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TIMS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Comunicações",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-0,35",
+        "Governo_Majoritario": "Não"
+    },
+    "TKNO": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "0,86%",
+        "DivLiq_EBIT": "-0,60",
+        "Governo_Majoritario": "Não"
+    },
+    "TLCP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TMAR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TMCP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TMGC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TNCP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TNEP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TNLP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TOKY": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "1.953,48%",
+        "DivLiq_EBIT": "-3,85",
+        "Governo_Majoritario": "Não"
+    },
+    "TOTS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "89,04%",
+        "DivLiq_EBIT": "1,24",
+        "Governo_Majoritario": "Não"
+    },
+    "TOYB": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "TPIS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "42,10%",
+        "DivLiq_EBIT": "-3,97",
+        "Governo_Majoritario": "Não"
+    },
+    "TPRC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TRFO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TRIS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "38,56%",
+        "DivLiq_EBIT": "2,06",
+        "Governo_Majoritario": "Não"
+    },
+    "TROR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TRPN": {
+        "Segmento": "Tradicional",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-0,72",
+        "Governo_Majoritario": "Não"
+    },
+    "TSEP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TSPP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TTEN": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo não Cíclico",
+        "Free_Float": "22,56%",
+        "DivLiq_EBIT": "5,26",
+        "Governo_Majoritario": "Não"
+    },
+    "TUPY": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "98,84%",
+        "DivLiq_EBIT": "12,74",
+        "Governo_Majoritario": "Não"
+    },
+    "TVIT": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "TXRX": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "44,73%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "UBBR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "UCAS": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "32,84%",
+        "DivLiq_EBIT": "15,81",
+        "Governo_Majoritario": "Não"
+    },
+    "UCOP": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "UGPA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "95,71%",
+        "DivLiq_EBIT": "1,21",
+        "Governo_Majoritario": "Não"
+    },
+    "UNIP": {
+        "Segmento": "Tradicional",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "53,75%",
+        "DivLiq_EBIT": "2,30",
+        "Governo_Majoritario": "Não"
+    },
+    "UOLL": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "USIM": {
+        "Segmento": "Nível 1",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "54,75%",
+        "DivLiq_EBIT": "-0,30",
+        "Governo_Majoritario": "Não"
+    },
+    "VAGV": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VALE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "96,01%",
+        "DivLiq_EBIT": "0,88",
+        "Governo_Majoritario": "Não"
+    },
+    "VAMO": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "43,13%",
+        "DivLiq_EBIT": "2,31",
+        "Governo_Majoritario": "Não"
+    },
+    "VBBR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Petróleo. Gás e Biocombustíveis",
+        "Free_Float": "99,63%",
+        "DivLiq_EBIT": "1,35",
+        "Governo_Majoritario": "Não"
+    },
+    "VCPA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VGOR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VIGR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VINE": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VITT": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Materiais Básicos",
+        "Free_Float": "31,94%",
+        "DivLiq_EBIT": "1,01",
+        "Governo_Majoritario": "Não"
+    },
+    "VIVA": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "52,44%",
+        "DivLiq_EBIT": "0,12",
+        "Governo_Majoritario": "Não"
+    },
+    "VIVO": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VIVR": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-1,78",
+        "Governo_Majoritario": "Não"
+    },
+    "VIVT": {
+        "Segmento": "Tradicional",
+        "Setor": "Comunicações",
+        "Free_Float": "21,92%",
+        "DivLiq_EBIT": "0,26",
+        "Governo_Majoritario": "Não"
+    },
+    "VLID": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "94,58%",
+        "DivLiq_EBIT": "0,35",
+        "Governo_Majoritario": "Não"
+    },
+    "VNET": {
+        "Segmento": "Erro",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VPSC": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VPTA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VSPT": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "-0,43",
+        "Governo_Majoritario": "Não"
+    },
+    "VSTE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "99,19%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "VTLM": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VTRU": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "--%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "VULC": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "34,04%",
+        "DivLiq_EBIT": "0,73",
+        "Governo_Majoritario": "Não"
+    },
+    "VVAR": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VVAX": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "VVEO": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Saúde",
+        "Free_Float": "60,23%",
+        "DivLiq_EBIT": "2,34",
+        "Governo_Majoritario": "Não"
+    },
+    "WDCN": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Tecnologia da Informação",
+        "Free_Float": "43,54%",
+        "DivLiq_EBIT": "-1,36",
+        "Governo_Majoritario": "Não"
+    },
+    "WEGE": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Bens Industriais",
+        "Free_Float": "34,80%",
+        "DivLiq_EBIT": "-0,42",
+        "Governo_Majoritario": "Não"
+    },
+    "WEST": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "WHRL": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "100,00%",
+        "DivLiq_EBIT": "0,25",
+        "Governo_Majoritario": "Não"
+    },
+    "WISA": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "WIZC": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Financeiro e Outros",
+        "Free_Float": "48,12%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    },
+    "WLMM": {
+        "Segmento": "Tradicional",
+        "Setor": "Bens Industriais",
+        "Free_Float": "14,05%",
+        "DivLiq_EBIT": "2,00",
+        "Governo_Majoritario": "Não"
+    },
+    "WMBY": {
+        "Segmento": "Tradicional",
+        "Setor": "Outros Setores",
+        "Free_Float": "0,00%",
+        "DivLiq_EBIT": "0,00",
+        "Governo_Majoritario": "Não"
+    },
+    "YDUQ": {
+        "Segmento": "Novo Mercado",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "90,43%",
+        "DivLiq_EBIT": "2,53",
+        "Governo_Majoritario": "Não"
+    },
+    "ZAMP": {
+        "Segmento": "Tradicional",
+        "Setor": "Consumo Cíclico",
+        "Free_Float": "0,01%",
+        "DivLiq_EBIT": "-",
+        "Governo_Majoritario": "Não"
+    }
+}
