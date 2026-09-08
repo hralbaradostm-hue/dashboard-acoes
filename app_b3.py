@@ -3,12 +3,29 @@ import pandas as pd
 import io
 
 # Configuração da Página
-st.set_page_config(page_title="Scanner Fundamentalista B3", layout="wide")
+st.set_page_config(page_title="Scanner Fundamentalista B3 | Prudence Invest", layout="wide")
 
 @st.cache_data
 def load_data():
     df = pd.read_excel("acoes_b3.xlsx")
+    
+    # 1. CRIA O INDICADOR CHOWDER RULE
     df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
+    
+    # 2. CALCULA O DIVIDENDO EM REAIS (R$)
+    # Pega a Cotação (R$) e multiplica pelo Dividend Yield (transformado em decimal)
+    df["Dividendo Pago (R$)"] = df["Cotação"] * (df["Dividend Yield"] / 100)
+    
+    # 3. CÁLCULO DO PREÇO TETO DE 6% (Método Barsi/Bazin)
+    df["Preço Teto (6%)"] = df["Dividendo Pago (R$)"] / 0.06
+    
+    # 4. CÁLCULO DA MARGEM DE SEGURANÇA (%)
+    # Evita divisão por zero caso a cotação seja 0 (improvável)
+    df["Margem de Segurança (%)"] = df.apply(
+        lambda row: ((row["Preço Teto (6%)"] / row["Cotação"]) - 1) * 100 if row["Cotação"] > 0 else 0,
+        axis=1
+    )
+    
     return df
 
 df = load_data()
@@ -37,6 +54,7 @@ def limpar_filtros():
     st.session_state.cresc_min = -50.0
     st.session_state.dy_min = 0.0
     st.session_state.soma_yc_min = -50.0
+    st.session_state.margem_seg_min = -100.0 # Novo filtro
 
 if "tipo_filtro" not in st.session_state:
     limpar_filtros()
@@ -66,6 +84,12 @@ cresc_min = st.sidebar.slider("16. Cresc. 5 Anos Mín. (%)", -50.0, 100.0, key="
 dy_min = st.sidebar.slider("17. Dividend Yield Mín. (%)", 0.0, 50.0, key="dy_min")
 soma_yc_min = st.sidebar.slider("18. Soma Yield + CAGR Mín. (%)", -50.0, 100.0, key="soma_yc_min")
 
+st.sidebar.markdown("---")
+st.sidebar.markdown("### 💎 Método Barsi")
+# 19. Filtro de Margem de Segurança
+margem_seg_min = st.sidebar.slider("19. Margem de Segurança Mín. (%)", -100.0, 100.0, key="margem_seg_min")
+st.sidebar.caption("Selecione '0%' para mostrar apenas ações negociadas ABAIXO do Preço Teto de 6%.")
+
 # --- MOTOR DE FILTRAGEM ---
 df_filtrado = df[
     (df["Tipo"].isin(tipo_filtro)) &
@@ -84,53 +108,55 @@ df_filtrado = df[
     (df["Margem EBIT"] >= mrg_ebit_min) &
     (df["Cresc. 5 Anos (%)"] >= cresc_min) &
     (df["Dividend Yield"] >= dy_min) &
-    (df["Yield + CAGR (%)"] >= soma_yc_min)
+    (df["Yield + CAGR (%)"] >= soma_yc_min) &
+    (df["Margem de Segurança (%)"] >= margem_seg_min) # Novo filtro aplicado
 ]
 
 if gov_filtro != "Ambos":
     df_filtrado = df_filtrado[df_filtrado["Governo Majoritário"] == gov_filtro]
 
 colunas_exibicao = [
-    "Ticker", "Empresa", "Tipo", "Segmento de Listagem", "Cotação", "Setor", 
+    "Ticker", "Empresa", "Setor", "Cotação", "Preço Teto (6%)", "Margem de Segurança (%)",
+    "Dividend Yield", "Dividendo Pago (R$)", "Tipo", "Segmento de Listagem", 
     "Tag Along (%)", "Free Float (%)", "Governo Majoritário", "Dívida Líquida/EBIT",
-    "P/L", "P/VP", "Dividend Yield", "Cresc. 5 Anos (%)", "Yield + CAGR (%)", 
+    "P/L", "P/VP", "Cresc. 5 Anos (%)", "Yield + CAGR (%)", 
     "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"
 ]
 
 df_filtrado = df_filtrado[[col for col in colunas_exibicao if col in df_filtrado.columns]]
 
-# --- FUNÇÃO DE EXPORTAÇÃO (NOVA) ---
+# --- FUNÇÃO DE EXPORTAÇÃO ---
 def converter_para_excel(df_export):
     buffer = io.BytesIO()
     with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
-        df_export.to_excel(writer, index=False, sheet_name='Acoes_Filtradas')
+        df_export.to_excel(writer, index=False, sheet_name='Prudence_Invest')
     return buffer.getvalue()
 
 # --- INTERFACE PRINCIPAL ---
-st.title("📈 Scanner Fundamentalista Institucional")
+st.title("🛡️ Prudence Invest | Scanner Institucional")
 
-# Cria duas colunas no topo: uma para o texto e outra para o botão
 col1, col2 = st.columns([3, 1])
-
 with col1:
     st.markdown(f"**Empresas Aprovadas:** `{len(df_filtrado)}` ativos na seleção atual.")
-
 with col2:
     if len(df_filtrado) > 0:
         dados_excel = converter_para_excel(df_filtrado)
         st.download_button(
             label="📥 Baixar em Excel",
             data=dados_excel,
-            file_name="Selecao_B3.xlsx",
+            file_name="Prudence_Invest_Selecao.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             use_container_width=True
         )
 
-# Tabela
+# Tabela com as Novas Colunas em Destaque
 st.dataframe(
     df_filtrado,
     column_config={
         "Cotação": st.column_config.NumberColumn(format="R$ %.2f"),
+        "Preço Teto (6%)": st.column_config.NumberColumn(format="R$ %.2f"), # NOVA
+        "Dividendo Pago (R$)": st.column_config.NumberColumn(format="R$ %.2f"), # NOVA
+        "Margem de Segurança (%)": st.column_config.NumberColumn(format="%.2f %%"), # NOVA
         "Liquidez Diária": st.column_config.NumberColumn(format="R$ %.2f"),
         "Patrimônio Líquido": st.column_config.NumberColumn(format="R$ %.2f"),
         "Tag Along (%)": st.column_config.NumberColumn(format="%.0f %%"),
