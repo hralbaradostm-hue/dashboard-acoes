@@ -9,7 +9,7 @@ from bs4 import BeautifulSoup
 
 warnings.filterwarnings('ignore')
 
-print("⏳ Gerando base limpa e corrigida...")
+print("⏳ Gerando base limpa e aplicando Filtro de Setores Perenes (B.E.S.T.)...")
 
 arquivo_json = "dados_profundos.json"
 dados_profundos = {}
@@ -77,18 +77,33 @@ def identificar_tipo_acao(ticker):
 df["Tipo"] = df["Ticker"].apply(identificar_tipo_acao)
 df["Empresa"] = df["Ticker"].map(lambda t: f"Empresa {str(t)[:4].upper()}")
 
+# --- DICIONÁRIO DE SETORES PERENES ---
+SETORES_PERENES = {
+    "Bancos": ["ITUB", "BBDC", "BBAS", "SANB", "BPAC", "ABCB", "BRSR", "BMEB", "BNBR", "BAZA", "BEES", "BGIP", "BPIN", "BRIV", "RPAD", "MERC", "PINE", "MODL", "BPAN", "BSLI"],
+    "Saneamento": ["SBSP", "CSMG", "SAPR", "CASN", "AMBP"],
+    "Telecomunicações": ["VIVT", "TIMS", "TELB", "OIBR", "DESK", "FIQE"],
+    "Energia Elétrica": ["TAEE", "TRPL", "ISAE", "EGIE", "CPLE", "CMIG", "ALUP", "ENBR", "NEOE", "CPFE", "AURE", "ELET", "EQTL", "ENGI", "MEGA", "LIGT", "CEBR", "CEPE", "CLSC", "COCE", "EKTR", "EMAE", "GEPA", "GPAR", "REDE", "RNEW", "AFLT", "ENEV"],
+    "Seguradoras": ["BBSE", "CXSE", "PSSA", "IRBR", "WIZC", "SULA", "PORP"]
+}
+
+# Inverte o dicionário para busca rápida (ex: "ITUB": "Bancos")
+mapa_setores = {ticker: setor for setor, tickers in SETORES_PERENES.items() for ticker in tickers}
+
 def aplicar_dados_profundos(row):
     radical = str(row["Ticker"])[:4].upper()
     info = dados_profundos.get(radical, {})
     
-    # Tratamento contra valores 'None' e strings vazias
     segmento = str(info.get("Segmento", "Tradicional")).strip()
     if segmento.lower() in ["none", "-", "erro", ""]: 
         segmento = "Tradicional"
         
-    setor = str(info.get("Setor", "Outros")).strip()
-    if setor.lower() in ["none", "-", "erro", ""]:
-        setor = "Outros Setores"
+    # --- REGRA DE ATRIBUIÇÃO DE SETOR ---
+    if radical in mapa_setores:
+        setor = mapa_setores[radical] # Força o setor personalizado (Bancos, Energia, etc)
+    else:
+        setor = str(info.get("Setor", "Outros")).strip() # Mantém o original do Status Invest para as demais
+        if setor.lower() in ["none", "-", "erro", ""]:
+            setor = "Outros Setores"
         
     ff_str = info.get("Free_Float", "0")
     div_str = info.get("DivLiq_EBIT", "0")
@@ -97,7 +112,6 @@ def aplicar_dados_profundos(row):
     if row["Tipo"] == "PN" and segmento == "Novo Mercado":
         segmento = "Nível 2"
 
-    # Arredondando os números para limpar casas decimais visuais (ex: 36.650000 -> 36.65)
     ff_num = round(converter_dado_profundo(ff_str), 2)
     div_num = round(converter_dado_profundo(div_str), 2)
 
@@ -122,4 +136,4 @@ colunas_ordenadas = [
 df = df[[col for col in colunas_ordenadas if col in df.columns]]
 df.to_excel("acoes_b3.xlsx", index=False)
 
-print(f"✅ Planilha salva com Sucesso: Setores preenchidos, 'None' removido e casas decimais limpas!")
+print(f"✅ SUCESSO! Base gerada. Setores estratégicos aplicados.")

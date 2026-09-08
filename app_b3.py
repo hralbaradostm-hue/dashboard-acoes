@@ -1,211 +1,151 @@
 import streamlit as st
 import pandas as pd
-import plotly.express as px
+import io
 
 # Configuração da Página
-st.set_page_config(
-    page_title="Dashboard Fundamentalista B3",
-    page_icon="📊",
-    layout="wide"
-)
+st.set_page_config(page_title="Scanner Fundamentalista B3", layout="wide")
 
-# Carregamento de Dados com Cache
 @st.cache_data
-def carregar_dados():
-    try:
-        df = pd.read_excel("acoes_b3.xlsx")
-        return df
-    except Exception as e:
-        st.error(f"Erro ao carregar o arquivo 'acoes_b3.xlsx': {e}")
-        return pd.DataFrame()
+def load_data():
+    df = pd.read_excel("acoes_b3.xlsx")
+    df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
+    return df
 
-df = carregar_dados()
+df = load_data()
 
-if df.empty:
-    st.warning("A base de dados está vazia ou não foi encontrada. Execute o script 'gerar_base.py' primeiro.")
-    st.stop()
+tipos_todos = list(df["Tipo"].unique())
+segmentos_todos = list(df["Segmento de Listagem"].unique())
+setores_todos = sorted(list(df["Setor"].unique()))
 
-# Cabeçalho Principal
-st.title("📊 Dashboard Fundamentalista da B3")
-st.markdown("Análise quantitativa de indicadores de ações listadas na bolsa de valores brasileira.")
+# --- FUNÇÃO PARA LIMPAR FILTROS (RESET) ---
+def limpar_filtros():
+    st.session_state.tipo_filtro = tipos_todos
+    st.session_state.seg_filtro = segmentos_todos
+    st.session_state.gov_filtro = "Ambos"
+    st.session_state.setor_filtro = setores_todos
+    st.session_state.liq_min = 0.0
+    st.session_state.pat_min = -10000000000.0
+    st.session_state.tag_min = 0
+    st.session_state.ff_min = 0.0
+    st.session_state.div_max = 100.0
+    st.session_state.pl_range = (-50.0, 150.0)
+    st.session_state.pvp_range = (-10.0, 20.0)
+    st.session_state.roe_min = -50.0
+    st.session_state.roic_min = -50.0
+    st.session_state.mrg_min = -50.0
+    st.session_state.mrg_ebit_min = -50.0
+    st.session_state.cresc_min = -50.0
+    st.session_state.dy_min = 0.0
+    st.session_state.soma_yc_min = -50.0
 
-# =========================================================
-# BARRA LATERAL: FILTROS
-# =========================================================
-st.sidebar.header("🔍 Filtros Fundamentalistas")
+if "tipo_filtro" not in st.session_state:
+    limpar_filtros()
 
-# 1. Filtro por Ticker / Nome da Empresa
-busca = st.sidebar.text_input("Filtrar Ticker ou Empresa:")
+# --- BARRA LATERAL ---
+st.sidebar.header("🎯 Filtros Fundamentalistas")
 
-# 2. Filtro por Setor
-setores_disponiveis = sorted(df["Setor"].dropna().unique().tolist()) if "Setor" in df.columns else []
-setores_selecionados = st.sidebar.multiselect("Filtrar por Setor:", setores_disponiveis)
+st.sidebar.button("🔄 Limpar Filtros (Mostrar Tudo)", on_click=limpar_filtros, use_container_width=True)
+st.sidebar.markdown("---")
 
-# 3. Filtro por Tipo de Ação (ON, PN, UNT)
-tipos_disponiveis = sorted(df["Tipo"].dropna().unique().tolist())
-tipos_selecionados = st.sidebar.multiselect(
-    "Filtrar por Tipo de Ação:", 
-    tipos_disponiveis, 
-    default=tipos_disponiveis
-)
+tipo_filtro = st.sidebar.multiselect("1. Tipo de Ação", tipos_todos, key="tipo_filtro")
+seg_filtro = st.sidebar.multiselect("2. Segmento B3", segmentos_todos, key="seg_filtro")
+gov_filtro = st.sidebar.radio("3. Governo Majoritário", ["Não", "Sim", "Ambos"], key="gov_filtro")
+setor_filtro = st.sidebar.multiselect("4. Setor de Atuação", setores_todos, key="setor_filtro")
+liq_min = st.sidebar.number_input("5. Liquidez Diária Mín. (R$)", min_value=0.0, step=500000.0, key="liq_min")
+pat_min = st.sidebar.number_input("6. Patrimônio Líq. Mín. (R$)", min_value=-10000000000.0, step=100000000.0, key="pat_min")
+tag_min = st.sidebar.slider("7. Tag Along Mínimo (%)", 0, 100, key="tag_min")
+ff_min = st.sidebar.slider("8. Free Float Mínimo (%)", 0.0, 100.0, key="ff_min")
+div_max = st.sidebar.number_input("9. Dívida Líq./EBIT Máxima (x)", min_value=-50.0, max_value=100.0, key="div_max")
+pl_min, pl_max = st.sidebar.slider("10. P/L (Preço/Lucro)", -50.0, 150.0, key="pl_range")
+pvp_min, pvp_max = st.sidebar.slider("11. P/VP (Preço/VPA)", -10.0, 20.0, key="pvp_range")
+roe_min = st.sidebar.slider("12. ROE Mínimo (%)", -50.0, 100.0, key="roe_min")
+roic_min = st.sidebar.slider("13. ROIC Mínimo (%)", -50.0, 100.0, key="roic_min")
+mrg_min = st.sidebar.slider("14. Margem Líquida Mín. (%)", -50.0, 100.0, key="mrg_min")
+mrg_ebit_min = st.sidebar.slider("15. Margem EBIT Mín. (%)", -50.0, 100.0, key="mrg_ebit_min")
+cresc_min = st.sidebar.slider("16. Cresc. 5 Anos Mín. (%)", -50.0, 100.0, key="cresc_min")
+dy_min = st.sidebar.slider("17. Dividend Yield Mín. (%)", 0.0, 50.0, key="dy_min")
+soma_yc_min = st.sidebar.slider("18. Soma Yield + CAGR Mín. (%)", -50.0, 100.0, key="soma_yc_min")
 
-# 4. Filtro por Segmento de Listagem (Novo Mercado, Nível 2, Nível 1, Tradicional)
-seg_disponiveis = sorted(df["Segmento de Listagem"].dropna().unique().tolist()) if "Segmento de Listagem" in df.columns else []
-seg_selecionados = st.sidebar.multiselect(
-    "Filtrar por Segmento de Listagem:",
-    seg_disponiveis,
-    default=seg_disponiveis
-)
-
-# Sliders de Métricas Financeiras
-pl_max = st.sidebar.slider("P/L Máximo:", 0.0, 100.0, 100.0)
-dy_min = st.sidebar.slider("Dividend Yield Mínimo (%):", 0.0, 30.0, 0.0)
-roe_min = st.sidebar.slider("ROE Mínimo (%):", -50.0, 100.0, -50.0)
-liq_min = st.sidebar.slider("Liquidez Diária Mínima (R$):", 0, 10000000, 0, step=100000)
-
-# =========================================================
-# APLICAÇÃO DOS FILTROS NO DATAFRAME
-# =========================================================
-df_filtrado = df.copy()
-
-if busca:
-    df_filtrado = df_filtrado[
-        df_filtrado["Ticker"].str.contains(busca, case=False, na=False) |
-        df_filtrado["Empresa"].str.contains(busca, case=False, na=False)
-    ]
-
-if setores_selecionados and "Setor" in df_filtrado.columns:
-    df_filtrado = df_filtrado[df_filtrado["Setor"].isin(setores_selecionados)]
-
-if tipos_selecionados:
-    df_filtrado = df_filtrado[df_filtrado["Tipo"].isin(tipos_selecionados)]
-
-if seg_selecionados and "Segmento de Listagem" in df_filtrado.columns:
-    df_filtrado = df_filtrado[df_filtrado["Segmento de Listagem"].isin(seg_selecionados)]
-
-df_filtrado = df_filtrado[
-    (df_filtrado["P/L"] <= pl_max) &
-    (df_filtrado["Dividend Yield"] >= dy_min) &
-    (df_filtrado["ROE"] >= roe_min) &
-    (df_filtrado["Liquidez Diária"] >= liq_min)
+# --- MOTOR DE FILTRAGEM ---
+df_filtrado = df[
+    (df["Tipo"].isin(tipo_filtro)) &
+    (df["Segmento de Listagem"].isin(seg_filtro)) &
+    (df["Setor"].isin(setor_filtro)) &
+    (df["Liquidez Diária"] >= liq_min) &
+    (df["Patrimônio Líquido"] >= pat_min) &
+    (df["Tag Along (%)"] >= tag_min) &
+    (df["Free Float (%)"] >= ff_min) &
+    (df["Dívida Líquida/EBIT"] <= div_max) &
+    (df["P/L"].between(pl_min, pl_max)) &
+    (df["P/VP"].between(pvp_min, pvp_max)) &
+    (df["ROE"] >= roe_min) &
+    (df["ROIC"] >= roic_min) &
+    (df["Margem Líquida"] >= mrg_min) &
+    (df["Margem EBIT"] >= mrg_ebit_min) &
+    (df["Cresc. 5 Anos (%)"] >= cresc_min) &
+    (df["Dividend Yield"] >= dy_min) &
+    (df["Yield + CAGR (%)"] >= soma_yc_min)
 ]
 
-# =========================================================
-# SEÇÃO 1: MÉTRICAS RESUMIDAS
-# =========================================================
-m1, m2, m3, m4 = st.columns(4)
-m1.metric("Ações Filtradas", len(df_filtrado))
-m2.metric("P/L Médio", f"{df_filtrado['P/L'].mean():.2f}" if not df_filtrado.empty else "0.00")
-m3.metric("DY Médio", f"{df_filtrado['Dividend Yield'].mean():.2f}%" if not df_filtrado.empty else "0.00%")
-m4.metric("ROE Médio", f"{df_filtrado['ROE'].mean():.2f}%" if not df_filtrado.empty else "0.00%")
+if gov_filtro != "Ambos":
+    df_filtrado = df_filtrado[df_filtrado["Governo Majoritário"] == gov_filtro]
 
-st.divider()
+colunas_exibicao = [
+    "Ticker", "Empresa", "Tipo", "Segmento de Listagem", "Cotação", "Setor", 
+    "Tag Along (%)", "Free Float (%)", "Governo Majoritário", "Dívida Líquida/EBIT",
+    "P/L", "P/VP", "Dividend Yield", "Cresc. 5 Anos (%)", "Yield + CAGR (%)", 
+    "ROIC", "ROE", "Margem EBIT", "Margem Líquida", "Patrimônio Líquido", "Liquidez Diária"
+]
 
-# =========================================================
-# SEÇÃO 2: GRÁFICOS INTERATIVOS DINÂMICOS
-# =========================================================
-st.subheader("📈 Análise Gráfica Dinâmica")
+df_filtrado = df_filtrado[[col for col in colunas_exibicao if col in df_filtrado.columns]]
 
-if not df_filtrado.empty:
-    col_graf1, col_graf2 = st.columns(2)
-    
-    df_graf_scatter = df_filtrado[
-        (df_filtrado["P/L"] > 0) & 
-        (df_filtrado["P/L"] <= 100) & 
-        (df_filtrado["ROE"] >= -50) & 
-        (df_filtrado["ROE"] <= 100)
-    ].copy()
+# --- FUNÇÃO DE EXPORTAÇÃO (NOVA) ---
+def converter_para_excel(df_export):
+    buffer = io.BytesIO()
+    with pd.ExcelWriter(buffer, engine='openpyxl') as writer:
+        df_export.to_excel(writer, index=False, sheet_name='Acoes_Filtradas')
+    return buffer.getvalue()
 
-    tem_setor_selecionado = len(setores_selecionados) > 0
-    coluna_colorir = "Ticker" if tem_setor_selecionado else "Setor"
-    titulo_legenda = "Ação" if tem_setor_selecionado else "Setor"
+# --- INTERFACE PRINCIPAL ---
+st.title("📈 Scanner Fundamentalista Institucional")
 
-    with col_graf1:
-        if not df_graf_scatter.empty:
-            s_min, s_max = df_graf_scatter["Liquidez Diária"].min(), df_graf_scatter["Liquidez Diária"].max()
-            sizes = [20] * len(df_graf_scatter) if s_min == s_max else df_graf_scatter["Liquidez Diária"]
+# Cria duas colunas no topo: uma para o texto e outra para o botão
+col1, col2 = st.columns([3, 1])
 
-            fig_scatter = px.scatter(
-                df_graf_scatter,
-                x="P/L",
-                y="ROE",
-                size=sizes,
-                color=coluna_colorir,
-                hover_name="Ticker",
-                title=f"Relação P/L vs. ROE (Colorido por {titulo_legenda})",
-                labels={"P/L": "Preço / Lucro", "ROE": "ROE (%)", coluna_colorir: titulo_legenda}
-            )
-            fig_scatter.update_traces(marker=dict(line=dict(width=1, color='DarkSlateGrey')))
-            st.plotly_chart(fig_scatter, use_container_width=True)
-        else:
-            st.info("Ações insuficientes para o Scatter Plot com os filtros atuais.")
-        
-    with col_graf2:
-        df_graf_bar = df_filtrado[df_filtrado["Dividend Yield"] < 100].copy()
+with col1:
+    st.markdown(f"**Empresas Aprovadas:** `{len(df_filtrado)}` ativos na seleção atual.")
 
-        if tem_setor_selecionado:
-            df_bar_data = df_graf_bar.sort_values(by="Dividend Yield", ascending=False)
-            fig_bar = px.bar(
-                df_bar_data,
-                x="Ticker",
-                y="Dividend Yield",
-                color="Dividend Yield",
-                title=f"Dividend Yield Individual das Ações ({', '.join(setores_selecionados)})",
-                labels={"Dividend Yield": "DY (%)", "Ticker": "Ação"},
-                color_continuous_scale="Viridis"
-            )
-            fig_bar.update_layout(xaxis_tickangle=-45)
-        else:
-            df_setor_media = df_graf_bar.groupby("Setor")["Dividend Yield"].mean().reset_index().sort_values(by="Dividend Yield", ascending=False)
-            fig_bar = px.bar(
-                df_setor_media,
-                x="Setor",
-                y="Dividend Yield",
-                color="Dividend Yield",
-                title="Dividend Yield Médio por Setor (%)",
-                labels={"Dividend Yield": "DY Médio (%)", "Setor": "Setor"},
-                color_continuous_scale="Viridis"
-            )
-            
-        st.plotly_chart(fig_bar, use_container_width=True)
+with col2:
+    if len(df_filtrado) > 0:
+        dados_excel = converter_para_excel(df_filtrado)
+        st.download_button(
+            label="📥 Baixar em Excel",
+            data=dados_excel,
+            file_name="Selecao_B3.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            use_container_width=True
+        )
 
-st.divider()
-
-# =========================================================
-# SEÇÃO 3: TABELA DE DADOS E RAIO-X
-# =========================================================
-st.subheader("📋 Tabela Complementar de Indicadores")
-
-formatos = {
-    "Cotação": "R$ {:.2f}",
-    "Tag Along (%)": "{:.0f}%",
-    "P/L": "{:.2f}",
-    "P/VP": "{:.2f}",
-    "Dividend Yield": "{:.2f}%",
-    "Margem EBIT": "{:.2f}%",
-    "Margem Líquida": "{:.2f}%",
-    "ROIC": "{:.2f}%",
-    "ROE": "{:.2f}%",
-    "Liquidez Diária": "R$ {:,.2f}",
-    "Patrimônio Líquido": "R$ {:,.2f}",
-    "Cresc. 5 Anos (%)": "{:.2f}%"
-}
-
+# Tabela
 st.dataframe(
-    df_filtrado.style.format(formatos, na_rep="-"),
+    df_filtrado,
+    column_config={
+        "Cotação": st.column_config.NumberColumn(format="R$ %.2f"),
+        "Liquidez Diária": st.column_config.NumberColumn(format="R$ %.2f"),
+        "Patrimônio Líquido": st.column_config.NumberColumn(format="R$ %.2f"),
+        "Tag Along (%)": st.column_config.NumberColumn(format="%.0f %%"),
+        "Free Float (%)": st.column_config.NumberColumn(format="%.2f %%"),
+        "ROE": st.column_config.NumberColumn(format="%.2f %%"),
+        "ROIC": st.column_config.NumberColumn(format="%.2f %%"),
+        "Margem Líquida": st.column_config.NumberColumn(format="%.2f %%"),
+        "Margem EBIT": st.column_config.NumberColumn(format="%.2f %%"),
+        "Dividend Yield": st.column_config.NumberColumn(format="%.2f %%"),
+        "Cresc. 5 Anos (%)": st.column_config.NumberColumn(format="%.2f %%"),
+        "Yield + CAGR (%)": st.column_config.NumberColumn(format="%.2f %%"),
+        "P/L": st.column_config.NumberColumn(format="%.2f x"),
+        "P/VP": st.column_config.NumberColumn(format="%.2f x"),
+        "Dívida Líquida/EBIT": st.column_config.NumberColumn(format="%.2f x")
+    },
     use_container_width=True,
-    height=400
+    hide_index=True
 )
-
-# --- RAIO-X INDIVIDUAL DA AÇÃO ---
-st.subheader("🔍 Raio-X da Ação")
-ticker_escolhido = st.selectbox("Selecione um papel para análise detalhada:", options=[""] + df_filtrado["Ticker"].tolist())
-
-if ticker_escolhido:
-    acao = df[df["Ticker"] == ticker_escolhido].iloc[0]
-    c1, c2, c3, c4, c5 = st.columns(5)
-    c1.metric("Preço Atual", f"R$ {acao['Cotação']:.2f}")
-    c2.metric("Setor Oficial B3", acao["Setor"] if "Setor" in acao else "N/A")
-    c3.metric("Segmento de Listagem", acao["Segmento de Listagem"] if "Segmento de Listagem" in acao else "N/A")
-    c4.metric("Tag Along", f"{acao['Tag Along (%)']:.0f}%" if "Tag Along (%)" in acao else "N/A")
-    c5.metric("Dividend Yield", f"{acao['Dividend Yield']:.2f}%")
