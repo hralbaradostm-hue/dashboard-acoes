@@ -82,8 +82,13 @@ SETORES_PERENES = {
     "Bancos": ["ITUB", "BBDC", "BBAS", "SANB", "BPAC", "ABCB", "BRSR", "BMEB", "BNBR", "BAZA", "BEES", "BGIP", "BPIN", "BRIV", "RPAD", "MERC", "PINE", "MODL", "BPAN", "BSLI"],
     "Saneamento": ["SBSP", "CSMG", "SAPR", "CASN", "AMBP"],
     "Telecomunicações": ["VIVT", "TIMS", "TELB", "OIBR", "DESK", "FIQE"],
-    "Energia Elétrica": ["TAEE", "TRPL", "ISAE", "EGIE", "CPLE", "CMIG", "ALUP", "ENBR", "NEOE", "CPFE", "AURE", "ELET", "EQTL", "ENGI", "MEGA", "LIGT", "CEBR", "CEPE", "CLSC", "COCE", "EKTR", "EMAE", "GEPA", "GPAR", "REDE", "RNEW", "AFLT", "ENEV"],
-    "Seguradoras": ["BBSE", "CXSE", "PSSA", "IRBR", "WIZC", "SULA", "PORP"]
+    "Energia Elétrica": [
+        "TAEE", "TRPL", "ISAE", "EGIE", "CPLE", "CMIG", "ALUP", "ENBR", "NEOE", 
+        "CPFE", "AURE", "ELET", "EQTL", "EQPA", "ENGI", "MEGA", "LIGT", "CEBR", 
+        "CEPE", "CLSC", "COCE", "EKTR", "EMAE", "GEPA", "GPAR", "REDE", "RNEW", 
+        "AFLT", "ENEV", "LIPR", "CBEE", "CELP", "CSRV", "CEEB", "CEED"
+    ],
+    "Seguradoras": ["BBSE", "CXSE", "PSSA", "IRBR", "WIZC", "SULA", "PORP", "CSAB"]
 }
 
 # Inverte o dicionário para busca rápida (ex: "ITUB": "Bancos")
