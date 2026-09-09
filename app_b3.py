@@ -187,7 +187,7 @@ st.dataframe(
 )
 
 # ==========================================
-# SEÇÃO: RAIO-X HISTÓRICO (LUCRO E DIVIDENDOS)
+# NOVA SEÇÃO: RAIO-X HISTÓRICO (LUCRO E DIVIDENDOS)
 # ==========================================
 st.markdown("---")
 st.title("📊 Raio-X Histórico: Lucros e Dividendos")
@@ -206,12 +206,14 @@ if len(df_filtrado) > 0:
                 
                 # --- GRÁFICO 1: LUCRO LÍQUIDO (DO COFRE EXCEL) ---
                 with col1:
-                    st.markdown("**💰 Evolução do Lucro Líquido (Cofre Local)**")
+                    st.markdown(f"**💰 Evolução do Lucro Líquido (Histórico Longo)**")
                     if not df_cofre.empty and acao_selecionada in df_cofre["Ticker"].values:
+                        # Filtra o cofre apenas para a ação selecionada
                         df_lucro_acao = df_cofre[df_cofre["Ticker"] == acao_selecionada].copy()
                         
+                        # Prepara para o gráfico
                         df_lucro_acao.set_index("Ano", inplace=True)
-                        df_grafico_lucro = pd.DataFrame({"Lucro Líquido (R$)": df_lucro_acao["Lucro Líquido"]})
+                        df_grafico_lucro = pd.DataFrame({"Lucro Líquido": df_lucro_acao["Lucro Líquido"]})
                         df_grafico_lucro.index = df_grafico_lucro.index.astype(str)
                         
                         st.line_chart(df_grafico_lucro, use_container_width=True)
@@ -219,15 +221,14 @@ if len(df_filtrado) > 0:
                         st.warning("Lucro Líquido não encontrado no Cofre de Dados.")
 
                 # --- GRÁFICO 2: DIVIDENDOS HISTÓRICOS MÁXIMOS (Linha) ---
+                historico_div = ticker_yf.dividends
                 with col2:
-                    st.markdown("**💸 Histórico Máximo de Dividendos**")
-                    historico_div = ticker_yf.dividends
-                    
+                    st.markdown(f"**💸 Histórico Máximo de Dividendos**")
                     if not historico_div.empty:
+                        # Agrupa todos os centavos pagos somando por ano
                         div_anual = historico_div.groupby(historico_div.index.year).sum()
                         df_div = pd.DataFrame({"Dividendos Pagos (R$)": div_anual})
                         df_div.index = df_div.index.astype(str)
-                        
                         st.line_chart(df_div, use_container_width=True)
                     else:
                         st.warning("Nenhum histórico de dividendos encontrado para este ativo.")
