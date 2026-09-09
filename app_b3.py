@@ -182,34 +182,33 @@ st.dataframe(
 # ==========================================
 st.markdown("---")
 st.title("📊 Raio-X Histórico: Lucros e Dividendos")
-st.markdown("Selecione uma ação aprovada para ver a evolução do Lucro (últimos 4 anos) e o histórico MÁXIMO de Dividendos.")
+st.markdown("Selecione uma ação aprovada para ver a evolução do Lucro e o histórico Máximo de Dividendos.")
 
 if len(df_filtrado) > 0:
     acao_selecionada = st.selectbox("Escolha a Ação para gerar os gráficos:", df_filtrado["Ticker"].tolist())
 
     if acao_selecionada:
-        with st.spinner(f"Buscando dados de {acao_selecionada} no Yahoo Finance..."):
+        with st.spinner(f"Processando histórico de {acao_selecionada}..."):
             try:
                 ticker_yf = yf.Ticker(f"{acao_selecionada}.SA")
                 
                 # Divide a tela em duas colunas para os gráficos
                 col1, col2 = st.columns(2)
                 
-                # --- GRÁFICO 1: LUCRO LÍQUIDO (Barras) ---
+                # --- GRÁFICO 1: LUCRO LÍQUIDO (Linha) ---
                 dre = ticker_yf.financials
                 with col1:
                     st.markdown(f"**💰 Evolução do Lucro Líquido**")
                     if not dre.empty and "Net Income" in dre.T.columns:
                         dre_t = dre.T.sort_index()
                         df_lucro = pd.DataFrame({"Lucro Líquido (R$)": dre_t["Net Income"]})
-                        # Converte o ano para texto para evitar a vírgula (ex: 2,022 -> "2022")
+                        # Converte o ano para texto para evitar a vírgula (ex: 2022)
                         df_lucro.index = df_lucro.index.year.astype(str)
-                        st.bar_chart(df_lucro, use_container_width=True)
-                        st.caption("Fonte: Yahoo Finance (Limite da API gratuita: 4 anos)")
+                        st.line_chart(df_lucro, use_container_width=True)
                     else:
                         st.warning("Lucro Líquido não disponível no momento.")
 
-                # --- GRÁFICO 2: DIVIDENDOS HISTÓRICOS MÁXIMOS ---
+                # --- GRÁFICO 2: DIVIDENDOS HISTÓRICOS MÁXIMOS (Linha) ---
                 historico_div = ticker_yf.dividends
                 with col2:
                     st.markdown(f"**💸 Histórico Máximo de Dividendos**")
@@ -218,10 +217,9 @@ if len(df_filtrado) > 0:
                         div_anual = historico_div.groupby(historico_div.index.year).sum()
                         df_div = pd.DataFrame({"Dividendos Pagos (R$)": div_anual})
                         df_div.index = df_div.index.astype(str)
-                        st.bar_chart(df_div, use_container_width=True)
-                        st.caption(f"Fonte: Yahoo Finance (Histórico Máximo desde a listagem)")
+                        st.line_chart(df_div, use_container_width=True)
                     else:
                         st.warning("Nenhum histórico de dividendos encontrado para este ativo.")
                         
             except Exception as e:
-                st.error("Erro de conexão com a API do Yahoo Finance.")
+                st.error("Erro ao processar os dados históricos.")
