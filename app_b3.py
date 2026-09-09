@@ -3,6 +3,15 @@ import pandas as pd
 import io
 import yfinance as yf  # <-- ADICIONE ESTA LINHA
 
+@st.cache_data
+def load_cofre():
+    try:
+        return pd.read_excel("cofre_lucros.xlsx")
+    except:
+        return pd.DataFrame() # Retorna vazio se o cofre não existir
+
+df_cofre = load_cofre()
+
 # Configuração da Página
 st.set_page_config(page_title="Scanner Fundamentalista B3 | Prudence Invest", layout="wide")
 
@@ -177,72 +186,18 @@ st.dataframe(
     hide_index=True
 )
 
-# ==========================================
-# NOVA SEÇÃO: RAIO-X HISTÓRICO (10+ ANOS SCRAPING)
-# ==========================================
-st.markdown("---")
-st.title("📊 Raio-X Histórico: 10+ Anos")
-st.markdown("Evolução do Lucro (Raspado do Fundamentus) e Dividendos (Yahoo Finance).")
-
-if len(df_filtrado) > 0:
-    acao_selecionada = st.selectbox("Escolha a Ação para gerar os gráficos:", df_filtrado["Ticker"].tolist())
-
-    if acao_selecionada:
-        with st.spinner(f"Extraindo histórico profundo de {acao_selecionada}..."):
-            col1, col2 = st.columns(2)
-            
-            # --- GRÁFICO 1: LUCRO LÍQUIDO (RASPAGEM DO FUNDAMENTUS) ---
+# --- GRÁFICO 1: LUCRO LÍQUIDO (DO COFRE EXCEL) ---
             with col1:
                 st.markdown(f"**💰 Evolução do Lucro Líquido (Histórico Longo)**")
-                try:
-                    # 1. Faz a requisição disfarçada de navegador real
-                    url_fundamentus = f"https://www.fundamentus.com.br/balancos.php?papel={acao_selecionada}"
-                    headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36'}
-                    resposta = requests.get(url_fundamentus, headers=headers, timeout=10)
+                if not df_cofre.empty and acao_selecionada in df_cofre["Ticker"].values:
+                    # Filtra o cofre apenas para a ação selecionada
+                    df_lucro_acao = df_cofre[df_cofre["Ticker"] == acao_selecionada].copy()
                     
-                    # 2. Lê as tabelas da página HTML
-                    tabelas = pd.read_html(io.StringIO(resposta.text), decimal=',', thousands='.')
+                    # Prepara para o gráfico
+                    df_lucro_acao.set_index("Ano", inplace=True)
+                    df_grafico_lucro = pd.DataFrame({"Lucro Líquido": df_lucro_acao["Lucro Líquido"]})
+                    df_grafico_lucro.index = df_grafico_lucro.index.astype(str)
                     
-                    # 3. Procura a tabela que contém a DRE (Lucro Líquido)
-                    df_dre = None
-                    for tb in tabelas:
-                        if 'Lucro Líquido' in tb.columns:
-                            df_dre = tb
-                            break
-                    
-                    if df_dre is not None:
-                        # Trata as datas e converte para Ano
-                        df_dre['Data'] = pd.to_datetime(df_dre['Data'], format='%d/%m/%Y', errors='coerce')
-                        df_dre = df_dre.dropna(subset=['Data'])
-                        df_dre['Ano'] = df_dre['Data'].dt.year
-                        
-                        # Como os dados estão em trimestres, agrupamos e somamos por Ano
-                        lucro_anual = df_dre.groupby('Ano')['Lucro Líquido'].sum()
-                        
-                        df_grafico_lucro = pd.DataFrame({"Lucro Líquido": lucro_anual})
-                        df_grafico_lucro.index = df_grafico_lucro.index.astype(str)
-                        
-                        # Plota o gráfico (ignorando anos sem dados)
-                        st.line_chart(df_grafico_lucro, use_container_width=True)
-                    else:
-                        st.warning("Histórico de lucros não encontrado no Fundamentus para este ativo.")
-                        
-                except Exception as e:
-                    st.error(f"Erro ao raspar dados do Fundamentus: {e}")
-
-            # --- GRÁFICO 2: DIVIDENDOS (YAHOO FINANCE) ---
-            with col2:
-                st.markdown(f"**💸 Histórico Máximo de Dividendos**")
-                try:
-                    ticker_yf = yf.Ticker(f"{acao_selecionada}.SA")
-                    historico_div = ticker_yf.dividends
-                    
-                    if not historico_div.empty:
-                        div_anual = historico_div.groupby(historico_div.index.year).sum()
-                        df_div = pd.DataFrame({"Dividendos Pagos (R$)": div_anual})
-                        df_div.index = df_div.index.astype(str)
-                        st.line_chart(df_div, use_container_width=True)
-                    else:
-                        st.warning("Nenhum histórico de dividendos encontrado.")
-                except Exception as e:
-                    st.error("Erro de conexão com a API de dividendos.")
+                    st.line_chart(df_grafico_lucro, use_container_width=True)
+                else:
+                    st.warning("Lucro Líquido não encontrado no Cofre de Dados.")
