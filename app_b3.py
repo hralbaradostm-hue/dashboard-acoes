@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import io
+import yfinance as yf  # <-- ADICIONE ESTA LINHA
 
 # Configuração da Página
 st.set_page_config(page_title="Scanner Fundamentalista B3 | Prudence Invest", layout="wide")
@@ -175,3 +176,49 @@ st.dataframe(
     use_container_width=True,
     hide_index=True
 )
+
+# ==========================================
+# NOVA SEÇÃO: RAIO-X HISTÓRICO (DRE)
+# ==========================================
+st.markdown("---")
+st.title("📊 Raio-X Histórico (DRE)")
+st.markdown("Selecione uma das empresas aprovadas no seu filtro para analisar a evolução financeira (Estilo Status Invest).")
+
+if len(df_filtrado) > 0:
+    # Cria um menu dropdown com os tickers aprovados
+    acao_selecionada = st.selectbox("Escolha a Ação para gerar o gráfico:", df_filtrado["Ticker"].tolist())
+
+    if acao_selecionada:
+        with st.spinner(f"Buscando histórico de {acao_selecionada} no Yahoo Finance..."):
+            try:
+                # Conecta na API (adiciona .SA para ações brasileiras)
+                ticker_yf = yf.Ticker(f"{acao_selecionada}.SA")
+                
+                # Puxa a DRE (Financials)
+                dre = ticker_yf.financials
+                
+                if not dre.empty:
+                    # Inverte a tabela para que as datas fiquem em ordem cronológica (do mais antigo pro atual)
+                    dre_t = dre.T.sort_index()
+                    
+                    # Prepara os dados para o gráfico
+                    colunas_grafico = {}
+                    if "Total Revenue" in dre_t.columns:
+                        colunas_grafico["Receita Total"] = dre_t["Total Revenue"]
+                    if "Net Income" in dre_t.columns:
+                        colunas_grafico["Lucro Líquido"] = dre_t["Net Income"]
+                    
+                    if colunas_grafico:
+                        df_grafico = pd.DataFrame(colunas_grafico)
+                        # Formata o eixo X para mostrar apenas o Ano
+                        df_grafico.index = df_grafico.index.year
+                        
+                        # Plota o gráfico de linha nativo do Streamlit
+                        st.line_chart(df_grafico, use_container_width=True)
+                        st.caption("Fonte: Yahoo Finance API (Últimos 4 anos reportados)")
+                    else:
+                        st.warning("Receita e Lucro não disponíveis na API gratuita para este ativo.")
+                else:
+                    st.warning("Demonstrativo de Resultados histórico não encontrado.")
+            except Exception as e:
+                st.error("Erro de conexão com a API de dados históricos.")
