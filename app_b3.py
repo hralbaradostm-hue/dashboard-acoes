@@ -178,47 +178,50 @@ st.dataframe(
 )
 
 # ==========================================
-# NOVA SEÇÃO: RAIO-X HISTÓRICO (DRE)
+# NOVA SEÇÃO: RAIO-X HISTÓRICO (LUCRO E DIVIDENDOS)
 # ==========================================
 st.markdown("---")
-st.title("📊 Raio-X Histórico (DRE)")
-st.markdown("Selecione uma das empresas aprovadas no seu filtro para analisar a evolução financeira (Estilo Status Invest).")
+st.title("📊 Raio-X Histórico: Lucros e Dividendos")
+st.markdown("Selecione uma ação aprovada para ver a evolução do Lucro (últimos 4 anos) e o histórico MÁXIMO de Dividendos.")
 
 if len(df_filtrado) > 0:
-    # Cria um menu dropdown com os tickers aprovados
-    acao_selecionada = st.selectbox("Escolha a Ação para gerar o gráfico:", df_filtrado["Ticker"].tolist())
+    acao_selecionada = st.selectbox("Escolha a Ação para gerar os gráficos:", df_filtrado["Ticker"].tolist())
 
     if acao_selecionada:
-        with st.spinner(f"Buscando histórico de {acao_selecionada} no Yahoo Finance..."):
+        with st.spinner(f"Buscando dados de {acao_selecionada} no Yahoo Finance..."):
             try:
-                # Conecta na API (adiciona .SA para ações brasileiras)
                 ticker_yf = yf.Ticker(f"{acao_selecionada}.SA")
                 
-                # Puxa a DRE (Financials)
-                dre = ticker_yf.financials
+                # Divide a tela em duas colunas para os gráficos
+                col1, col2 = st.columns(2)
                 
-                if not dre.empty:
-                    # Inverte a tabela para que as datas fiquem em ordem cronológica (do mais antigo pro atual)
-                    dre_t = dre.T.sort_index()
-                    
-                    # Prepara os dados para o gráfico
-                    colunas_grafico = {}
-                    if "Total Revenue" in dre_t.columns:
-                        colunas_grafico["Receita Total"] = dre_t["Total Revenue"]
-                    if "Net Income" in dre_t.columns:
-                        colunas_grafico["Lucro Líquido"] = dre_t["Net Income"]
-                    
-                    if colunas_grafico:
-                        df_grafico = pd.DataFrame(colunas_grafico)
-                        # Formata o eixo X para mostrar apenas o Ano
-                        df_grafico.index = df_grafico.index.year
-                        
-                        # Plota o gráfico de linha nativo do Streamlit
-                        st.line_chart(df_grafico, use_container_width=True)
-                        st.caption("Fonte: Yahoo Finance API (Últimos 4 anos reportados)")
+                # --- GRÁFICO 1: LUCRO LÍQUIDO (Barras) ---
+                dre = ticker_yf.financials
+                with col1:
+                    st.markdown(f"**💰 Evolução do Lucro Líquido**")
+                    if not dre.empty and "Net Income" in dre.T.columns:
+                        dre_t = dre.T.sort_index()
+                        df_lucro = pd.DataFrame({"Lucro Líquido (R$)": dre_t["Net Income"]})
+                        # Converte o ano para texto para evitar a vírgula (ex: 2,022 -> "2022")
+                        df_lucro.index = df_lucro.index.year.astype(str)
+                        st.bar_chart(df_lucro, use_container_width=True)
+                        st.caption("Fonte: Yahoo Finance (Limite da API gratuita: 4 anos)")
                     else:
-                        st.warning("Receita e Lucro não disponíveis na API gratuita para este ativo.")
-                else:
-                    st.warning("Demonstrativo de Resultados histórico não encontrado.")
+                        st.warning("Lucro Líquido não disponível no momento.")
+
+                # --- GRÁFICO 2: DIVIDENDOS HISTÓRICOS MÁXIMOS ---
+                historico_div = ticker_yf.dividends
+                with col2:
+                    st.markdown(f"**💸 Histórico Máximo de Dividendos**")
+                    if not historico_div.empty:
+                        # Agrupa todos os centavos pagos somando por ano
+                        div_anual = historico_div.groupby(historico_div.index.year).sum()
+                        df_div = pd.DataFrame({"Dividendos Pagos (R$)": div_anual})
+                        df_div.index = df_div.index.astype(str)
+                        st.bar_chart(df_div, use_container_width=True)
+                        st.caption(f"Fonte: Yahoo Finance (Histórico Máximo desde a listagem)")
+                    else:
+                        st.warning("Nenhum histórico de dividendos encontrado para este ativo.")
+                        
             except Exception as e:
-                st.error("Erro de conexão com a API de dados históricos.")
+                st.error("Erro de conexão com a API do Yahoo Finance.")
