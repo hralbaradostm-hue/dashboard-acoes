@@ -320,3 +320,14 @@ if len(df_filtrado) > 0:
                         st.warning("Nenhum histórico de dividendos encontrado.")
                 except Exception:
                     st.warning("O Yahoo Finance não reconhece este Ticker (Ação extinta ou sem dados).")
+
+# --- RODAPÉ INSTITUCIONAL ---
+st.markdown("---")
+st.markdown(
+    """
+    <div style='text-align: center; color: #94a3b8; font-size: 12px; padding: 15px;'>
+        © 2026 Terminal Albarado. Todos os direitos reservados.
+    </div>
+    """,
+    unsafe_allow_html=True
+)
