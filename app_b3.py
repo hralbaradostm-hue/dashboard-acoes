@@ -337,7 +337,7 @@ st.markdown(
         border-top: 1px solid #1e293b;
         z-index: 99999;
     '>
-        © 2026 Terminal Albarado. Todos os direitos reservados.
+        © 2026 Prudence Invest. Todos os direitos reservados.
     </div>
     """,
     unsafe_allow_html=True
