@@ -18,10 +18,17 @@ st.set_page_config(page_title="Scanner Fundamentalista B3 | Prudence Invest", la
 # --- DESIGN SYSTEM INSTITUCIONAL (SaaS) ---
 st.markdown("""
     <style>
-    /* Esconde elementos padrão do Streamlit que denunciam a plataforma */
+    /* Esconde o menu principal e o rodapé padrão */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
-    header {visibility: hidden;}
+    
+    /* ⚠️ IMPORTANTE: Removemos a linha do 'header' para a setinha da barra lateral voltar */
+    
+    /* Esconde o botão flutuante 'Gerenciar aplicativo' do canto inferior direito */
+    [data-testid="stStatusWidget"] {
+        visibility: hidden;
+        display: none;
+    }
     
     /* Fundo geral da aplicação mais limpo e moderno */
     .stApp {
@@ -57,11 +64,6 @@ st.markdown("""
         font-weight: 700;
         color: #38bdf8; /* Azul Neon Executivo */
         margin-top: 5px;
-    }
-    
-    /* Tabelas e Dataframes com visual corporativo */
-    dataframe {
-        border-radius: 8px;
     }
     </style>
 """, unsafe_allow_html=True)
