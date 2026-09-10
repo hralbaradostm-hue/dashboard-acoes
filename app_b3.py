@@ -201,18 +201,27 @@ st.markdown("---")
 # ==========================================
 # PAINEL DE INDICADORES (KPIs COM CARDS SaaS)
 # ==========================================
+total_aprovadas = len(df_filtrado)
+media_dy = df_filtrado["Dividend Yield"].mean() if total_aprovadas > 0 else 0
+mediana_margem = df_filtrado["Margem de Segurança (%)"].median() if total_aprovadas > 0 else 0
+
+if total_aprovadas > 0 and 'Segmento de Listagem' in df_filtrado.columns:
+    novo_mercado_count = df_filtrado['Segmento de Listagem'].str.contains('Novo Mercado', case=False, na=False).sum()
+    pct_novo_mercado = (novo_mercado_count / total_aprovadas) * 100
+else:
+    pct_novo_mercado = 0
+
 col1, col2, col3, col4 = st.columns(4)
 
 with col1:
     st.markdown(f"""
         <div class="metric-card">
             <div class="metric-title">🎯 Ações Aprovadas</div>
-            <div class="metric-value">{len(df_filtrado)}</div>
+            <div class="metric-value">{total_aprovadas}</div>
         </div>
     """, unsafe_allow_html=True)
 
 with col2:
-    media_dy = df_filtrado["Dividend Yield"].mean() if len(df_filtrado) > 0 else 0
     st.markdown(f"""
         <div class="metric-card">
             <div class="metric-title">💰 Média de Yield</div>
@@ -221,22 +230,32 @@ with col2:
     """, unsafe_allow_html=True)
 
 with col3:
-    maior_margem = df_filtrado["Margem de Segurança (%)"].max() if len(df_filtrado) > 0 else 0
     st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-title">💎 Maior Margem Seg.</div>
-            <div class="metric-value">{maior_margem:.1f}%</div>
+            <div class="metric-title">🛡️ Margem Mediana</div>
+            <div class="metric-value">{mediana_margem:.1f}%</div>
         </div>
     """, unsafe_allow_html=True)
 
 with col4:
-    st.markdown("<div style='padding-top: 10px;'></div>", unsafe_allow_html=True)
-    if len(df_filtrado) > 0:
+    st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">🌟 Novo Mercado</div>
+            <div class="metric-value">{pct_novo_mercado:.1f}%</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+st.markdown("<br>", unsafe_allow_html=True)
+
+# Botão de Download em Excel reposicionado com destaque acima da tabela
+if total_aprovadas > 0:
+    col_vazio, col_btn = st.columns([4, 1])
+    with col_btn:
         dados_excel = converter_para_excel(df_filtrado)
         st.download_button(
             label="📥 Baixar em Excel",
             data=dados_excel,
-            file_name="Prudence_Invest_Selecao.xlsx",
+            file_name="Terminal_Albarado_Selecao.xlsx",
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
             use_container_width=True
         )
