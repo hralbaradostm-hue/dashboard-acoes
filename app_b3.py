@@ -8,7 +8,7 @@ def load_cofre():
     try:
         return pd.read_excel("cofre_lucros.xlsx")
     except:
-        return pd.DataFrame() # Retorna vazio se o cofre não existir
+        return pd.DataFrame()
 
 df_cofre = load_cofre()
 
@@ -18,13 +18,11 @@ st.set_page_config(page_title="Scanner Fundamentalista B3 | Prudence Invest", la
 # --- DESIGN SYSTEM INSTITUCIONAL (SaaS) ---
 st.markdown("""
     <style>
-st.markdown("""
-    <style>
     /* Esconde elementos padrão do Streamlit */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* TORNA O FUNDO DO CABEÇALHO TRANSPARENTE (Some com o retângulo branco) */
+    /* Torna o fundo do cabeçalho transparente (Some com o retângulo branco) */
     [data-testid="stHeader"] {
         background-color: transparent;
     }
@@ -35,28 +33,9 @@ st.markdown("""
         display: none;
     }
     
-    /* O restante do seu CSS continua igual... */
-    .stApp {
-        background-color: #0f172a;
-        color: #f8fafc;
-    }
-    ...
-""", unsafe_allow_html=True)
-    /* Esconde o menu principal e o rodapé padrão */
-    #MainMenu {visibility: hidden;}
-    footer {visibility: hidden;}
-    
-    /* ⚠️ IMPORTANTE: Removemos a linha do 'header' para a setinha da barra lateral voltar */
-    
-    /* Esconde o botão flutuante 'Gerenciar aplicativo' do canto inferior direito */
-    [data-testid="stStatusWidget"] {
-        visibility: hidden;
-        display: none;
-    }
-    
     /* Fundo geral da aplicação mais limpo e moderno */
     .stApp {
-        background-color: #0f172a; /* Azul Noite Profundo / Estilo Bloomberg/TradingView */
+        background-color: #0f172a;
         color: #f8fafc;
     }
     
@@ -86,12 +65,11 @@ st.markdown("""
     .metric-value {
         font-size: 26px;
         font-weight: 700;
-        color: #38bdf8; /* Azul Neon Executivo */
+        color: #38bdf8;
         margin-top: 5px;
     }
     </style>
 """, unsafe_allow_html=True)
-
 @st.cache_data
 def load_data():
     df = pd.read_excel("acoes_b3.xlsx")
