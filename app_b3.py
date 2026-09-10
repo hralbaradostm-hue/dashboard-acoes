@@ -332,7 +332,7 @@ st.markdown(
         background-color: #0f172a;
         color: #64748b;
         text-align: center;
-        font-size: 11px;
+        font-size: 14px;
         padding: 8px 0;
         border-top: 1px solid #1e293b;
         z-index: 99999;
