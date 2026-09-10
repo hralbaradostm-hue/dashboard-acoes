@@ -321,11 +321,11 @@ if len(df_filtrado) > 0:
                 except Exception:
                     st.warning("O Yahoo Finance não reconhece este Ticker (Ação extinta ou sem dados).")
 
-# --- RODAPÉ INSTITUCIONAL ---
-st.markdown("---")
+# --- RODAPÉ FINAL ---
+st.markdown("<br><br>", unsafe_allow_html=True)
 st.markdown(
     """
-    <div style='text-align: center; color: #94a3b8; font-size: 12px; padding: 15px;'>
+    <div style='text-align: center; color: #64748b; font-size: 14px; padding: 20px 0; border-top: 1px solid #1e293b; margin-top: 50px;'>
         © 2026 Terminal Albarado. Todos os direitos reservados.
     </div>
     """,
