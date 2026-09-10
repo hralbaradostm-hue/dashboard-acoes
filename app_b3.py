@@ -18,6 +18,30 @@ st.set_page_config(page_title="Scanner Fundamentalista B3 | Prudence Invest", la
 # --- DESIGN SYSTEM INSTITUCIONAL (SaaS) ---
 st.markdown("""
     <style>
+st.markdown("""
+    <style>
+    /* Esconde elementos padrão do Streamlit */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    
+    /* TORNA O FUNDO DO CABEÇALHO TRANSPARENTE (Some com o retângulo branco) */
+    [data-testid="stHeader"] {
+        background-color: transparent;
+    }
+    
+    /* Esconde o botão flutuante 'Gerenciar aplicativo' */
+    [data-testid="stStatusWidget"] {
+        visibility: hidden;
+        display: none;
+    }
+    
+    /* O restante do seu CSS continua igual... */
+    .stApp {
+        background-color: #0f172a;
+        color: #f8fafc;
+    }
+    ...
+""", unsafe_allow_html=True)
     /* Esconde o menu principal e o rodapé padrão */
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
@@ -193,7 +217,7 @@ def converter_para_excel(df_export):
     return buffer.getvalue()
 
 # --- INTERFACE PRINCIPAL ---
-st.title("🛡️ Prudence Invest | Institutional Terminal")
+st.title("🛡️ Prudence Invest | Terminal Albarado")
 st.markdown("---")
 
 # ==========================================
