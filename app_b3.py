@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 import io
-import yfinance as yf  # <-- ADICIONE ESTA LINHA
+import yfinance as yf
 
 @st.cache_data
 def load_cofre():
@@ -15,6 +15,57 @@ df_cofre = load_cofre()
 # Configuração da Página
 st.set_page_config(page_title="Scanner Fundamentalista B3 | Prudence Invest", layout="wide")
 
+# --- DESIGN SYSTEM INSTITUCIONAL (SaaS) ---
+st.markdown("""
+    <style>
+    /* Esconde elementos padrão do Streamlit que denunciam a plataforma */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Fundo geral da aplicação mais limpo e moderno */
+    .stApp {
+        background-color: #0f172a; /* Azul Noite Profundo / Estilo Bloomberg/TradingView */
+        color: #f8fafc;
+    }
+    
+    /* Estilização da Sidebar (Menu Lateral) */
+    [data-testid="stSidebar"] {
+        background-color: #1e293b;
+        border-right: 1px solid #334155;
+    }
+    
+    /* Cards de Métricas Estilo SaaS */
+    .metric-card {
+        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+        border: 1px solid #334155;
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        margin-bottom: 10px;
+    }
+    .metric-title {
+        font-size: 13px;
+        color: #94a3b8;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-weight: 600;
+    }
+    .metric-value {
+        font-size: 26px;
+        font-weight: 700;
+        color: #38bdf8; /* Azul Neon Executivo */
+        margin-top: 5px;
+    }
+    
+    /* Tabelas e Dataframes com visual corporativo */
+    dataframe {
+        border-radius: 8px;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 @st.cache_data
 def load_data():
     df = pd.read_excel("acoes_b3.xlsx")
@@ -23,14 +74,12 @@ def load_data():
     df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
     
     # 2. CALCULA O DIVIDENDO EM REAIS (R$)
-    # Pega a Cotação (R$) e multiplica pelo Dividend Yield (transformado em decimal)
     df["Dividendo Pago (R$)"] = df["Cotação"] * (df["Dividend Yield"] / 100)
     
     # 3. CÁLCULO DO PREÇO TETO DE 6% (Método Barsi/Bazin)
     df["Preço Teto (6%)"] = df["Dividendo Pago (R$)"] / 0.06
     
     # 4. CÁLCULO DA MARGEM DE SEGURANÇA (%)
-    # Evita divisão por zero caso a cotação seja 0 (improvável)
     df["Margem de Segurança (%)"] = df.apply(
         lambda row: ((row["Preço Teto (6%)"] / row["Cotação"]) - 1) * 100 if row["Cotação"] > 0 else 0,
         axis=1
@@ -64,7 +113,7 @@ def limpar_filtros():
     st.session_state.cresc_min = -50.0
     st.session_state.dy_min = 0.0
     st.session_state.soma_yc_min = -50.0
-    st.session_state.margem_seg_min = -100.0 # Novo filtro
+    st.session_state.margem_seg_min = -100.0
 
 if "tipo_filtro" not in st.session_state:
     limpar_filtros()
@@ -96,7 +145,6 @@ soma_yc_min = st.sidebar.slider("18. Soma Yield + CAGR Mín. (%)", -50.0, 100.0,
 
 st.sidebar.markdown("---")
 st.sidebar.markdown("### 💎 Método Barsi")
-# 19. Filtro de Margem de Segurança
 margem_seg_min = st.sidebar.slider("19. Margem de Segurança Mín. (%)", -100.0, 100.0, key="margem_seg_min")
 st.sidebar.caption("Selecione '0%' para mostrar apenas ações negociadas ABAIXO do Preço Teto de 6%.")
 
@@ -119,7 +167,7 @@ df_filtrado = df[
     (df["Cresc. 5 Anos (%)"] >= cresc_min) &
     (df["Dividend Yield"] >= dy_min) &
     (df["Yield + CAGR (%)"] >= soma_yc_min) &
-    (df["Margem de Segurança (%)"] >= margem_seg_min) # Novo filtro aplicado
+    (df["Margem de Segurança (%)"] >= margem_seg_min)
 ]
 
 if gov_filtro != "Ambos":
@@ -143,12 +191,42 @@ def converter_para_excel(df_export):
     return buffer.getvalue()
 
 # --- INTERFACE PRINCIPAL ---
-st.title("🛡️ Prudence Invest | Scanner Institucional")
+st.title("🛡️ Prudence Invest | Institutional Terminal")
+st.markdown("---")
 
-col1, col2 = st.columns([3, 1])
+# ==========================================
+# PAINEL DE INDICADORES (KPIs COM CARDS SaaS)
+# ==========================================
+col1, col2, col3, col4 = st.columns(4)
+
 with col1:
-    st.markdown(f"**Empresas Aprovadas:** `{len(df_filtrado)}` ativos na seleção atual.")
+    st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">🎯 Ações Aprovadas</div>
+            <div class="metric-value">{len(df_filtrado)}</div>
+        </div>
+    """, unsafe_allow_html=True)
+
 with col2:
+    media_dy = df_filtrado["Dividend Yield"].mean() if len(df_filtrado) > 0 else 0
+    st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">💰 Média de Yield</div>
+            <div class="metric-value">{media_dy:.2f}%</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col3:
+    maior_margem = df_filtrado["Margem de Segurança (%)"].max() if len(df_filtrado) > 0 else 0
+    st.markdown(f"""
+        <div class="metric-card">
+            <div class="metric-title">💎 Maior Margem Seg.</div>
+            <div class="metric-value">{maior_margem:.1f}%</div>
+        </div>
+    """, unsafe_allow_html=True)
+
+with col4:
+    st.markdown("<div style='padding-top: 10px;'></div>", unsafe_allow_html=True)
     if len(df_filtrado) > 0:
         dados_excel = converter_para_excel(df_filtrado)
         st.download_button(
@@ -159,14 +237,16 @@ with col2:
             use_container_width=True
         )
 
+st.markdown("<br>", unsafe_allow_html=True)
+
 # Tabela com as Novas Colunas em Destaque
 st.dataframe(
     df_filtrado,
     column_config={
         "Cotação": st.column_config.NumberColumn(format="R$ %.2f"),
-        "Preço Teto (6%)": st.column_config.NumberColumn(format="R$ %.2f"), # NOVA
-        "Dividendo Pago (R$)": st.column_config.NumberColumn(format="R$ %.2f"), # NOVA
-        "Margem de Segurança (%)": st.column_config.NumberColumn(format="%.2f %%"), # NOVA
+        "Preço Teto (6%)": st.column_config.NumberColumn(format="R$ %.2f"),
+        "Dividendo Pago (R$)": st.column_config.NumberColumn(format="R$ %.2f"),
+        "Margem de Segurança (%)": st.column_config.NumberColumn(format="%.2f %%"),
         "Liquidez Diária": st.column_config.NumberColumn(format="R$ %.2f"),
         "Patrimônio Líquido": st.column_config.NumberColumn(format="R$ %.2f"),
         "Tag Along (%)": st.column_config.NumberColumn(format="%.0f %%"),
@@ -181,10 +261,15 @@ st.dataframe(
         "P/L": st.column_config.NumberColumn(format="%.2f x"),
         "P/VP": st.column_config.NumberColumn(format="%.2f x"),
         "Dívida Líquida/EBIT": st.column_config.NumberColumn(format="%.2f x")
-    },
-    use_container_width=True,
-    hide_index=True
+    }
 )
+
+# ==========================================
+# SISTEMA DE ALERTA NA TELA (RADAR DE OURO)
+# ==========================================
+if len(df_filtrado) > 0 and len(df_filtrado) <= 3 and margem_seg_min >= 10.0:
+    st.toast("🚨 Radar Barsi: Oportunidade(s) de Ouro detectada(s)!", icon="💎")
+    st.balloons()
 
 # ==========================================
 # SEÇÃO: RAIO-X HISTÓRICO (LUCRO E DIVIDENDOS)
@@ -198,7 +283,6 @@ if len(df_filtrado) > 0:
 
     if acao_selecionada:
         with st.spinner(f"Processando histórico de {acao_selecionada}..."):
-            # Divide a tela em duas colunas independentes
             col1, col2 = st.columns(2)
             
             # --- GRÁFICO 1: LUCRO LÍQUIDO (DO COFRE EXCEL) ---
@@ -231,5 +315,4 @@ if len(df_filtrado) > 0:
                     else:
                         st.warning("Nenhum histórico de dividendos encontrado.")
                 except Exception:
-                    # Se o Yahoo der erro na ação fantasma, mostra um aviso amigável ao invés do erro vermelho
                     st.warning("O Yahoo Finance não reconhece este Ticker (Ação extinta ou sem dados).")
