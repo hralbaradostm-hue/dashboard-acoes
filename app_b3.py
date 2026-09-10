@@ -324,7 +324,7 @@ if len(df_filtrado) > 0:
 # --- RODAPÉ FINAL ---
 st.markdown(
     """
-    <div style='text-align: center; color: #64748b; font-size: 14px; padding: 30px 0; border-top: 1px solid #1e293b; margin-top: 300px;'>
+    <div style='text-align: center; color: #64748b; font-size: 14px; padding: 30px 0; border-top: 1px solid #1e293b; margin-top: 600px;'>
         © 2026 Terminal Albarado. Todos os direitos reservados.
     </div>
     """,
