@@ -1,0 +1,15 @@
+[theme]
+# Cor principal (botões, sliders)
+primaryColor = "#0047AB" # Azul Cobalto Institucional
+
+# Cor do fundo da tela principal
+backgroundColor = "#F4F6F9" # Cinza bem claro (limpo)
+
+# Cor do fundo da barra lateral
+secondaryBackgroundColor = "#1E2A38" # Azul escuro/Chumbo
+
+# Cor do texto
+textColor = "#111111"
+
+# Fonte do site
+font = "sans serif"
