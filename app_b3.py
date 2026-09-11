@@ -70,6 +70,7 @@ def load_fiis_data():
             "Multi-inquilino": ["Sim", "Não", "Não", "Sim", "Sim", "Sim", "Sim", "Sim", "Não", "Não"],
             "Vacância": [4.5, 0.0, 0.0, 5.2, 2.1, 4.0, 1.0, 0.0, 0.0, 0.0],
             "Para FII de Papel % em CRIs": [0.0, 95.0, 85.0, 0.0, 0.0, 0.0, 0.0, 0.0, 91.0, 93.5],
+            "Quantidade de CRIs": [0, 45, 38, 0, 0, 0, 0, 0, 52, 40],
             "Administrador": ["Credit Suisse", "Kinea", "BTG Pactual", "BTG Pactual", "BTG Pactual", "BRL Trust", "BRL Trust", "BTG Pactual", "BTG Pactual", "Kinea"],
             "Tempo de listagem": [14, 12, 10, 6, 8, 10, 5, 6, 5, 4],
             "Tipo de Gestão": ["Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa"],
@@ -406,12 +407,12 @@ if not df_fiis.empty:
     df_fiis_filtrado = df_fiis[cond_fiis]
 
     colunas_exib_fiis = [
-        "Ticker", "Tipo de fundo", "Segmento de Atuação", "Cotação", "P/VP", "Desconto VP (%)",
-        "DY 12M Acumulado", "Rendimento 12M (R$)", "Preço Teto (9%)", "Margem Teto (%)",
-        "Vacância", "Quantidade de Imóveis", "Multi-inquilino", "Para FII de Papel % em CRIs",
-        "Liquidez diária", "Patrimônio Líquido", "Tempo de listagem", "Tipo de Gestão",
-        "Administrador", "Taxa de adm", "Taxa de Performance", "Benchmark"
-    ]
+    "Ticker", "Tipo de fundo", "Segmento de Atuação", "Cotação", "P/VP", "Desconto VP (%)",
+    "DY 12M Acumulado", "Rendimento 12M (R$)", "Preço Teto (9%)", "Margem Teto (%)",
+    "Vacância", "Quantidade de Imóveis", "Quantidade de CRIs", "Multi-inquilino", "Para FII de Papel % em CRIs",
+    "Liquidez diária", "Patrimônio Líquido", "Tempo de listagem", "Tipo de Gestão",
+    "Administrador", "Taxa de adm", "Taxa de Performance", "Benchmark"
+]
     df_fiis_filtrado = df_fiis_filtrado[[c for c in colunas_exib_fiis if c in df_fiis_filtrado.columns]]
 
     # KPIs FIIs
@@ -454,6 +455,7 @@ if not df_fiis.empty:
             "Margem Teto (%)": st.column_config.NumberColumn(format="%.2f %%"),
             "Vacância": st.column_config.NumberColumn(format="%.2f %%"),
             "Para FII de Papel % em CRIs": st.column_config.NumberColumn(format="%.2f %%"),
+            "Quantidade de CRIs": st.column_config.NumberColumn(format="%d CRIs"),
             "Liquidez diária": st.column_config.NumberColumn(format="R$ %.2f"),
             "Patrimônio Líquido": st.column_config.NumberColumn(format="R$ %.2f"),
             "Quantidade de Imóveis": st.column_config.NumberColumn(format="%d imóveis"),
