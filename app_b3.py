@@ -75,6 +75,14 @@ st.markdown("""
 def load_data():
     df = pd.read_excel("acoes_b3.xlsx")
     
+    # --- FILTRO DE ELITE AUTOMÁTICO (UNIVERSO FUNDAMENTEI) ---
+    # Remove empresas sem patrimônio líquido positivo e com liquidez diária inferior a R$ 500 mil
+    if "Liquidez Diária" in df.columns and "Patrimônio Líquido" in df.columns:
+        df = df[
+            (df["Patrimônio Líquido"] > 0) & 
+            (df["Liquidez Diária"] >= 500_000.0)
+        ].copy()
+
     # 1. CRIA O INDICADOR CHOWDER RULE
     df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
     
@@ -104,8 +112,8 @@ def limpar_filtros():
     st.session_state.seg_filtro = segmentos_todos
     st.session_state.gov_filtro = "Ambos"
     st.session_state.setor_filtro = setores_todos
-    st.session_state.liq_min = 0.0
-    st.session_state.pat_min = -10000000000.0
+    st.session_state.liq_min = 500000.0
+    st.session_state.pat_min = 0.0
     st.session_state.tag_min = 0
     st.session_state.ff_min = 0.0
     st.session_state.div_max = 100.0
