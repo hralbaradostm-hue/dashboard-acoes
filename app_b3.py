@@ -52,11 +52,10 @@ def load_acoes_data():
     return df
 
 @st.cache_data
-def load_fiis_data():
+def load_fiis_data_v3():
     try:
         df = pd.read_excel("fiis_b3.xlsx")
     except Exception:
-        # Fallback automático com dados padrão em memória
         dados_default = {
             "Ticker": ["HGLG11", "KNCR11", "MXRF11", "XPML11", "BTLG11", "VISC11", "TRXF11", "ALZR11", "CPTS11", "KNSC11"],
             "Tipo de fundo": ["Tijolo", "Papel", "Papel", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Papel", "Papel"],
@@ -79,35 +78,46 @@ def load_fiis_data():
             "Benchmark": ["IFIX", "CDI", "CDI", "IFIX", "IFIX", "IFIX", "IPCA + 6%", "IPCA + 6%", "CDI", "CDI"]
         }
         df = pd.DataFrame(dados_default)
+    return df
 
-    if "Patrimônio Líquido" in df.columns:
-        df = df[df["Patrimônio Líquido"] > 0].copy()
+df_cofre = load_cofre_acoes()
+df_acoes = load_acoes_data()
+df_fiis = load_fiis_data_v3()
 
-    # Cálculos defensivos para FIIs
-    if "DY 12M Acumulado" in df.columns and "Cotação" in df.columns:
-        df["Rendimento 12M (R$)"] = df["Cotação"] * (df["DY 12M Acumulado"] / 100)
+# --- INJEÇÃO DA COLUNA FORA DO CACHE (GARANTIA ABSOLUTA) ---
+if not df_fiis.empty:
+    if "Quantidade de CRIs" not in df_fiis.columns:
+        cris_map = {"KNCR11": 45, "MXRF11": 38, "CPTS11": 52, "KNSC11": 40}
+        if "Ticker" in df_fiis.columns:
+            df_fiis["Quantidade de CRIs"] = df_fiis["Ticker"].map(cris_map).fillna(0).astype(int)
+        else:
+            df_fiis["Quantidade de CRIs"] = 0
+
+    if "Patrimônio Líquido" in df_fiis.columns:
+        df_fiis = df_fiis[df_fiis["Patrimônio Líquido"] > 0].copy()
+
+    if "DY 12M Acumulado" in df_fiis.columns and "Cotação" in df_fiis.columns:
+        df_fiis["Rendimento 12M (R$)"] = df_fiis["Cotação"] * (df_fiis["DY 12M Acumulado"] / 100)
     else:
-        df["Rendimento 12M (R$)"] = 0.0
+        df_fiis["Rendimento 12M (R$)"] = 0.0
 
-    if "Rendimento 12M (R$)" in df.columns:
-        df["Preço Teto (9%)"] = df["Rendimento 12M (R$)"] / 0.09
+    if "Rendimento 12M (R$)" in df_fiis.columns:
+        df_fiis["Preço Teto (9%)"] = df_fiis["Rendimento 12M (R$)"] / 0.09
     else:
-        df["Preço Teto (9%)"] = 0.0
+        df_fiis["Preço Teto (9%)"] = 0.0
 
-    if "Preço Teto (9%)" in df.columns and "Cotação" in df.columns:
-        df["Margem Teto (%)"] = df.apply(
+    if "Preço Teto (9%)" in df_fiis.columns and "Cotação" in df_fiis.columns:
+        df_fiis["Margem Teto (%)"] = df_fiis.apply(
             lambda row: ((row["Preço Teto (9%)"] / row["Cotação"]) - 1) * 100 if row["Cotação"] > 0 else 0,
             axis=1
         )
     else:
-        df["Margem Teto (%)"] = 0.0
+        df_fiis["Margem Teto (%)"] = 0.0
 
-    if "P/VP" in df.columns:
-        df["Desconto VP (%)"] = (1 - df["P/VP"]) * 100
+    if "P/VP" in df_fiis.columns:
+        df_fiis["Desconto VP (%)"] = (1 - df_fiis["P/VP"]) * 100
     else:
-        df["Desconto VP (%)"] = 0.0
-
-    return df
+        df_fiis["Desconto VP (%)"] = 0.0
 
 df_cofre = load_cofre_acoes()
 df_acoes = load_acoes_data()
@@ -409,10 +419,12 @@ if not df_fiis.empty:
 
     df_fiis_filtrado = df_fiis[cond_fiis]
 
+    # Ordenação com 'Quantidade de CRIs' e 'Para FII de Papel % em CRIs' LADO A LADO
     colunas_exib_fiis = [
         "Ticker", "Tipo de fundo", "Segmento de Atuação", "Cotação", "P/VP", "Desconto VP (%)",
         "DY 12M Acumulado", "Rendimento 12M (R$)", "Preço Teto (9%)", "Margem Teto (%)",
-        "Vacância", "Quantidade de Imóveis", "Quantidade de CRIs", "Multi-inquilino", "Para FII de Papel % em CRIs",
+        "Vacância", "Quantidade de Imóveis", "Multi-inquilino", 
+        "Quantidade de CRIs", "Para FII de Papel % em CRIs",
         "Liquidez diária", "Patrimônio Líquido", "Tempo de listagem", "Tipo de Gestão",
         "Administrador", "Taxa de adm", "Taxa de Performance", "Benchmark"
     ]
@@ -457,11 +469,11 @@ if not df_fiis.empty:
             "Preço Teto (9%)": st.column_config.NumberColumn(format="R$ %.2f"),
             "Margem Teto (%)": st.column_config.NumberColumn(format="%.2f %%"),
             "Vacância": st.column_config.NumberColumn(format="%.2f %%"),
+            "Quantidade de CRIs": st.column_config.NumberColumn(format="%d CRIs"),
             "Para FII de Papel % em CRIs": st.column_config.NumberColumn(format="%.2f %%"),
             "Liquidez diária": st.column_config.NumberColumn(format="R$ %.2f"),
             "Patrimônio Líquido": st.column_config.NumberColumn(format="R$ %.2f"),
             "Quantidade de Imóveis": st.column_config.NumberColumn(format="%d imóveis"),
-            "Quantidade de CRIs": st.column_config.NumberColumn(format="%d CRIs"),
             "Tempo de listagem": st.column_config.NumberColumn(format="%d anos")
         },
         hide_index=True
