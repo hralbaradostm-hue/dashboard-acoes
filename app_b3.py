@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 import io
 import yfinance as yf
+import re
+import unicodedata
 
 @st.cache_data
 def load_cofre():
@@ -22,7 +24,7 @@ st.markdown("""
     #MainMenu {visibility: hidden;}
     footer {visibility: hidden;}
     
-    /* Torna o fundo do cabeçalho transparente (Some com o retângulo branco) */
+    /* Torna o fundo do cabeçalho transparente */
     [data-testid="stHeader"] {
         background-color: transparent;
     }
@@ -33,7 +35,7 @@ st.markdown("""
         display: none;
     }
     
-    /* Fundo geral da aplicação mais limpo e moderno */
+    /* Fundo geral da aplicação */
     .stApp {
         background-color: #0f172a;
         color: #f8fafc;
@@ -79,60 +81,102 @@ def load_data():
     if "Patrimônio Líquido" in df.columns:
         df = df[df["Patrimônio Líquido"] > 0].copy()
 
-    # --- FUNÇÃO INTELIGENTE DE LOGOTIPOS (COMPATÍVEL COM PNG NO STREAMLIT) ---
-    def obter_logo(ticker):
-        t = str(ticker).upper().strip()
+    # --- GERADOR DINÂMICO DE LOGOTIPOS (100% DE COBERTURA VIA CDN) ---
+    def obter_logo(row):
+        ticker = str(row.get("Ticker", "")).upper().strip()
         
-        # Mapeamento robusto com URLs em PNG direto (garante compatibilidade visual no Streamlit)
+        # 1. Mapa direto de altíssima velocidade para Blue Chips
         logos_map = {
             "PETR4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/PETR4_BZ.png",
             "PETR3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/PETR4_BZ.png",
             "VALE3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/VALE3_BZ.png",
             "ITUB4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITUB4_BZ.png",
+            "ITUB3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITUB4_BZ.png",
             "BBDC4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/BBDC4_BZ.png",
             "BBDC3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/BBDC4_BZ.png",
             "BBAS3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/BBAS3_BZ.png",
             "ABEV3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ABEV3_BZ.png",
             "WEGE3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/WEGE3_BZ.png",
             "ITSA4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITSA4_BZ.png",
+            "ITSA3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITSA4_BZ.png",
             "RENT3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/RENT3_BZ.png",
             "B3SA3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/B3SA3_BZ.png",
             "SUZB3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/SUZB3_BZ.png",
             "JBSS3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/JBSS3_BZ.png",
-            "RADL3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/RADL3_BZ.png"
+            "RADL3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/RADL3_BZ.png",
+            "EGIE3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/EGIE3_BZ.png",
+            "CPLE6": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/CPLE6_BZ.png",
+            "TAEE11": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/TAEE11_BZ.png",
+            "TRPL4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/TRPL4_BZ.png",
+            "SANB11": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/SANB11_BZ.png",
+            "CSAN3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/CSAN3_BZ.png",
+            "PRIO3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/PRIO3_BZ.png",
+            "VBBR3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/VBBR3_BZ.png",
+            "UGPA3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/UGPA3_BZ.png",
+            "GGBR4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/GGBR4_BZ.png",
+            "GOAU4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/GOAU4_BZ.png",
+            "USIM5": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/USIM5_BZ.png",
+            "CSNA3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/CSNA3_BZ.png",
+            "KLBN11": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/KLBN11_BZ.png",
+            "EMBR3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/EMBR3_BZ.png",
+            "MULT3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/MULT3_BZ.png",
+            "LREN3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/LREN3_BZ.png",
+            "MGLU3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/MGLU3_BZ.png",
+            "NTCO3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/NTCO3_BZ.png",
+            "HAPV3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/HAPV3_BZ.png",
+            "FLRY3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/FLRY3_BZ.png",
+            "SBSP3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/SBSP3_BZ.png",
+            "ELET3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ELET3_BZ.png",
+            "ELET6": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ELET6_BZ.png",
+            "CCRO3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/CCRO3_BZ.png",
+            "RAIZ4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/RAIZ4_BZ.png",
+            "SMTO3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/SMTO3_BZ.png"
         }
         
-        if t in logos_map:
-            return logos_map[t]
+        if ticker in logos_map:
+            return logos_map[ticker]
         
-        # Ícone corporativo genérico padrão em PNG para os demais ativos (evita células vazias)
+        # 2. Busca dinâmica na CDN global pelo padrão de ticker da B3 (_BZ)
+        if len(ticker) >= 4 and ticker[:4].isalpha():
+            return f"https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/{ticker}_BZ.png"
+        
+        # 3. Ícone corporativo genérico como fallback absoluto
         return "https://cdn-icons-png.flaticon.com/128/2910/2910791.png"
 
-    # 1. ADICIONA A COLUNA DE LOGOS
-    df["Logo"] = df["Ticker"].apply(obter_logo)
+    # Aplicação da busca dinâmica
+    df["Logo"] = df.apply(obter_logo, axis=1)
 
-    # 2. CRIA O INDICADOR CHOWDER RULE
-    df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
+    # --- DEFESA CONTRA KEYERROR (CÁLCULOS SEGUROS DE INDICADORES) ---
+    if "Dividend Yield" in df.columns and "Cresc. 5 Anos (%)" in df.columns:
+        df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
+    else:
+        df["Yield + CAGR (%)"] = 0.0
     
-    # 3. CALCULA O DIVIDENDO EM REAIS (R$)
-    df["Dividendo Pago (R$)"] = df["Cotação"] * (df["Dividend Yield"] / 100)
+    if "Cotação" in df.columns and "Dividend Yield" in df.columns:
+        df["Dividendo Pago (R$)"] = df["Cotação"] * (df["Dividend Yield"] / 100)
+    else:
+        df["Dividendo Pago (R$)"] = 0.0
     
-    # 4. CÁLCULO DO PREÇO TETO DE 6% (Método Barsi/Bazin)
-    df["Preço Teto (6%)"] = df["Dividendo Pago (R$)"] / 0.06
+    if "Dividendo Pago (R$)" in df.columns:
+        df["Preço Teto (6%)"] = df["Dividendo Pago (R$)"] / 0.06
+    else:
+        df["Preço Teto (6%)"] = 0.0
     
-    # 5. CÁLCULO DA MARGEM DE SEGURANÇA (%)
-    df["Margem de Segurança (%)"] = df.apply(
-        lambda row: ((row["Preço Teto (6%)"] / row["Cotação"]) - 1) * 100 if row["Cotação"] > 0 else 0,
-        axis=1
-    )
+    if "Preço Teto (6%)" in df.columns and "Cotação" in df.columns:
+        df["Margem de Segurança (%)"] = df.apply(
+            lambda row: ((row["Preço Teto (6%)"] / row["Cotação"]) - 1) * 100 if row["Cotação"] > 0 else 0,
+            axis=1
+        )
+    else:
+        df["Margem de Segurança (%)"] = 0.0
     
     return df
 
 df = load_data()
 
-tipos_todos = list(df["Tipo"].unique())
-segmentos_todos = list(df["Segmento de Listagem"].unique())
-setores_todos = sorted(list(df["Setor"].unique()))
+tipos_todos = list(df["Tipo"].unique()) if "Tipo" in df.columns else []
+segmentos_todos = list(df["Segmento de Listagem"].unique()) if "Segmento de Listagem" in df.columns else []
+setores_todos = sorted(list(df["Setor"].unique())) if "Setor" in df.columns else []
 
 # --- FUNÇÃO PARA LIMPAR FILTROS (RESET) ---
 def limpar_filtros():
@@ -211,7 +255,7 @@ df_filtrado = df[
     (df["Margem de Segurança (%)"] >= margem_seg_min)
 ]
 
-if gov_filtro != "Ambos":
+if gov_filtro != "Ambos" and "Governo Majoritário" in df_filtrado.columns:
     df_filtrado = df_filtrado[df_filtrado["Governo Majoritário"] == gov_filtro]
 
 colunas_exibicao = [
@@ -239,8 +283,8 @@ st.markdown("---")
 # PAINEL DE INDICADORES (KPIs COM CARDS SaaS)
 # ==========================================
 total_aprovadas = len(df_filtrado)
-media_dy = df_filtrado["Dividend Yield"].mean() if total_aprovadas > 0 else 0
-mediana_margem = df_filtrado["Margem de Segurança (%)"].median() if total_aprovadas > 0 else 0
+media_dy = df_filtrado["Dividend Yield"].mean() if (total_aprovadas > 0 and "Dividend Yield" in df_filtrado.columns) else 0
+mediana_margem = df_filtrado["Margem de Segurança (%)"].median() if (total_aprovadas > 0 and "Margem de Segurança (%)" in df_filtrado.columns) else 0
 media_roe = df_filtrado["ROE"].mean() if (total_aprovadas > 0 and "ROE" in df_filtrado.columns) else 0
 
 col1, col2, col3, col4 = st.columns(4)
@@ -335,7 +379,7 @@ st.markdown("---")
 st.title("📊 Raio-X Histórico: Lucros e Dividendos")
 st.markdown("Selecione uma ação aprovada para ver a evolução do Lucro e o histórico Máximo de Dividendos.")
 
-if len(df_filtrado) > 0:
+if len(df_filtrado) > 0 and "Ticker" in df_filtrado.columns:
     acao_selecionada = st.selectbox("Escolha a Ação para gerar os gráficos:", df_filtrado["Ticker"].tolist())
 
     if acao_selecionada:
@@ -345,14 +389,16 @@ if len(df_filtrado) > 0:
             # --- GRÁFICO 1: LUCRO LÍQUIDO (DO COFRE EXCEL) ---
             with col1:
                 st.markdown("**💰 Evolução do Lucro Líquido (Cofre Local)**")
-                if not df_cofre.empty and acao_selecionada in df_cofre["Ticker"].values:
+                if not df_cofre.empty and "Ticker" in df_cofre.columns and acao_selecionada in df_cofre["Ticker"].values:
                     df_lucro_acao = df_cofre[df_cofre["Ticker"] == acao_selecionada].copy()
                     
-                    df_lucro_acao.set_index("Ano", inplace=True)
-                    df_grafico_lucro = pd.DataFrame({"Lucro Líquido (R$)": df_lucro_acao["Lucro Líquido"]})
-                    df_grafico_lucro.index = df_grafico_lucro.index.astype(str)
-                    
-                    st.line_chart(df_grafico_lucro, use_container_width=True)
+                    if "Ano" in df_lucro_acao.columns and "Lucro Líquido" in df_lucro_acao.columns:
+                        df_lucro_acao.set_index("Ano", inplace=True)
+                        df_grafico_lucro = pd.DataFrame({"Lucro Líquido (R$)": df_lucro_acao["Lucro Líquido"]})
+                        df_grafico_lucro.index = df_grafico_lucro.index.astype(str)
+                        st.line_chart(df_grafico_lucro, use_container_width=True)
+                    else:
+                        st.warning("Estrutura do Cofre de dados incompleta.")
                 else:
                     st.warning("Lucro Líquido não encontrado no Cofre de Dados.")
 
