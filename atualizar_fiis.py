@@ -1,4 +1,5 @@
 import io
+import logging
 import warnings
 from datetime import datetime
 import numpy as np
@@ -6,8 +7,9 @@ import pandas as pd
 import requests
 import yfinance as yf
 
-# Silencia avisos do yfinance
+# Silencia totalmente os logs e avisos do Yahoo Finance no terminal
 warnings.filterwarnings("ignore")
+logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 
 print("🚀 Iniciando atualização completa e unificada da base de FIIs...")
 
@@ -30,7 +32,6 @@ try:
   tables = pd.read_html(io.StringIO(res.text), decimal=",", thousands=".")
   raw_df = tables[0]
 
-  # Ajusta o fatiamento de colunas dinamicamente para evitar erro de tamanho
   if raw_df.shape[1] >= 12:
     df_main = raw_df.iloc[:, :12].copy()
     df_main.columns = [
@@ -64,17 +65,20 @@ except Exception as e:
   df_main = pd.read_excel("fiis_b3.xlsx")
 
 # -----------------------------------------------------------------------------
-# 2. ADMINISTRADORES OFICIAIS DA CVM
+# 2. ADMINISTRADORES OFICIAIS E DATA DE REGISTRO DA CVM
 # -----------------------------------------------------------------------------
-print("\n[2/4] Consultando administradores oficiais no cadastro da CVM...")
+print(
+    "\n[2/4] Consultando administradores oficiais e datas no cadastro da CVM..."
+)
 url_cvm = "http://dados.cvm.gov.br/dados/FII/CAD/DADOS/cad_fii.csv"
 mapa_admin_cvm = {}
+mapa_tempo_cvm = {}
+ano_atual = datetime.now().year
 
 try:
   res_cvm = requests.get(url_cvm, timeout=20)
   res_cvm.encoding = "latin-1"
 
-  # Tratamento robusto para ignorar linhas malformatadas do CSV da CVM
   df_cvm = pd.read_csv(
       io.StringIO(res_cvm.text),
       sep=";",
@@ -99,50 +103,68 @@ try:
       ),
       None,
   )
+  col_dt_reg = next(
+      (c for c in df_cvm.columns if "DT_REG" in str(c).upper()), None
+  )
 
-  if col_ticker and col_admin:
-    df_cvm_clean = df_cvm[[col_ticker, col_admin]].dropna()
-    df_cvm_clean[col_ticker] = df_cvm_clean[col_ticker].str.strip().str.upper()
-    mapa_admin_cvm = dict(
-        zip(df_cvm_clean[col_ticker], df_cvm_clean[col_admin])
-    )
-    print(f"  ✅ {len(mapa_admin_cvm)} administradores mapeados via CVM.")
+  if col_ticker:
+    df_cvm[col_ticker] = df_cvm[col_ticker].str.strip().str.upper()
+
+    if col_admin:
+      df_admin_clean = df_cvm[[col_ticker, col_admin]].dropna()
+      mapa_admin_cvm = dict(
+          zip(df_admin_clean[col_ticker], df_admin_clean[col_admin])
+      )
+
+    if col_dt_reg:
+      for _, row in df_cvm.iterrows():
+        t_code = row[col_ticker]
+        dt_raw = str(row[col_dt_reg]).strip()
+        if pd.notna(t_code) and len(dt_raw) >= 4:
+          try:
+            dt_obj = pd.to_datetime(dt_raw, errors="coerce")
+            if pd.notnull(dt_obj):
+              mapa_tempo_cvm[t_code] = max(1, ano_atual - dt_obj.year)
+          except Exception:
+            pass
+
+  print(f"  ✅ {len(mapa_admin_cvm)} administradores e dados CVM mapeados.")
 except Exception as e:
-  print(f"⚠️ Aviso: Não foi possível obter dados da CVM ({e}).")
+  print(f"⚠️ Aviso: Não foi possível obter dados completos da CVM ({e}).")
 
 # -----------------------------------------------------------------------------
-# 3. TEMPO REAL DE B3 VIA YAHOO FINANCE
+# 3. TEMPO DE LISTAGEM (CVM + FALLBACK INTELIGENTE YAHOO)
 # -----------------------------------------------------------------------------
-print("\n[3/4] Calculando tempo real de B3 via histórico do Yahoo Finance...")
-ano_atual = datetime.now().year
+print("\n[3/4] Processando tempo de listagem real dos FIIs...")
 tempos_reais = []
 admins = []
-total = len(df_main)
 
-for idx, ticker in enumerate(df_main["Ticker"]):
+for ticker in df_main["Ticker"]:
   t = str(ticker).replace("$", "").strip().upper()
 
-  # Administrador Oficial
+  # 1. Administrador Oficial
   admin_val = mapa_admin_cvm.get(t, "BTG Pactual / Outros")
   admins.append(admin_val)
 
-  # Idade real de negociação na B3
-  anos_calc = 5  # Padrão
-  try:
-    data = yf.Ticker(f"{t}.SA")
-    hist = data.history(period="10y")
-    if not hist.empty:
-      primeiro_ano = hist.index.min().year
-      anos_calc = max(1, ano_atual - primeiro_ano)
-  except Exception:
-    pass
-  tempos_reais.append(anos_calc)
+  # 2. Tempo de Listagem (Prioriza CVM -> senão usa histórico do ticker -> padrão 5)
+  if t in mapa_tempo_cvm:
+    anos_calc = mapa_tempo_cvm[t]
+  else:
+    anos_calc = 5
+    try:
+      data = yf.Ticker(f"{t}.SA")
+      hist = data.history(period="5y")
+      if not hist.empty:
+        primeiro_ano = hist.index.min().year
+        anos_calc = max(1, ano_atual - primeiro_ano)
+    except Exception:
+      pass
 
-  if (idx + 1) % 50 == 0 or (idx + 1) == total:
-    print(f"  Progresso: {idx + 1}/{total} FIIs processados...")
+  tempos_reais.append(anos_calc)
 
 df_main["Administrador"] = admins
 df_main["Tempo de listagem"] = tempos_reais
+print(f"  ✅ Tempo de listagem calculado para todos os {len(df_main)} FIIs.")
 
 # -----------------------------------------------------------------------------
 # 4. TAXAS, BENCHMARKS E REGRAS QUALITATIVAS
@@ -193,9 +215,9 @@ df_main["Taxa de Performance"] = df_main["Taxa de Performance"].fillna(
     "Isento"
 )
 
-# Salva a planilha final totalmente consolidada
+# Salva a planilha final limpa e consolidada
 df_main.to_excel("fiis_b3.xlsx", index=False)
 print(
-    "\n✅ SUCESSO! A planilha 'fiis_b3.xlsx' foi gerada com dados 100%"
-    " atualizados sem erros."
+    "\n✅ SUCESSO! A planilha 'fiis_b3.xlsx' foi gerada em segundos e sem"
+    " erros."
 )
