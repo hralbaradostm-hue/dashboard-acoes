@@ -75,12 +75,12 @@ st.markdown("""
 def load_data():
     df = pd.read_excel("acoes_b3.xlsx")
     
-    # --- FILTRO DE ELITE AUTOMÁTICO (UNIVERSO FUNDAMENTEI) ---
-    # Remove empresas sem patrimônio líquido positivo e com liquidez diária inferior a R$ 500 mil
+    # --- FILTRO DE ELITE AUTOMÁTICO (UNIVERSO FUNDAMENTEI ~300 ATIVOS) ---
+    # Remove empresas sem patrimônio líquido positivo e ajusta liquidez para R$ 200 mil
     if "Liquidez Diária" in df.columns and "Patrimônio Líquido" in df.columns:
         df = df[
             (df["Patrimônio Líquido"] > 0) & 
-            (df["Liquidez Diária"] >= 500_000.0)
+            (df["Liquidez Diária"] >= 200_000.0)
         ].copy()
 
     # 1. CRIA O INDICADOR CHOWDER RULE
@@ -112,7 +112,7 @@ def limpar_filtros():
     st.session_state.seg_filtro = segmentos_todos
     st.session_state.gov_filtro = "Ambos"
     st.session_state.setor_filtro = setores_todos
-    st.session_state.liq_min = 500000.0
+    st.session_state.liq_min = 200000.0
     st.session_state.pat_min = 0.0
     st.session_state.tag_min = 0
     st.session_state.ff_min = 0.0
@@ -141,7 +141,7 @@ tipo_filtro = st.sidebar.multiselect("1. Tipo de Ação", tipos_todos, key="tipo
 seg_filtro = st.sidebar.multiselect("2. Segmento B3", segmentos_todos, key="seg_filtro")
 gov_filtro = st.sidebar.radio("3. Governo Majoritário", ["Não", "Sim", "Ambos"], key="gov_filtro")
 setor_filtro = st.sidebar.multiselect("4. Setor de Atuação", setores_todos, key="setor_filtro")
-liq_min = st.sidebar.number_input("5. Liquidez Diária Mín. (R$)", min_value=0.0, step=500000.0, key="liq_min")
+liq_min = st.sidebar.number_input("5. Liquidez Diária Mín. (R$)", min_value=0.0, step=50000.0, key="liq_min")
 pat_min = st.sidebar.number_input("6. Patrimônio Líq. Mín. (R$)", min_value=-10000000000.0, step=100000000.0, key="pat_min")
 tag_min = st.sidebar.slider("7. Tag Along Mínimo (%)", 0, 100, key="tag_min")
 ff_min = st.sidebar.slider("8. Free Float Mínimo (%)", 0.0, 100.0, key="ff_min")
