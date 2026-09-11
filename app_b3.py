@@ -294,6 +294,18 @@ admins_fii = (
     if "Administrador" in df_fiis.columns
     else []
 )
+taxas_adm_fii = (
+    sorted([str(x) for x in df_fiis["Taxa de adm"].unique() if pd.notna(x)])
+    if "Taxa de adm" in df_fiis.columns
+    else []
+)
+taxas_perf_fii = (
+    sorted(
+        [str(x) for x in df_fiis["Taxa de Performance"].unique() if pd.notna(x)]
+    )
+    if "Taxa de Performance" in df_fiis.columns
+    else []
+)
 
 
 def limpar_filtros_fiis():
@@ -302,6 +314,8 @@ def limpar_filtros_fiis():
   st.session_state.fii_gestao = gestoes_fii
   st.session_state.fii_multi = multi_fii
   st.session_state.fii_admin = admins_fii
+  st.session_state.fii_taxa_adm = taxas_adm_fii
+  st.session_state.fii_taxa_perf = taxas_perf_fii
   st.session_state.fii_pvp = (0.0, 2.0)
   st.session_state.fii_dy = 0.0
   st.session_state.fii_vacancia = 100.0
@@ -369,6 +383,12 @@ fii_pat_min = st.sidebar.number_input(
 )
 fii_admin_filtro = st.sidebar.multiselect(
     "14. Administrador", admins_fii, key="fii_admin"
+)
+fii_taxa_adm_filtro = st.sidebar.multiselect(
+    "15. Taxa de Administração", taxas_adm_fii, key="fii_taxa_adm"
+)
+fii_taxa_perf_filtro = st.sidebar.multiselect(
+    "16. Taxa de Performance", taxas_perf_fii, key="fii_taxa_perf"
 )
 
 # -----------------------------------------------------------------------------
@@ -591,6 +611,12 @@ if not df_fiis.empty:
     cond_fiis &= df_fiis["Multi-inquilino"].isin(fii_multi_filtro)
   if "Administrador" in df_fiis.columns:
     cond_fiis &= df_fiis["Administrador"].isin(fii_admin_filtro)
+  if "Taxa de adm" in df_fiis.columns:
+    cond_fiis &= df_fiis["Taxa de adm"].astype(str).isin(fii_taxa_adm_filtro)
+  if "Taxa de Performance" in df_fiis.columns:
+    cond_fiis &= (
+        df_fiis["Taxa de Performance"].astype(str).isin(fii_taxa_perf_filtro)
+    )
   if "P/VP" in df_fiis.columns:
     cond_fiis &= df_fiis["P/VP"].between(fii_pvp_min, fii_pvp_max)
   if "DY 12M Acumulado" in df_fiis.columns:
