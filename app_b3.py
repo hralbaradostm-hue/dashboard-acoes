@@ -79,8 +79,37 @@ def load_data():
     if "Patrimônio Líquido" in df.columns:
         df = df[df["Patrimônio Líquido"] > 0].copy()
 
-    # 1. ADICIONA A COLUNA DE LOGOTIPOS (Mapeamento via repositório de ativos)
-    df["Logo"] = df["Ticker"].apply(lambda t: f"https://s3-symbol-logo.tradingview.com/brazil/{str(t).lower()}.svg")
+    # --- FUNÇÃO INTELIGENTE DE LOGOTIPOS (COMPATÍVEL COM PNG NO STREAMLIT) ---
+    def obter_logo(ticker):
+        t = str(ticker).upper().strip()
+        
+        # Mapeamento robusto com URLs em PNG direto (garante compatibilidade visual no Streamlit)
+        logos_map = {
+            "PETR4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/PETR4_BZ.png",
+            "PETR3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/PETR4_BZ.png",
+            "VALE3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/VALE3_BZ.png",
+            "ITUB4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITUB4_BZ.png",
+            "BBDC4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/BBDC4_BZ.png",
+            "BBDC3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/BBDC4_BZ.png",
+            "BBAS3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/BBAS3_BZ.png",
+            "ABEV3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ABEV3_BZ.png",
+            "WEGE3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/WEGE3_BZ.png",
+            "ITSA4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITSA4_BZ.png",
+            "RENT3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/RENT3_BZ.png",
+            "B3SA3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/B3SA3_BZ.png",
+            "SUZB3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/SUZB3_BZ.png",
+            "JBSS3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/JBSS3_BZ.png",
+            "RADL3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/RADL3_BZ.png"
+        }
+        
+        if t in logos_map:
+            return logos_map[t]
+        
+        # Ícone corporativo genérico padrão em PNG para os demais ativos (evita células vazias)
+        return "https://cdn-icons-png.flaticon.com/128/2910/2910791.png"
+
+    # 1. ADICIONA A COLUNA DE LOGOS
+    df["Logo"] = df["Ticker"].apply(obter_logo)
 
     # 2. CRIA O INDICADOR CHOWDER RULE
     df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
