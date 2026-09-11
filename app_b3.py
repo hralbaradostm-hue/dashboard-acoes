@@ -357,4 +357,3 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-```[cite: 1]
