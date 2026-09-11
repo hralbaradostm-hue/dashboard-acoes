@@ -70,6 +70,7 @@ st.markdown("""
     }
     </style>
 """, unsafe_allow_html=True)
+
 @st.cache_data
 def load_data():
     df = pd.read_excel("acoes_b3.xlsx")
@@ -356,3 +357,4 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
+```[cite: 1]
