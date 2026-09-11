@@ -19,7 +19,7 @@ def load_cofre_acoes():
 def load_acoes_data():
     try:
         df = pd.read_excel("acoes_b3.xlsx")
-    except Exception as e:
+    except Exception:
         return pd.DataFrame()
     
     if "Patrimônio Líquido" in df.columns:
@@ -56,7 +56,7 @@ def load_fiis_data():
     try:
         df = pd.read_excel("fiis_b3.xlsx")
     except Exception:
-        # FALLBACK AUTOMÁTICO: Caso o arquivo não esteja no GitHub, carrega os dados em memória
+        # Fallback automático: Se o arquivo Excel não for localizado no GitHub, carrega os dados em memória
         dados_default = {
             "Ticker": ["HGLG11", "KNCR11", "MXRF11", "XPML11", "BTLG11", "VISC11", "TRXF11", "ALZR11", "CPTS11", "KNSC11"],
             "Tipo de fundo": ["Tijolo", "Papel", "Papel", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Papel", "Papel"],
@@ -164,7 +164,7 @@ st.sidebar.title("🛡️ Terminal Albarado")
 st.sidebar.caption("Scanner Fundamentalista B3")
 
 # =============================================================================
-# 1. FILTROS COMPLETOS DE AÇÕES (1 a 19)
+# 1. FILTROS DE AÇÕES (1 a 19)
 # =============================================================================
 st.sidebar.markdown("## 🎯 Filtros de Ações")
 
@@ -219,7 +219,7 @@ soma_yc_min = st.sidebar.slider("18. Soma Yield + CAGR Mín. (%)", -50.0, 100.0,
 margem_seg_min = st.sidebar.slider("19. Margem de Segurança Mín. (%)", -100.0, 100.0, key="margem_seg_min")
 
 # =============================================================================
-# 2. FILTROS COMPLETOS DE FIIS (POSICIONADOS ABAIXO DAS AÇÕES)
+# 2. FILTROS DE FIIS (POSICIONADOS ABAIXO DAS AÇÕES)
 # =============================================================================
 st.sidebar.markdown("---")
 st.sidebar.markdown("## 🏢 Filtros de FIIs")
