@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import io
 import yfinance as yf
-import re
-import unicodedata
 
 @st.cache_data
 def load_cofre():
@@ -80,71 +78,6 @@ def load_data():
     # --- FILTRO BASE DE SEGURANÇA ---
     if "Patrimônio Líquido" in df.columns:
         df = df[df["Patrimônio Líquido"] > 0].copy()
-
-    # --- GERADOR DINÂMICO DE LOGOTIPOS (100% DE COBERTURA VIA CDN) ---
-    def obter_logo(row):
-        ticker = str(row.get("Ticker", "")).upper().strip()
-        
-        # 1. Mapa direto de altíssima velocidade para Blue Chips
-        logos_map = {
-            "PETR4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/PETR4_BZ.png",
-            "PETR3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/PETR4_BZ.png",
-            "VALE3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/VALE3_BZ.png",
-            "ITUB4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITUB4_BZ.png",
-            "ITUB3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITUB4_BZ.png",
-            "BBDC4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/BBDC4_BZ.png",
-            "BBDC3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/BBDC4_BZ.png",
-            "BBAS3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/BBAS3_BZ.png",
-            "ABEV3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ABEV3_BZ.png",
-            "WEGE3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/WEGE3_BZ.png",
-            "ITSA4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITSA4_BZ.png",
-            "ITSA3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ITSA4_BZ.png",
-            "RENT3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/RENT3_BZ.png",
-            "B3SA3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/B3SA3_BZ.png",
-            "SUZB3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/SUZB3_BZ.png",
-            "JBSS3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/JBSS3_BZ.png",
-            "RADL3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/RADL3_BZ.png",
-            "EGIE3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/EGIE3_BZ.png",
-            "CPLE6": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/CPLE6_BZ.png",
-            "TAEE11": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/TAEE11_BZ.png",
-            "TRPL4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/TRPL4_BZ.png",
-            "SANB11": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/SANB11_BZ.png",
-            "CSAN3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/CSAN3_BZ.png",
-            "PRIO3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/PRIO3_BZ.png",
-            "VBBR3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/VBBR3_BZ.png",
-            "UGPA3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/UGPA3_BZ.png",
-            "GGBR4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/GGBR4_BZ.png",
-            "GOAU4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/GOAU4_BZ.png",
-            "USIM5": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/USIM5_BZ.png",
-            "CSNA3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/CSNA3_BZ.png",
-            "KLBN11": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/KLBN11_BZ.png",
-            "EMBR3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/EMBR3_BZ.png",
-            "MULT3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/MULT3_BZ.png",
-            "LREN3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/LREN3_BZ.png",
-            "MGLU3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/MGLU3_BZ.png",
-            "NTCO3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/NTCO3_BZ.png",
-            "HAPV3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/HAPV3_BZ.png",
-            "FLRY3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/FLRY3_BZ.png",
-            "SBSP3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/SBSP3_BZ.png",
-            "ELET3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ELET3_BZ.png",
-            "ELET6": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/ELET6_BZ.png",
-            "CCRO3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/CCRO3_BZ.png",
-            "RAIZ4": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/RAIZ4_BZ.png",
-            "SMTO3": "https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/SMTO3_BZ.png"
-        }
-        
-        if ticker in logos_map:
-            return logos_map[ticker]
-        
-        # 2. Busca dinâmica na CDN global pelo padrão de ticker da B3 (_BZ)
-        if len(ticker) >= 4 and ticker[:4].isalpha():
-            return f"https://assets.msn.com/weathermapdata/1/sources/logos/stocks/128/{ticker}_BZ.png"
-        
-        # 3. Ícone corporativo genérico como fallback absoluto
-        return "https://cdn-icons-png.flaticon.com/128/2910/2910791.png"
-
-    # Aplicação da busca dinâmica
-    df["Logo"] = df.apply(obter_logo, axis=1)
 
     # --- DEFESA CONTRA KEYERROR (CÁLCULOS SEGUROS DE INDICADORES) ---
     if "Dividend Yield" in df.columns and "Cresc. 5 Anos (%)" in df.columns:
@@ -259,7 +192,7 @@ if gov_filtro != "Ambos" and "Governo Majoritário" in df_filtrado.columns:
     df_filtrado = df_filtrado[df_filtrado["Governo Majoritário"] == gov_filtro]
 
 colunas_exibicao = [
-    "Logo", "Ticker", "Empresa", "Setor", "Cotação", "Preço Teto (6%)", "Margem de Segurança (%)",
+    "Ticker", "Empresa", "Setor", "Cotação", "Preço Teto (6%)", "Margem de Segurança (%)",
     "Dividend Yield", "Dividendo Pago (R$)", "Tipo", "Segmento de Listagem", 
     "Tag Along (%)", "Free Float (%)", "Governo Majoritário", "Dívida Líquida/EBIT",
     "P/L", "P/VP", "Cresc. 5 Anos (%)", "Yield + CAGR (%)", 
@@ -338,11 +271,10 @@ if total_aprovadas > 0:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Tabela com as Colunas e Logotipos em Destaque
+# Tabela sem a coluna Logo
 st.dataframe(
     df_filtrado,
     column_config={
-        "Logo": st.column_config.ImageColumn("Logo", width="small"),
         "Cotação": st.column_config.NumberColumn(format="R$ %.2f"),
         "Preço Teto (6%)": st.column_config.NumberColumn(format="R$ %.2f"),
         "Dividendo Pago (R$)": st.column_config.NumberColumn(format="R$ %.2f"),
