@@ -133,81 +133,115 @@ st.markdown("""
         color: #38bdf8;
         margin-top: 5px;
     }
-    .section-header {
-        color: #38bdf8;
-        font-weight: 700;
-        margin-top: 30px;
-        margin-bottom: 15px;
-    }
     </style>
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL (FILTROS DE AÇÕES E FIIS ORGANIZADOS EM EXPANDERS)
+# BARRA LATERAL (FILTROS DE AÇÕES E FIIS EMPILHADOS)
 # -----------------------------------------------------------------------------
 st.sidebar.title("🛡️ Terminal Albarado")
 st.sidebar.caption("Scanner Fundamentalista B3")
 
-# --- EXPANDER 1: FILTROS DE AÇÕES ---
-with st.sidebar.expander("📈 Filtros de Ações", expanded=True):
-    tipos_acoes = list(df_acoes["Tipo"].unique()) if "Tipo" in df_acoes.columns else []
-    segmentos_acoes = list(df_acoes["Segmento de Listagem"].unique()) if "Segmento de Listagem" in df_acoes.columns else []
-    setores_acoes = sorted(list(df_acoes["Setor"].unique())) if "Setor" in df_acoes.columns else []
+# =============================================================================
+# 1. FILTROS COMPLETOS DE AÇÕES (1 a 19)
+# =============================================================================
+st.sidebar.markdown("## 🎯 Filtros de Ações")
 
-    def limpar_filtros_acoes():
-        st.session_state.tipo_filtro = tipos_acoes
-        st.session_state.seg_filtro = segmentos_acoes
-        st.session_state.gov_filtro = "Ambos"
-        st.session_state.setor_filtro = setores_acoes
-        st.session_state.liq_min = 0.0
-        st.session_state.pat_min = 0.0
-        st.session_state.dy_min = 0.0
-        st.session_state.margem_seg_min = -100.0
+tipos_acoes = list(df_acoes["Tipo"].unique()) if "Tipo" in df_acoes.columns else []
+segmentos_acoes = list(df_acoes["Segmento de Listagem"].unique()) if "Segmento de Listagem" in df_acoes.columns else []
+setores_acoes = sorted(list(df_acoes["Setor"].unique())) if "Setor" in df_acoes.columns else []
 
-    if "tipo_filtro" not in st.session_state:
-        limpar_filtros_acoes()
+def limpar_filtros_acoes():
+    st.session_state.tipo_filtro = tipos_acoes
+    st.session_state.seg_filtro = segmentos_acoes
+    st.session_state.gov_filtro = "Ambos"
+    st.session_state.setor_filtro = setores_acoes
+    st.session_state.liq_min = 0.0
+    st.session_state.pat_min = 0.0
+    st.session_state.tag_min = 0
+    st.session_state.ff_min = 0.0
+    st.session_state.div_max = 100.0
+    st.session_state.pl_range = (-50.0, 150.0)
+    st.session_state.pvp_range = (-10.0, 20.0)
+    st.session_state.roe_min = -50.0
+    st.session_state.roic_min = -50.0
+    st.session_state.mrg_min = -50.0
+    st.session_state.mrg_ebit_min = -50.0
+    st.session_state.cresc_min = -50.0
+    st.session_state.dy_min = 0.0
+    st.session_state.soma_yc_min = -50.0
+    st.session_state.margem_seg_min = -100.0
 
-    st.button("🔄 Resetar Ações", on_click=limpar_filtros_acoes, use_container_width=True)
-    tipo_filtro = st.multiselect("Tipo de Ação", tipos_acoes, key="tipo_filtro")
-    seg_filtro = st.multiselect("Segmento B3", segmentos_acoes, key="seg_filtro")
-    gov_filtro = st.radio("Governo Majoritário", ["Não", "Sim", "Ambos"], key="gov_filtro")
-    setor_filtro = st.multiselect("Setor de Atuação", setores_acoes, key="setor_filtro")
-    liq_min = st.number_input("Liquidez Diária Mín. (R$)", min_value=0.0, step=50000.0, key="liq_min")
-    pat_min = st.number_input("Patrimônio Líq. Mín. (R$)", min_value=0.0, step=100000000.0, key="pat_min")
-    dy_min = st.slider("Dividend Yield Mín. (%)", 0.0, 50.0, key="dy_min")
-    margem_seg_min = st.slider("Margem de Segurança Mín. (%)", -100.0, 100.0, key="margem_seg_min")
+if "tipo_filtro" not in st.session_state:
+    limpar_filtros_acoes()
 
-# --- EXPANDER 2: FILTROS DE FIIS ---
-with st.sidebar.expander("🏢 Filtros de FIIs", expanded=False):
-    tipos_fii = list(df_fiis["Tipo de fundo"].unique()) if "Tipo de fundo" in df_fiis.columns else []
-    segmentos_fii = sorted(list(df_fiis["Segmento de Atuação"].unique())) if "Segmento de Atuação" in df_fiis.columns else []
-    gestoes_fii = list(df_fiis["Tipo de Gestão"].unique()) if "Tipo de Gestão" in df_fiis.columns else []
-    multi_fii = list(df_fiis["Multi-inquilino"].unique()) if "Multi-inquilino" in df_fiis.columns else []
+st.sidebar.button("🔄 Resetar Filtros de Ações", on_click=limpar_filtros_acoes, use_container_width=True)
 
-    def limpar_filtros_fiis():
-        st.session_state.fii_tipo = tipos_fii
-        st.session_state.fii_seg = segmentos_fii
-        st.session_state.fii_gestao = gestoes_fii
-        st.session_state.fii_multi = multi_fii
-        st.session_state.fii_pvp = (0.0, 2.0)
-        st.session_state.fii_dy = 0.0
-        st.session_state.fii_vacancia = 100.0
-        st.session_state.fii_cris = 0.0
-        st.session_state.fii_liq = 0.0
+tipo_filtro = st.sidebar.multiselect("1. Tipo de Ação", tipos_acoes, key="tipo_filtro")
+seg_filtro = st.sidebar.multiselect("2. Segmento B3", segmentos_acoes, key="seg_filtro")
+gov_filtro = st.sidebar.radio("3. Governo Majoritário", ["Não", "Sim", "Ambos"], key="gov_filtro")
+setor_filtro = st.sidebar.multiselect("4. Setor de Atuação", setores_acoes, key="setor_filtro")
+liq_min = st.sidebar.number_input("5. Liquidez Diária Mín. (R$)", min_value=0.0, step=50000.0, key="liq_min")
+pat_min = st.sidebar.number_input("6. Patrimônio Líq. Mín. (R$)", min_value=-10000000000.0, step=100000000.0, key="pat_min")
+tag_min = st.sidebar.slider("7. Tag Along Mínimo (%)", 0, 100, key="tag_min")
+ff_min = st.sidebar.slider("8. Free Float Mínimo (%)", 0.0, 100.0, key="ff_min")
+div_max = st.sidebar.number_input("9. Dívida Líq./EBIT Máxima (x)", min_value=-50.0, max_value=100.0, key="div_max")
+pl_min, pl_max = st.sidebar.slider("10. P/L (Preço/Lucro)", -50.0, 150.0, key="pl_range")
+pvp_min, pvp_max = st.sidebar.slider("11. P/VP (Preço/VPA)", -10.0, 20.0, key="pvp_range")
+roe_min = st.sidebar.slider("12. ROE Mínimo (%)", -50.0, 100.0, key="roe_min")
+roic_min = st.sidebar.slider("13. ROIC Mínimo (%)", -50.0, 100.0, key="roic_min")
+mrg_min = st.sidebar.slider("14. Margem Líquida Mín. (%)", -50.0, 100.0, key="mrg_min")
+mrg_ebit_min = st.sidebar.slider("15. Margem EBIT Mín. (%)", -50.0, 100.0, key="mrg_ebit_min")
+cresc_min = st.sidebar.slider("16. Cresc. 5 Anos Mín. (%)", -50.0, 100.0, key="cresc_min")
+dy_min = st.sidebar.slider("17. Dividend Yield Mín. (%)", 0.0, 50.0, key="dy_min")
+soma_yc_min = st.sidebar.slider("18. Soma Yield + CAGR Mín. (%)", -50.0, 100.0, key="soma_yc_min")
+margem_seg_min = st.sidebar.slider("19. Margem de Segurança Mín. (%)", -100.0, 100.0, key="margem_seg_min")
 
-    if "fii_tipo" not in st.session_state:
-        limpar_filtros_fiis()
+# =============================================================================
+# 2. FILTROS COMPLETOS DE FIIS (POSICIONADOS ABAIXO DAS AÇÕES)
+# =============================================================================
+st.sidebar.markdown("---")
+st.sidebar.markdown("## 🏢 Filtros de FIIs")
 
-    st.button("🔄 Resetar FIIs", on_click=limpar_filtros_fiis, use_container_width=True)
-    fii_tipo_filtro = st.multiselect("Tipo de Fundo", tipos_fii, key="fii_tipo")
-    fii_seg_filtro = st.multiselect("Segmento", segmentos_fii, key="fii_seg")
-    fii_gestao_filtro = st.multiselect("Gestão", gestoes_fii, key="fii_gestao")
-    fii_multi_filtro = st.multiselect("Multi-inquilino", multi_fii, key="fii_multi")
-    fii_pvp_min, fii_pvp_max = st.slider("Faixa P/VP", 0.0, 2.0, key="fii_pvp")
-    fii_dy_min = st.slider("DY 12M Mínimo (%)", 0.0, 25.0, key="fii_dy")
-    fii_vac_max = st.slider("Vacância Máxima (%)", 0.0, 100.0, key="fii_vacancia")
-    fii_cris_min = st.slider("% Mín. em CRIs (Papel)", 0.0, 100.0, key="fii_cris")
-    fii_liq_min = st.number_input("Liquidez FII Mín. (R$)", min_value=0.0, step=50000.0, key="fii_liq")
+tipos_fii = list(df_fiis["Tipo de fundo"].unique()) if "Tipo de fundo" in df_fiis.columns else []
+segmentos_fii = sorted(list(df_fiis["Segmento de Atuação"].unique())) if "Segmento de Atuação" in df_fiis.columns else []
+gestoes_fii = list(df_fiis["Tipo de Gestão"].unique()) if "Tipo de Gestão" in df_fiis.columns else []
+multi_fii = list(df_fiis["Multi-inquilino"].unique()) if "Multi-inquilino" in df_fiis.columns else []
+admins_fii = sorted(list(df_fiis["Administrador"].unique())) if "Administrador" in df_fiis.columns else []
+
+def limpar_filtros_fiis():
+    st.session_state.fii_tipo = tipos_fii
+    st.session_state.fii_seg = segmentos_fii
+    st.session_state.fii_gestao = gestoes_fii
+    st.session_state.fii_multi = multi_fii
+    st.session_state.fii_admin = admins_fii
+    st.session_state.fii_pvp = (0.0, 2.0)
+    st.session_state.fii_dy = 0.0
+    st.session_state.fii_vacancia = 100.0
+    st.session_state.fii_cris = 0.0
+    st.session_state.fii_imoveis = 0
+    st.session_state.fii_tempo = 0
+    st.session_state.fii_liq = 0.0
+    st.session_state.fii_pat = 0.0
+
+if "fii_tipo" not in st.session_state:
+    limpar_filtros_fiis()
+
+st.sidebar.button("🔄 Resetar Filtros de FIIs", on_click=limpar_filtros_fiis, use_container_width=True)
+
+fii_tipo_filtro = st.sidebar.multiselect("1. Tipo de Fundo (FII)", tipos_fii, key="fii_tipo")
+fii_seg_filtro = st.sidebar.multiselect("2. Segmento de Atuação", segmentos_fii, key="fii_seg")
+fii_gestao_filtro = st.sidebar.multiselect("3. Tipo de Gestão", gestoes_fii, key="fii_gestao")
+fii_multi_filtro = st.sidebar.multiselect("4. Multi-inquilino", multi_fii, key="fii_multi")
+fii_pvp_min, fii_pvp_max = st.sidebar.slider("5. Faixa de P/VP", 0.0, 2.0, key="fii_pvp")
+fii_dy_min = st.sidebar.slider("6. DY 12M Acumulado Mín. (%)", 0.0, 25.0, key="fii_dy")
+fii_vac_max = st.sidebar.slider("7. Vacância Máxima (%)", 0.0, 100.0, key="fii_vacancia")
+fii_cris_min = st.sidebar.slider("8. % Mínimo em CRIs (Papel)", 0.0, 100.0, key="fii_cris")
+fii_imoveis_min = st.sidebar.number_input("9. Qtd. Mínima de Imóveis", min_value=0, step=1, key="fii_imoveis")
+fii_tempo_min = st.sidebar.number_input("10. Tempo Mín. Listagem (Anos)", min_value=0, step=1, key="fii_tempo")
+fii_liq_min = st.sidebar.number_input("11. Liquidez Diária Mín. (R$)", min_value=0.0, step=50000.0, key="fii_liq")
+fii_pat_min = st.sidebar.number_input("12. Patrimônio Líq. Mín. (R$)", min_value=0.0, step=50000000.0, key="fii_pat")
+fii_admin_filtro = st.sidebar.multiselect("13. Administrador", admins_fii, key="fii_admin")
 
 # -----------------------------------------------------------------------------
 # CABEÇALHO DA APLICAÇÃO
@@ -220,14 +254,25 @@ st.markdown("---")
 # =============================================================================
 st.subheader("📈 Scanner Fundamentalista de Ações")
 
-# Filtragem de Ações
+# Motor de Filtragem de Ações
 cond_acoes = pd.Series(True, index=df_acoes.index)
 if "Tipo" in df_acoes.columns: cond_acoes &= df_acoes["Tipo"].isin(tipo_filtro)
 if "Segmento de Listagem" in df_acoes.columns: cond_acoes &= df_acoes["Segmento de Listagem"].isin(seg_filtro)
 if "Setor" in df_acoes.columns: cond_acoes &= df_acoes["Setor"].isin(setor_filtro)
 if "Liquidez Diária" in df_acoes.columns: cond_acoes &= df_acoes["Liquidez Diária"] >= liq_min
 if "Patrimônio Líquido" in df_acoes.columns: cond_acoes &= df_acoes["Patrimônio Líquido"] >= pat_min
+if "Tag Along (%)" in df_acoes.columns: cond_acoes &= df_acoes["Tag Along (%)"] >= tag_min
+if "Free Float (%)" in df_acoes.columns: cond_acoes &= df_acoes["Free Float (%)"] >= ff_min
+if "Dívida Líquida/EBIT" in df_acoes.columns: cond_acoes &= df_acoes["Dívida Líquida/EBIT"] <= div_max
+if "P/L" in df_acoes.columns: cond_acoes &= df_acoes["P/L"].between(pl_min, pl_max)
+if "P/VP" in df_acoes.columns: cond_acoes &= df_acoes["P/VP"].between(pvp_min, pvp_max)
+if "ROE" in df_acoes.columns: cond_acoes &= df_acoes["ROE"] >= roe_min
+if "ROIC" in df_acoes.columns: cond_acoes &= df_acoes["ROIC"] >= roic_min
+if "Margem Líquida" in df_acoes.columns: cond_acoes &= df_acoes["Margem Líquida"] >= mrg_min
+if "Margem EBIT" in df_acoes.columns: cond_acoes &= df_acoes["Margem EBIT"] >= mrg_ebit_min
+if "Cresc. 5 Anos (%)" in df_acoes.columns: cond_acoes &= df_acoes["Cresc. 5 Anos (%)"] >= cresc_min
 if "Dividend Yield" in df_acoes.columns: cond_acoes &= df_acoes["Dividend Yield"] >= dy_min
+if "Yield + CAGR (%)" in df_acoes.columns: cond_acoes &= df_acoes["Yield + CAGR (%)"] >= soma_yc_min
 if "Margem de Segurança (%)" in df_acoes.columns: cond_acoes &= df_acoes["Margem de Segurança (%)"] >= margem_seg_min
 if gov_filtro != "Ambos" and "Governo Majoritário" in df_acoes.columns:
     cond_acoes &= df_acoes["Governo Majoritário"] == gov_filtro
@@ -267,10 +312,18 @@ st.dataframe(
         "Margem de Segurança (%)": st.column_config.NumberColumn(format="%.2f %%"),
         "Liquidez Diária": st.column_config.NumberColumn(format="R$ %.2f"),
         "Patrimônio Líquido": st.column_config.NumberColumn(format="R$ %.2f"),
-        "Dividend Yield": st.column_config.NumberColumn(format="%.2f %%"),
+        "Tag Along (%)": st.column_config.NumberColumn(format="%.0f %%"),
+        "Free Float (%)": st.column_config.NumberColumn(format="%.2f %%"),
         "ROE": st.column_config.NumberColumn(format="%.2f %%"),
+        "ROIC": st.column_config.NumberColumn(format="%.2f %%"),
+        "Margem Líquida": st.column_config.NumberColumn(format="%.2f %%"),
+        "Margem EBIT": st.column_config.NumberColumn(format="%.2f %%"),
+        "Dividend Yield": st.column_config.NumberColumn(format="%.2f %%"),
+        "Cresc. 5 Anos (%)": st.column_config.NumberColumn(format="%.2f %%"),
+        "Yield + CAGR (%)": st.column_config.NumberColumn(format="%.2f %%"),
         "P/L": st.column_config.NumberColumn(format="%.2f x"),
-        "P/VP": st.column_config.NumberColumn(format="%.2f x")
+        "P/VP": st.column_config.NumberColumn(format="%.2f x"),
+        "Dívida Líquida/EBIT": st.column_config.NumberColumn(format="%.2f x")
     },
     hide_index=True
 )
@@ -313,17 +366,21 @@ st.markdown("---")
 st.subheader("🏢 Scanner Fundamentalista de FIIs (Fundos Imobiliários)")
 
 if not df_fiis.empty:
-    # Filtragem FIIs
+    # Motor de Filtragem de FIIs
     cond_fiis = pd.Series(True, index=df_fiis.index)
     if "Tipo de fundo" in df_fiis.columns: cond_fiis &= df_fiis["Tipo de fundo"].isin(fii_tipo_filtro)
     if "Segmento de Atuação" in df_fiis.columns: cond_fiis &= df_fiis["Segmento de Atuação"].isin(fii_seg_filtro)
     if "Tipo de Gestão" in df_fiis.columns: cond_fiis &= df_fiis["Tipo de Gestão"].isin(fii_gestao_filtro)
     if "Multi-inquilino" in df_fiis.columns: cond_fiis &= df_fiis["Multi-inquilino"].isin(fii_multi_filtro)
+    if "Administrador" in df_fiis.columns: cond_fiis &= df_fiis["Administrador"].isin(fii_admin_filtro)
     if "P/VP" in df_fiis.columns: cond_fiis &= df_fiis["P/VP"].between(fii_pvp_min, fii_pvp_max)
     if "DY 12M Acumulado" in df_fiis.columns: cond_fiis &= df_fiis["DY 12M Acumulado"] >= fii_dy_min
     if "Vacância" in df_fiis.columns: cond_fiis &= df_fiis["Vacância"] <= fii_vac_max
     if "Para FII de Papel % em CRIs" in df_fiis.columns: cond_fiis &= df_fiis["Para FII de Papel % em CRIs"] >= fii_cris_min
+    if "Quantidade de Imóveis" in df_fiis.columns: cond_fiis &= df_fiis["Quantidade de Imóveis"] >= fii_imoveis_min
+    if "Tempo de listagem" in df_fiis.columns: cond_fiis &= df_fiis["Tempo de listagem"] >= fii_tempo_min
     if "Liquidez diária" in df_fiis.columns: cond_fiis &= df_fiis["Liquidez diária"] >= fii_liq_min
+    if "Patrimônio Líquido" in df_fiis.columns: cond_fiis &= df_fiis["Patrimônio Líquido"] >= fii_pat_min
 
     df_fiis_filtrado = df_fiis[cond_fiis]
 
