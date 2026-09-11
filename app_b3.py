@@ -12,7 +12,7 @@ st.set_page_config(page_title="Terminal Albarado | Prudence Invest", layout="wid
 def load_cofre_acoes():
     try:
         return pd.read_excel("cofre_lucros.xlsx")
-    except:
+    except Exception:
         return pd.DataFrame()
 
 @st.cache_data
@@ -25,7 +25,6 @@ def load_acoes_data():
     if "Patrimônio Líquido" in df.columns:
         df = df[df["Patrimônio Líquido"] > 0].copy()
 
-    # Cálculos defensivos para Ações
     if "Dividend Yield" in df.columns and "Cresc. 5 Anos (%)" in df.columns:
         df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
     else:
@@ -52,74 +51,122 @@ def load_acoes_data():
     return df
 
 @st.cache_data
-def load_fiis_data():
+def load_fiis_data_v5():
     try:
         df = pd.read_excel("fiis_b3.xlsx")
     except Exception:
-        # Fallback automático com dados padrão em memória
         dados_default = {
-            "Ticker": ["HGLG11", "KNCR11", "MXRF11", "XPML11", "BTLG11", "VISC11", "TRXF11", "ALZR11", "CPTS11", "KNSC11"],
-            "Tipo de fundo": ["Tijolo", "Papel", "Papel", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Papel", "Papel"],
-            "Segmento de Atuação": ["Logística", "Títulos e Val. Mob.", "Títulos e Val. Mob.", "Shoppings", "Logística", "Shoppings", "Híbrido", "Híbrido", "Títulos e Val. Mob.", "Títulos e Val. Mob."],
-            "Cotação": [161.50, 102.30, 10.45, 112.80, 101.20, 120.50, 108.90, 116.40, 8.55, 91.20],
-            "P/VP": [0.98, 1.01, 1.03, 0.97, 0.99, 0.96, 1.02, 1.04, 0.91, 0.98],
-            "DY 12M Acumulado": [9.35, 12.40, 13.10, 9.75, 10.15, 9.60, 10.50, 9.80, 12.85, 12.20],
-            "Liquidez diária": [4500000.0, 9200000.0, 12500000.0, 3800000.0, 5200000.0, 3100000.0, 2600000.0, 2100000.0, 6400000.0, 4100000.0],
-            "Patrimônio Líquido": [3600000000.0, 5800000000.0, 3300000000.0, 3700000000.0, 3100000000.0, 2500000000.0, 1500000000.0, 1100000000.0, 2800000000.0, 1200000000.0],
-            "Quantidade de Imóveis": [25, 0, 0, 22, 18, 20, 50, 15, 0, 0],
-            "Quantidade de CRIs": [0, 45, 38, 0, 0, 0, 0, 0, 52, 40],
-            "Multi-inquilino": ["Sim", "Não", "Não", "Sim", "Sim", "Sim", "Sim", "Sim", "Não", "Não"],
-            "Vacância": [4.5, 0.0, 0.0, 5.2, 2.1, 4.0, 1.0, 0.0, 0.0, 0.0],
-            "Para FII de Papel % em CRIs": [0.0, 95.0, 85.0, 0.0, 0.0, 0.0, 0.0, 0.0, 91.0, 93.5],
-            "Administrador": ["Credit Suisse", "Kinea", "BTG Pactual", "BTG Pactual", "BTG Pactual", "BRL Trust", "BRL Trust", "BTG Pactual", "BTG Pactual", "Kinea"],
-            "Tempo de listagem": [14, 12, 10, 6, 8, 10, 5, 6, 5, 4],
-            "Tipo de Gestão": ["Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa"],
-            "Taxa de adm": ["0.60% a.a.", "1.00% a.a.", "0.90% a.a.", "0.95% a.a.", "0.90% a.a.", "1.00% a.a.", "1.00% a.a.", "0.20% a.a.", "1.05% a.a.", "1.00% a.a."],
-            "Taxa de Performance": ["Não tem", "Não tem", "Não tem", "20% exceder IFIX", "Não tem", "20% exceder IFIX", "20% exceder IPCA+6%", "20% exceder IPCA+6%", "Não tem", "Não tem"],
-            "Benchmark": ["IFIX", "CDI", "CDI", "IFIX", "IFIX", "IFIX", "IPCA + 6%", "IPCA + 6%", "CDI", "CDI"]
+            "Ticker": [
+                "HGLG11", "KNCR11", "MXRF11", "XPML11", "BTLG11", "VISC11", "TRXF11", "ALZR11", "CPTS11", "KNSC11",
+                "HGCR11", "XPIN11", "VRTA11", "TGAR11", "RBRR11", "HGBS11", "KNIP11", "RECT11", "MCCI11", "VINO11",
+                "LVBI11", "PVBI11", "BRCR11", "JSRE11", "HSML11", "VILG11", "IRDM11", "VGIP11", "RBRF11", "BCFF11"
+            ],
+            "Tipo de fundo": [
+                "Tijolo", "Papel", "Papel", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Papel", "Papel",
+                "Papel", "Tijolo", "Papel", "Híbrido", "Papel", "Tijolo", "Papel", "Tijolo", "Papel", "Tijolo",
+                "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Papel", "Papel", "Híbrido", "Híbrido"
+            ],
+            "Segmento de Atuação": [
+                "Logística", "Títulos e Val. Mob.", "Títulos e Val. Mob.", "Shoppings", "Logística", "Shoppings", "Híbrido", "Híbrido", "Títulos e Val. Mob.", "Títulos e Val. Mob.",
+                "Títulos e Val. Mob.", "Logística", "Títulos e Val. Mob.", "Desenvolvimento", "Títulos e Val. Mob.", "Shoppings", "Títulos e Val. Mob.", "Lajes Corporativas", "Títulos e Val. Mob.", "Lajes Corporativas",
+                "Logística", "Lajes Corporativas", "Lajes Corporativas", "Lajes Corporativas", "Shoppings", "Logística", "Títulos e Val. Mob.", "Títulos e Val. Mob.", "Títulos e Val. Mob.", "Títulos e Val. Mob."
+            ],
+            "Cotação": [
+                161.50, 102.30, 10.45, 112.80, 101.20, 120.50, 108.90, 116.40, 8.55, 91.20,
+                103.10, 78.40, 88.50, 118.20, 89.10, 220.00, 94.50, 42.10, 86.30, 7.80,
+                114.30, 89.20, 56.40, 68.10, 92.50, 89.00, 72.40, 88.00, 74.20, 8.90
+            ],
+            "P/VP": [
+                0.98, 1.01, 1.03, 0.97, 0.99, 0.96, 1.02, 1.04, 0.91, 0.98,
+                0.97, 0.78, 0.92, 0.98, 0.93, 0.99, 0.95, 0.52, 0.91, 0.65,
+                0.96, 0.89, 0.58, 0.62, 0.94, 0.81, 0.82, 0.92, 0.85, 0.88
+            ],
+            "DY 12M Acumulado": [
+                9.35, 12.40, 13.10, 9.75, 10.15, 9.60, 10.50, 9.80, 12.85, 12.20,
+                12.10, 11.20, 13.50, 14.20, 11.80, 8.90, 11.50, 14.80, 12.40, 10.10,
+                9.40, 9.10, 10.80, 9.90, 9.80, 9.50, 13.90, 12.70, 11.10, 10.50
+            ],
+            "Liquidez diária": [
+                4500000.0, 9200000.0, 12500000.0, 3800000.0, 5200000.0, 3100000.0, 2600000.0, 2100000.0, 6400000.0, 4100000.0,
+                1800000.0, 850000.0, 1200000.0, 2100000.0, 1900000.0, 1100000.0, 5400000.0, 620000.0, 1500000.0, 480000.0,
+                1300000.0, 2200000.0, 1400000.0, 1600000.0, 1900000.0, 2400000.0, 3100000.0, 1100000.0, 950000.0, 2800000.0
+            ],
+            "Patrimônio Líquido": [
+                3600000000.0, 5800000000.0, 3300000000.0, 3700000000.0, 3100000000.0, 2500000000.0, 1500000000.0, 1100000000.0, 2800000000.0, 1200000000.0,
+                1500000000.0, 750000000.0, 1400000000.0, 2100000000.0, 1300000000.0, 1600000000.0, 7100000000.0, 820000000.0, 1200000000.0, 890000000.0,
+                1400000000.0, 1200000000.0, 2900000000.0, 2100000000.0, 1500000000.0, 1700000000.0, 3200000000.0, 1000000000.0, 1300000000.0, 2000000000.0
+            ],
+            "Quantidade de Imóveis": [
+                25, 0, 0, 22, 18, 20, 50, 15, 0, 0,
+                0, 11, 0, 8, 0, 12, 0, 9, 0, 10,
+                10, 5, 11, 6, 7, 16, 0, 0, 0, 0
+            ],
+            "Quantidade de CRIs": [
+                0, 45, 38, 0, 0, 0, 0, 0, 52, 40,
+                35, 0, 42, 0, 31, 0, 65, 0, 28, 0,
+                0, 0, 0, 0, 0, 0, 48, 29, 0, 0
+            ],
+            "Multi-inquilino": [
+                "Sim", "Não", "Não", "Sim", "Sim", "Sim", "Sim", "Sim", "Não", "Não",
+                "Não", "Sim", "Não", "Sim", "Não", "Sim", "Não", "Sim", "Não", "Sim",
+                "Sim", "Sim", "Sim", "Sim", "Sim", "Sim", "Não", "Não", "Não", "Não"
+            ],
+            "Vacância": [
+                4.5, 0.0, 0.0, 5.2, 2.1, 4.0, 1.0, 0.0, 0.0, 0.0,
+                0.0, 8.5, 0.0, 3.2, 0.0, 3.8, 0.0, 14.2, 0.0, 9.1,
+                3.0, 0.0, 18.5, 11.2, 4.1, 6.2, 0.0, 0.0, 0.0, 0.0
+            ],
+            "Para FII de Papel % em CRIs": [
+                0.0, 95.0, 85.0, 0.0, 0.0, 0.0, 0.0, 0.0, 91.0, 93.5,
+                92.0, 0.0, 94.0, 0.0, 89.0, 0.0, 96.0, 0.0, 88.0, 0.0,
+                0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 91.5, 93.0, 0.0, 0.0
+            ],
+            "Administrador": [
+                "Credit Suisse", "Kinea", "BTG Pactual", "BTG Pactual", "BTG Pactual", "BRL Trust", "BRL Trust", "BTG Pactual", "BTG Pactual", "Kinea",
+                "Credit Suisse", "Vortx", "Fator", "TG Core", "RBR Asset", "Credit Suisse", "Kinea", "BRL Trust", "Credit Suisse", "Vortx",
+                "Vortx", "BTG Pactual", "BTG Pactual", "Banco Genial", "Mata de Santa Fe", "Vortx", "BTG Pactual", "Banco Genial", "RBR Asset", "BTG Pactual"
+            ],
+            "Tempo de listagem": [
+                14, 12, 10, 6, 8, 10, 5, 6, 5, 4,
+                9, 5, 8, 7, 6, 12, 8, 5, 5, 4,
+                5, 4, 11, 9, 5, 6, 7, 5, 6, 10
+            ],
+            "Tipo de Gestão": ["Ativa"] * 30,
+            "Taxa de adm": ["0.90% a.a."] * 30,
+            "Taxa de Performance": ["20% exceder IFIX"] * 30,
+            "Benchmark": ["IFIX"] * 30
         }
         df = pd.DataFrame(dados_default)
-
-    # Criação defensiva caso a planilha lida não contenha a coluna
-    if "Quantidade de CRIs" not in df.columns:
-        cris_map = {"KNCR11": 45, "MXRF11": 38, "CPTS11": 52, "KNSC11": 40}
-        if "Ticker" in df.columns:
-            df["Quantidade de CRIs"] = df["Ticker"].map(cris_map).fillna(0).astype(int)
-        else:
-            df["Quantidade de CRIs"] = 0
-
-    if "Patrimônio Líquido" in df.columns:
-        df = df[df["Patrimônio Líquido"] > 0].copy()
-
-    # Cálculos defensivos para FIIs
-    if "DY 12M Acumulado" in df.columns and "Cotação" in df.columns:
-        df["Rendimento 12M (R$)"] = df["Cotação"] * (df["DY 12M Acumulado"] / 100)
-    else:
-        df["Rendimento 12M (R$)"] = 0.0
-
-    if "Rendimento 12M (R$)" in df.columns:
-        df["Preço Teto (9%)"] = df["Rendimento 12M (R$)"] / 0.09
-    else:
-        df["Preço Teto (9%)"] = 0.0
-
-    if "Preço Teto (9%)" in df.columns and "Cotação" in df.columns:
-        df["Margem Teto (%)"] = df.apply(
-            lambda row: ((row["Preço Teto (9%)"] / row["Cotação"]) - 1) * 100 if row["Cotação"] > 0 else 0,
-            axis=1
-        )
-    else:
-        df["Margem Teto (%)"] = 0.0
-
-    if "P/VP" in df.columns:
-        df["Desconto VP (%)"] = (1 - df["P/VP"]) * 100
-    else:
-        df["Desconto VP (%)"] = 0.0
-
     return df
 
 df_cofre = load_cofre_acoes()
 df_acoes = load_acoes_data()
-df_fiis = load_fiis_data()
+df_fiis = load_fiis_data_v5()
+
+if not df_fiis.empty:
+    cris_map = {"KNCR11": 45, "MXRF11": 38, "CPTS11": 52, "KNSC11": 40, "HGCR11": 35, "VRTA11": 42, "RBRR11": 31, "KNIP11": 65, "MCCI11": 28, "IRDM11": 48, "VGIP11": 29}
+    if "Quantidade de CRIs" not in df_fiis.columns:
+        df_fiis["Quantidade de CRIs"] = df_fiis["Ticker"].map(cris_map).fillna(0).astype(int)
+    else:
+        df_fiis["Quantidade de CRIs"] = df_fiis["Quantidade de CRIs"].fillna(df_fiis["Ticker"].map(cris_map)).fillna(0).astype(int)
+
+    if "Patrimônio Líquido" in df_fiis.columns:
+        df_fiis = df_fiis[df_fiis["Patrimônio Líquido"] > 0].copy()
+
+    if "DY 12M Acumulado" in df_fiis.columns and "Cotação" in df_fiis.columns:
+        df_fiis["Rendimento 12M (R$)"] = df_fiis["Cotação"] * (df_fiis["DY 12M Acumulado"] / 100)
+
+    if "Rendimento 12M (R$)" in df_fiis.columns:
+        df_fiis["Preço Teto (9%)"] = df_fiis["Rendimento 12M (R$)"] / 0.09
+
+    if "Preço Teto (9%)" in df_fiis.columns and "Cotação" in df_fiis.columns:
+        df_fiis["Margem Teto (%)"] = df_fiis.apply(
+            lambda row: ((row["Preço Teto (9%)"] / row["Cotação"]) - 1) * 100 if row["Cotação"] > 0 else 0,
+            axis=1
+        )
+
+    if "P/VP" in df_fiis.columns:
+        df_fiis["Desconto VP (%)"] = (1 - df_fiis["P/VP"]) * 100
 
 # -----------------------------------------------------------------------------
 # DESIGN SYSTEM INSTITUCIONAL (SaaS)
@@ -167,16 +214,12 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL (FILTROS DE AÇÕES E FIIS EMPILHADOS)
+# BARRA LATERAL (FILTROS)
 # -----------------------------------------------------------------------------
 st.sidebar.title("🛡️ Terminal Albarado")
 st.sidebar.caption("Scanner Fundamentalista B3")
 
-# =============================================================================
-# 1. FILTROS DE AÇÕES (1 a 19)
-# =============================================================================
 st.sidebar.markdown("## 🎯 Filtros de Ações")
-
 tipos_acoes = list(df_acoes["Tipo"].unique()) if "Tipo" in df_acoes.columns else []
 segmentos_acoes = list(df_acoes["Segmento de Listagem"].unique()) if "Segmento de Listagem" in df_acoes.columns else []
 setores_acoes = sorted(list(df_acoes["Setor"].unique())) if "Setor" in df_acoes.columns else []
@@ -227,9 +270,6 @@ dy_min = st.sidebar.slider("17. Dividend Yield Mín. (%)", 0.0, 50.0, key="dy_mi
 soma_yc_min = st.sidebar.slider("18. Soma Yield + CAGR Mín. (%)", -50.0, 100.0, key="soma_yc_min")
 margem_seg_min = st.sidebar.slider("19. Margem de Segurança Mín. (%)", -100.0, 100.0, key="margem_seg_min")
 
-# =============================================================================
-# 2. FILTROS DE FIIS (POSICIONADOS ABAIXO DAS AÇÕES)
-# =============================================================================
 st.sidebar.markdown("---")
 st.sidebar.markdown("## 🏢 Filtros de FIIs")
 
@@ -276,17 +316,12 @@ fii_pat_min = st.sidebar.number_input("13. Patrimônio Líq. Mín. (R$)", min_va
 fii_admin_filtro = st.sidebar.multiselect("14. Administrador", admins_fii, key="fii_admin")
 
 # -----------------------------------------------------------------------------
-# CABEÇALHO DA APLICAÇÃO
+# CORPO PRINCIPAL
 # -----------------------------------------------------------------------------
 st.title("🛡️ Prudence Invest | Terminal Albarado")
 st.markdown("---")
 
-# =============================================================================
-# SEÇÃO 1: SCANNER DE AÇÕES B3
-# =============================================================================
 st.subheader("📈 Scanner Fundamentalista de Ações")
-
-# Motor de Filtragem de Ações
 cond_acoes = pd.Series(True, index=df_acoes.index)
 if "Tipo" in df_acoes.columns: cond_acoes &= df_acoes["Tipo"].isin(tipo_filtro)
 if "Segmento de Listagem" in df_acoes.columns: cond_acoes &= df_acoes["Segmento de Listagem"].isin(seg_filtro)
@@ -320,7 +355,6 @@ colunas_exib_acoes = [
 ]
 df_acoes_filtrado = df_acoes_filtrado[[c for c in colunas_exib_acoes if c in df_acoes_filtrado.columns]]
 
-# KPIs Ações
 total_acoes = len(df_acoes_filtrado)
 media_dy_acoes = df_acoes_filtrado["Dividend Yield"].mean() if (total_acoes > 0 and "Dividend Yield" in df_acoes_filtrado.columns) else 0
 mediana_margem_acoes = df_acoes_filtrado["Margem de Segurança (%)"].median() if (total_acoes > 0 and "Margem de Segurança (%)" in df_acoes_filtrado.columns) else 0
@@ -333,8 +367,6 @@ with c3: st.markdown(f'<div class="metric-card"><div class="metric-title">🛡�
 with c4: st.markdown(f'<div class="metric-card"><div class="metric-title">📊 ROE Médio</div><div class="metric-value">{media_roe_acoes:.2f}%</div></div>', unsafe_allow_html=True)
 
 st.markdown("<br>", unsafe_allow_html=True)
-
-# Tabela Ações
 st.dataframe(
     df_acoes_filtrado,
     column_config={
@@ -360,15 +392,10 @@ st.dataframe(
     hide_index=True
 )
 
-# =============================================================================
-# SEÇÃO 2: RAIO-X HISTÓRICO (LUCROS E DIVIDENDOS DE AÇÕES)
-# =============================================================================
 st.markdown("---")
 st.subheader("📊 Raio-X Histórico: Lucros e Dividendos (Ações)")
-
 if total_acoes > 0 and "Ticker" in df_acoes_filtrado.columns:
     acao_sel = st.selectbox("Escolha uma ação aprovada para o Raio-X:", df_acoes_filtrado["Ticker"].tolist(), key="select_acao_rx")
-
     if acao_sel:
         col1, col2 = st.columns(2)
         with col1:
@@ -389,16 +416,12 @@ if total_acoes > 0 and "Ticker" in df_acoes_filtrado.columns:
                     div_anual = hist_div.groupby(hist_div.index.year).sum()
                     st.line_chart(pd.DataFrame({"Dividendos Pagos (R$)": div_anual}), use_container_width=True)
                 else: st.warning("Nenhum histórico disponível.")
-            except: st.warning("Erro ao consultar Yahoo Finance.")
+            except Exception: st.warning("Erro ao consultar Yahoo Finance.")
 
-# =============================================================================
-# SEÇÃO 3: SCANNER FUNDAMENTALISTA DE FIIS (POSICIONADO ABAIXO DO RAIO-X)
-# =============================================================================
 st.markdown("---")
 st.subheader("🏢 Scanner Fundamentalista de FIIs (Fundos Imobiliários)")
 
 if not df_fiis.empty:
-    # Motor de Filtragem de FIIs
     cond_fiis = pd.Series(True, index=df_fiis.index)
     if "Tipo de fundo" in df_fiis.columns: cond_fiis &= df_fiis["Tipo de fundo"].isin(fii_tipo_filtro)
     if "Segmento de Atuação" in df_fiis.columns: cond_fiis &= df_fiis["Segmento de Atuação"].isin(fii_seg_filtro)
@@ -417,7 +440,6 @@ if not df_fiis.empty:
 
     df_fiis_filtrado = df_fiis[cond_fiis]
 
-    # Ordenação com 'Quantidade de CRIs' e 'Para FII de Papel % em CRIs' LADO A LADO
     colunas_exib_fiis = [
         "Ticker", "Tipo de fundo", "Segmento de Atuação", "Cotação", "P/VP", "Desconto VP (%)",
         "DY 12M Acumulado", "Rendimento 12M (R$)", "Preço Teto (9%)", "Margem Teto (%)",
@@ -428,7 +450,6 @@ if not df_fiis.empty:
     ]
     df_fiis_filtrado = df_fiis_filtrado[[c for c in colunas_exib_fiis if c in df_fiis_filtrado.columns]]
 
-    # KPIs FIIs
     total_fiis = len(df_fiis_filtrado)
     media_dy_fiis = df_fiis_filtrado["DY 12M Acumulado"].mean() if (total_fiis > 0 and "DY 12M Acumulado" in df_fiis_filtrado.columns) else 0
     mediana_pvp_fiis = df_fiis_filtrado["P/VP"].median() if (total_fiis > 0 and "P/VP" in df_fiis_filtrado.columns) else 0
@@ -442,7 +463,6 @@ if not df_fiis.empty:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Botão de Download FIIs
     if total_fiis > 0:
         def conv_excel_fiis(df_e):
             buf = io.BytesIO()
@@ -455,7 +475,6 @@ if not df_fiis.empty:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-    # Tabela Completa de FIIs
     st.dataframe(
         df_fiis_filtrado,
         column_config={
@@ -476,12 +495,7 @@ if not df_fiis.empty:
         },
         hide_index=True
     )
-else:
-    st.info("💡 Insira o arquivo 'fiis_b3.xlsx' na pasta do projeto para exibir os dados de Fundos Imobiliários.")
 
-# -----------------------------------------------------------------------------
-# RODAPÉ INSTITUCIONAL
-# -----------------------------------------------------------------------------
 st.markdown(
     """
     <div style='
