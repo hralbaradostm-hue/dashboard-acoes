@@ -204,12 +204,7 @@ st.markdown("---")
 total_aprovadas = len(df_filtrado)
 media_dy = df_filtrado["Dividend Yield"].mean() if total_aprovadas > 0 else 0
 mediana_margem = df_filtrado["Margem de Segurança (%)"].median() if total_aprovadas > 0 else 0
-
-if total_aprovadas > 0 and 'Segmento de Listagem' in df_filtrado.columns:
-    novo_mercado_count = df_filtrado['Segmento de Listagem'].str.contains('Novo Mercado', case=False, na=False).sum()
-    pct_novo_mercado = (novo_mercado_count / total_aprovadas) * 100
-else:
-    pct_novo_mercado = 0
+media_roe = df_filtrado["ROE"].mean() if (total_aprovadas > 0 and "ROE" in df_filtrado.columns) else 0
 
 col1, col2, col3, col4 = st.columns(4)
 
@@ -240,8 +235,8 @@ with col3:
 with col4:
     st.markdown(f"""
         <div class="metric-card">
-            <div class="metric-title">🌟 Novo Mercado</div>
-            <div class="metric-value">{pct_novo_mercado:.1f}%</div>
+            <div class="metric-title">📊 ROE Médio</div>
+            <div class="metric-value">{media_roe:.2f}%</div>
         </div>
     """, unsafe_allow_html=True)
 
