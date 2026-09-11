@@ -75,21 +75,23 @@ st.markdown("""
 def load_data():
     df = pd.read_excel("acoes_b3.xlsx")
     
-    # --- FILTRO BASE DE SEGURANÇA (MANTÉM O UNIVERSO DE ~314 AÇÕES DA B3) ---
-    # Remove apenas empresas sem patrimônio líquido positivo
+    # --- FILTRO BASE DE SEGURANÇA ---
     if "Patrimônio Líquido" in df.columns:
         df = df[df["Patrimônio Líquido"] > 0].copy()
 
-    # 1. CRIA O INDICADOR CHOWDER RULE
+    # 1. ADICIONA A COLUNA DE LOGOTIPOS (Mapeamento via repositório de ativos)
+    df["Logo"] = df["Ticker"].apply(lambda t: f"https://s3-symbol-logo.tradingview.com/brazil/{str(t).lower()}.svg")
+
+    # 2. CRIA O INDICADOR CHOWDER RULE
     df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
     
-    # 2. CALCULA O DIVIDENDO EM REAIS (R$)
+    # 3. CALCULA O DIVIDENDO EM REAIS (R$)
     df["Dividendo Pago (R$)"] = df["Cotação"] * (df["Dividend Yield"] / 100)
     
-    # 3. CÁLCULO DO PREÇO TETO DE 6% (Método Barsi/Bazin)
+    # 4. CÁLCULO DO PREÇO TETO DE 6% (Método Barsi/Bazin)
     df["Preço Teto (6%)"] = df["Dividendo Pago (R$)"] / 0.06
     
-    # 4. CÁLCULO DA MARGEM DE SEGURANÇA (%)
+    # 5. CÁLCULO DA MARGEM DE SEGURANÇA (%)
     df["Margem de Segurança (%)"] = df.apply(
         lambda row: ((row["Preço Teto (6%)"] / row["Cotação"]) - 1) * 100 if row["Cotação"] > 0 else 0,
         axis=1
@@ -184,7 +186,7 @@ if gov_filtro != "Ambos":
     df_filtrado = df_filtrado[df_filtrado["Governo Majoritário"] == gov_filtro]
 
 colunas_exibicao = [
-    "Ticker", "Empresa", "Setor", "Cotação", "Preço Teto (6%)", "Margem de Segurança (%)",
+    "Logo", "Ticker", "Empresa", "Setor", "Cotação", "Preço Teto (6%)", "Margem de Segurança (%)",
     "Dividend Yield", "Dividendo Pago (R$)", "Tipo", "Segmento de Listagem", 
     "Tag Along (%)", "Free Float (%)", "Governo Majoritário", "Dívida Líquida/EBIT",
     "P/L", "P/VP", "Cresc. 5 Anos (%)", "Yield + CAGR (%)", 
@@ -263,10 +265,11 @@ if total_aprovadas > 0:
 
 st.markdown("<br>", unsafe_allow_html=True)
 
-# Tabela com as Novas Colunas em Destaque
+# Tabela com as Colunas e Logotipos em Destaque
 st.dataframe(
     df_filtrado,
     column_config={
+        "Logo": st.column_config.ImageColumn("Logo", width="small"),
         "Cotação": st.column_config.NumberColumn(format="R$ %.2f"),
         "Preço Teto (6%)": st.column_config.NumberColumn(format="R$ %.2f"),
         "Dividendo Pago (R$)": st.column_config.NumberColumn(format="R$ %.2f"),
@@ -285,7 +288,8 @@ st.dataframe(
         "P/L": st.column_config.NumberColumn(format="%.2f x"),
         "P/VP": st.column_config.NumberColumn(format="%.2f x"),
         "Dívida Líquida/EBIT": st.column_config.NumberColumn(format="%.2f x")
-    }
+    },
+    hide_index=True
 )
 
 # ==========================================
