@@ -56,7 +56,7 @@ def load_fiis_data():
     try:
         df = pd.read_excel("fiis_b3.xlsx")
     except Exception:
-        # Fallback automático: Se o arquivo Excel não for localizado no GitHub, carrega os dados em memória
+        # Fallback automático com dados padrão em memória
         dados_default = {
             "Ticker": ["HGLG11", "KNCR11", "MXRF11", "XPML11", "BTLG11", "VISC11", "TRXF11", "ALZR11", "CPTS11", "KNSC11"],
             "Tipo de fundo": ["Tijolo", "Papel", "Papel", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Tijolo", "Papel", "Papel"],
@@ -67,10 +67,10 @@ def load_fiis_data():
             "Liquidez diária": [4500000.0, 9200000.0, 12500000.0, 3800000.0, 5200000.0, 3100000.0, 2600000.0, 2100000.0, 6400000.0, 4100000.0],
             "Patrimônio Líquido": [3600000000.0, 5800000000.0, 3300000000.0, 3700000000.0, 3100000000.0, 2500000000.0, 1500000000.0, 1100000000.0, 2800000000.0, 1200000000.0],
             "Quantidade de Imóveis": [25, 0, 0, 22, 18, 20, 50, 15, 0, 0],
+            "Quantidade de CRIs": [0, 45, 38, 0, 0, 0, 0, 0, 52, 40],
             "Multi-inquilino": ["Sim", "Não", "Não", "Sim", "Sim", "Sim", "Sim", "Sim", "Não", "Não"],
             "Vacância": [4.5, 0.0, 0.0, 5.2, 2.1, 4.0, 1.0, 0.0, 0.0, 0.0],
             "Para FII de Papel % em CRIs": [0.0, 95.0, 85.0, 0.0, 0.0, 0.0, 0.0, 0.0, 91.0, 93.5],
-            "Quantidade de CRIs": [0, 45, 38, 0, 0, 0, 0, 0, 52, 40],
             "Administrador": ["Credit Suisse", "Kinea", "BTG Pactual", "BTG Pactual", "BTG Pactual", "BRL Trust", "BRL Trust", "BTG Pactual", "BTG Pactual", "Kinea"],
             "Tempo de listagem": [14, 12, 10, 6, 8, 10, 5, 6, 5, 4],
             "Tipo de Gestão": ["Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa", "Ativa"],
@@ -241,6 +241,7 @@ def limpar_filtros_fiis():
     st.session_state.fii_dy = 0.0
     st.session_state.fii_vacancia = 100.0
     st.session_state.fii_cris = 0.0
+    st.session_state.fii_qtd_cris = 0
     st.session_state.fii_imoveis = 0
     st.session_state.fii_tempo = 0
     st.session_state.fii_liq = 0.0
@@ -259,11 +260,12 @@ fii_pvp_min, fii_pvp_max = st.sidebar.slider("5. Faixa de P/VP", 0.0, 2.0, key="
 fii_dy_min = st.sidebar.slider("6. DY 12M Acumulado Mín. (%)", 0.0, 25.0, key="fii_dy")
 fii_vac_max = st.sidebar.slider("7. Vacância Máxima (%)", 0.0, 100.0, key="fii_vacancia")
 fii_cris_min = st.sidebar.slider("8. % Mínimo em CRIs (Papel)", 0.0, 100.0, key="fii_cris")
-fii_imoveis_min = st.sidebar.number_input("9. Qtd. Mínima de Imóveis", min_value=0, step=1, key="fii_imoveis")
-fii_tempo_min = st.sidebar.number_input("10. Tempo Mín. Listagem (Anos)", min_value=0, step=1, key="fii_tempo")
-fii_liq_min = st.sidebar.number_input("11. Liquidez Diária Mín. (R$)", min_value=0.0, step=50000.0, key="fii_liq")
-fii_pat_min = st.sidebar.number_input("12. Patrimônio Líq. Mín. (R$)", min_value=0.0, step=50000000.0, key="fii_pat")
-fii_admin_filtro = st.sidebar.multiselect("13. Administrador", admins_fii, key="fii_admin")
+fii_qtd_cris_min = st.sidebar.number_input("9. Qtd. Mínima de CRIs", min_value=0, step=1, key="fii_qtd_cris")
+fii_imoveis_min = st.sidebar.number_input("10. Qtd. Mínima de Imóveis", min_value=0, step=1, key="fii_imoveis")
+fii_tempo_min = st.sidebar.number_input("11. Tempo Mín. Listagem (Anos)", min_value=0, step=1, key="fii_tempo")
+fii_liq_min = st.sidebar.number_input("12. Liquidez Diária Mín. (R$)", min_value=0.0, step=50000.0, key="fii_liq")
+fii_pat_min = st.sidebar.number_input("13. Patrimônio Líq. Mín. (R$)", min_value=0.0, step=50000000.0, key="fii_pat")
+fii_admin_filtro = st.sidebar.multiselect("14. Administrador", admins_fii, key="fii_admin")
 
 # -----------------------------------------------------------------------------
 # CABEÇALHO DA APLICAÇÃO
@@ -399,6 +401,7 @@ if not df_fiis.empty:
     if "DY 12M Acumulado" in df_fiis.columns: cond_fiis &= df_fiis["DY 12M Acumulado"] >= fii_dy_min
     if "Vacância" in df_fiis.columns: cond_fiis &= df_fiis["Vacância"] <= fii_vac_max
     if "Para FII de Papel % em CRIs" in df_fiis.columns: cond_fiis &= df_fiis["Para FII de Papel % em CRIs"] >= fii_cris_min
+    if "Quantidade de CRIs" in df_fiis.columns: cond_fiis &= df_fiis["Quantidade de CRIs"] >= fii_qtd_cris_min
     if "Quantidade de Imóveis" in df_fiis.columns: cond_fiis &= df_fiis["Quantidade de Imóveis"] >= fii_imoveis_min
     if "Tempo de listagem" in df_fiis.columns: cond_fiis &= df_fiis["Tempo de listagem"] >= fii_tempo_min
     if "Liquidez diária" in df_fiis.columns: cond_fiis &= df_fiis["Liquidez diária"] >= fii_liq_min
@@ -407,12 +410,12 @@ if not df_fiis.empty:
     df_fiis_filtrado = df_fiis[cond_fiis]
 
     colunas_exib_fiis = [
-    "Ticker", "Tipo de fundo", "Segmento de Atuação", "Cotação", "P/VP", "Desconto VP (%)",
-    "DY 12M Acumulado", "Rendimento 12M (R$)", "Preço Teto (9%)", "Margem Teto (%)",
-    "Vacância", "Quantidade de Imóveis", "Quantidade de CRIs", "Multi-inquilino", "Para FII de Papel % em CRIs",
-    "Liquidez diária", "Patrimônio Líquido", "Tempo de listagem", "Tipo de Gestão",
-    "Administrador", "Taxa de adm", "Taxa de Performance", "Benchmark"
-]
+        "Ticker", "Tipo de fundo", "Segmento de Atuação", "Cotação", "P/VP", "Desconto VP (%)",
+        "DY 12M Acumulado", "Rendimento 12M (R$)", "Preço Teto (9%)", "Margem Teto (%)",
+        "Vacância", "Quantidade de Imóveis", "Quantidade de CRIs", "Multi-inquilino", "Para FII de Papel % em CRIs",
+        "Liquidez diária", "Patrimônio Líquido", "Tempo de listagem", "Tipo de Gestão",
+        "Administrador", "Taxa de adm", "Taxa de Performance", "Benchmark"
+    ]
     df_fiis_filtrado = df_fiis_filtrado[[c for c in colunas_exib_fiis if c in df_fiis_filtrado.columns]]
 
     # KPIs FIIs
@@ -455,10 +458,10 @@ if not df_fiis.empty:
             "Margem Teto (%)": st.column_config.NumberColumn(format="%.2f %%"),
             "Vacância": st.column_config.NumberColumn(format="%.2f %%"),
             "Para FII de Papel % em CRIs": st.column_config.NumberColumn(format="%.2f %%"),
-            "Quantidade de CRIs": st.column_config.NumberColumn(format="%d CRIs"),
             "Liquidez diária": st.column_config.NumberColumn(format="R$ %.2f"),
             "Patrimônio Líquido": st.column_config.NumberColumn(format="R$ %.2f"),
             "Quantidade de Imóveis": st.column_config.NumberColumn(format="%d imóveis"),
+            "Quantidade de CRIs": st.column_config.NumberColumn(format="%d CRIs"),
             "Tempo de listagem": st.column_config.NumberColumn(format="%d anos")
         },
         hide_index=True
