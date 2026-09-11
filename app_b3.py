@@ -314,8 +314,8 @@ def limpar_filtros_fiis():
   st.session_state.fii_gestao = gestoes_fii
   st.session_state.fii_multi = multi_fii
   st.session_state.fii_admin = admins_fii
-  st.session_state.fii_taxa_adm = taxas_adm_fii
-  st.session_state.fii_taxa_perf = taxas_perf_fii
+  st.session_state.fii_taxa_adm = []
+  st.session_state.fii_taxa_perf = []
   st.session_state.fii_pvp = (0.0, 2.0)
   st.session_state.fii_dy = 0.0
   st.session_state.fii_vacancia = 100.0
@@ -403,11 +403,11 @@ st.markdown("---")
 st.subheader("📈 Scanner Fundamentalista de Ações")
 
 cond_acoes = pd.Series(True, index=df_acoes.index)
-if "Tipo" in df_acoes.columns:
+if "Tipo" in df_acoes.columns and tipo_filtro:
   cond_acoes &= df_acoes["Tipo"].isin(tipo_filtro)
-if "Segmento de Listagem" in df_acoes.columns:
+if "Segmento de Listagem" in df_acoes.columns and seg_filtro:
   cond_acoes &= df_acoes["Segmento de Listagem"].isin(seg_filtro)
-if "Setor" in df_acoes.columns:
+if "Setor" in df_acoes.columns and setor_filtro:
   cond_acoes &= df_acoes["Setor"].isin(setor_filtro)
 if "Liquidez Diária" in df_acoes.columns:
   cond_acoes &= df_acoes["Liquidez Diária"] >= liq_min
@@ -601,19 +601,19 @@ st.subheader("🏢 Scanner Fundamentalista de FIIs (Fundos Imobiliários)")
 
 if not df_fiis.empty:
   cond_fiis = pd.Series(True, index=df_fiis.index)
-  if "Tipo de fundo" in df_fiis.columns:
+  if "Tipo de fundo" in df_fiis.columns and fii_tipo_filtro:
     cond_fiis &= df_fiis["Tipo de fundo"].isin(fii_tipo_filtro)
-  if "Segmento de Atuação" in df_fiis.columns:
+  if "Segmento de Atuação" in df_fiis.columns and fii_seg_filtro:
     cond_fiis &= df_fiis["Segmento de Atuação"].isin(fii_seg_filtro)
-  if "Tipo de Gestão" in df_fiis.columns:
+  if "Tipo de Gestão" in df_fiis.columns and fii_gestao_filtro:
     cond_fiis &= df_fiis["Tipo de Gestão"].isin(fii_gestao_filtro)
-  if "Multi-inquilino" in df_fiis.columns:
+  if "Multi-inquilino" in df_fiis.columns and fii_multi_filtro:
     cond_fiis &= df_fiis["Multi-inquilino"].isin(fii_multi_filtro)
-  if "Administrador" in df_fiis.columns:
+  if "Administrador" in df_fiis.columns and fii_admin_filtro:
     cond_fiis &= df_fiis["Administrador"].isin(fii_admin_filtro)
-  if "Taxa de adm" in df_fiis.columns:
+  if "Taxa de adm" in df_fiis.columns and fii_taxa_adm_filtro:
     cond_fiis &= df_fiis["Taxa de adm"].astype(str).isin(fii_taxa_adm_filtro)
-  if "Taxa de Performance" in df_fiis.columns:
+  if "Taxa de Performance" in df_fiis.columns and fii_taxa_perf_filtro:
     cond_fiis &= (
         df_fiis["Taxa de Performance"].astype(str).isin(fii_taxa_perf_filtro)
     )
