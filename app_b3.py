@@ -72,6 +72,16 @@ df_acoes = load_acoes_data()
 df_fiis = load_fiis_data_v6()
 
 if not df_fiis.empty:
+  # Tratamento de valores None / Nulos na Taxa de Performance
+  if "Taxa de Performance" in df_fiis.columns:
+    df_fiis["Taxa de Performance"] = (
+        df_fiis["Taxa de Performance"]
+        .fillna("Isento")
+        .replace(
+            {"None": "Isento", "N/A": "Isento", "nan": "Isento", "": "Isento"}
+        )
+    )
+
   if "Quantidade de CRIs" not in df_fiis.columns:
     df_fiis["Quantidade de CRIs"] = 0
 
