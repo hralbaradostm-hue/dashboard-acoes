@@ -66,8 +66,22 @@ def load_cofre_acoes():
 
 @st.cache_data(ttl=600)
 def load_acoes_data():
-  df = pd.DataFrame()
-  # 1. Tenta buscar dados ao vivo do Fundamentus
+  # 1. Base local (metadados enriquecidos)
+  df_base = pd.DataFrame()
+  for f in ["acoes_b3.csv", "acoes_b3.xlsx"]:
+    try:
+      if f.endswith(".csv"):
+        df_temp = pd.read_csv(f, encoding="utf-8-sig")
+      else:
+        df_temp = pd.read_excel(f)
+      if len(df_temp) > 5:
+        df_base = df_temp
+        break
+    except Exception:
+      pass
+
+  # 2. Dados online ao vivo do Fundamentus
+  df_live = pd.DataFrame()
   try:
     url = "https://www.fundamentus.com.br/resultado.php"
     res = requests.get(url, headers=HEADERS, timeout=12)
@@ -84,30 +98,98 @@ def load_acoes_data():
           "Patrim.Liq": "Patrimônio Líquido",
           "Cresc.Rec.5a": "Cresc. 5 Anos (%)",
       }
-      df = raw_df.rename(columns=col_map).copy()
+      df_live = raw_df.rename(columns=col_map).copy()
   except Exception:
-    df = pd.DataFrame()
+    pass
 
-  # 2. Fallback para arquivos locais
-  if df.empty:
-    for f in ["acoes_b3.csv", "acoes_b3.xlsx"]:
-      try:
-        if f.endswith(".csv"):
-          df_temp = pd.read_csv(f, encoding="utf-8-sig")
+  # Unificação das duas fontes sem perder colunas
+  if not df_base.empty and not df_live.empty:
+    df_base["Ticker"] = df_base["Ticker"].astype(str).str.strip().str.upper()
+    df_live["Ticker"] = df_live["Ticker"].astype(str).str.strip().str.upper()
+
+    df_b_idx = df_base.set_index("Ticker")
+    df_l_idx = df_live.set_index("Ticker")
+
+    cols_update = [
+        "Cotação",
+        "P/L",
+        "P/VP",
+        "Dividend Yield",
+        "Margem EBIT",
+        "Margem Líquida",
+        "ROIC",
+        "ROE",
+        "Liquidez Diária",
+        "Patrimônio Líquido",
+        "Cresc. 5 Anos (%)",
+    ]
+    for c in cols_update:
+      if c in df_l_idx.columns:
+        if c not in df_b_idx.columns:
+          df_b_idx[c] = df_l_idx[c]
         else:
-          df_temp = pd.read_excel(f)
-        if len(df_temp) > 5:
-          df = df_temp
-          break
-      except Exception:
-        pass
-  return df
+          df_b_idx.update(df_l_idx[[c]])
+
+    novos_tickers = df_l_idx.index.difference(df_b_idx.index)
+    if not novos_tickers.empty:
+      df_novos = df_l_idx.loc[novos_tickers]
+      df_b_idx = pd.concat([df_b_idx, df_novos], axis=0)
+
+    df_acoes = df_b_idx.reset_index()
+  elif not df_base.empty:
+    df_acoes = df_base
+  elif not df_live.empty:
+    df_acoes = df_live
+  else:
+    df_acoes = pd.DataFrame()
+
+  # Garantir presenca de todas as colunas
+  cols_padrao = {
+      "Empresa": "N/A",
+      "Setor": "Outros",
+      "Tipo": "ON/PN",
+      "Segmento de Listagem": "Tradicional",
+      "Tag Along (%)": 100.0,
+      "Free Float (%)": 0.0,
+      "Governo Majoritário": "Não",
+      "Dívida Líquida/EBIT": 0.0,
+      "Cotação": 0.0,
+      "P/L": 0.0,
+      "P/VP": 0.0,
+      "Dividend Yield": 0.0,
+      "Margem EBIT": 0.0,
+      "Margem Líquida": 0.0,
+      "ROIC": 0.0,
+      "ROE": 0.0,
+      "Liquidez Diária": 0.0,
+      "Patrimônio Líquido": 0.0,
+      "Cresc. 5 Anos (%)": 0.0,
+  }
+  for col, val_default in cols_padrao.items():
+    if col not in df_acoes.columns:
+      df_acoes[col] = val_default
+
+  return df_acoes
 
 
 @st.cache_data(ttl=600)
 def load_fiis_data_v6():
-  df = pd.DataFrame()
-  # 1. Tenta buscar dados ao vivo do Fundamentus
+  # 1. Base local (metadados enriquecidos)
+  df_base = pd.DataFrame()
+  for f in ["fiis_b3.csv", "fiis_b3.xlsx"]:
+    try:
+      if f.endswith(".csv"):
+        df_temp = pd.read_csv(f, encoding="utf-8-sig")
+      else:
+        df_temp = pd.read_excel(f)
+      if len(df_temp) > 5:
+        df_base = df_temp
+        break
+    except Exception:
+      pass
+
+  # 2. Dados online ao vivo do Fundamentus
+  df_live = pd.DataFrame()
   try:
     url = "https://www.fundamentus.com.br/fii_resultado.php"
     res = requests.get(url, headers=HEADERS, timeout=12)
@@ -128,24 +210,73 @@ def load_fiis_data_v6():
           "Cap Rate": "Cap Rate",
           "Vacância Média": "Vacância",
       }
-      df = raw_df.rename(columns=col_map).copy()
+      df_live = raw_df.rename(columns=col_map).copy()
   except Exception:
-    df = pd.DataFrame()
+    pass
 
-  # 2. Fallback para arquivos locais
-  if df.empty:
-    for f in ["fiis_b3.csv", "fiis_b3.xlsx"]:
-      try:
-        if f.endswith(".csv"):
-          df_temp = pd.read_csv(f, encoding="utf-8-sig")
+  # Unificação das duas fontes sem perder colunas
+  if not df_base.empty and not df_live.empty:
+    df_base["Ticker"] = df_base["Ticker"].astype(str).str.strip().str.upper()
+    df_live["Ticker"] = df_live["Ticker"].astype(str).str.strip().str.upper()
+
+    df_b_idx = df_base.set_index("Ticker")
+    df_l_idx = df_live.set_index("Ticker")
+
+    cols_update = [
+        "Cotação",
+        "P/VP",
+        "DY 12M Acumulado",
+        "Patrimônio Líquido",
+        "Liquidez diária",
+        "Quantidade de Imóveis",
+        "Vacância",
+    ]
+    for c in cols_update:
+      if c in df_l_idx.columns:
+        if c not in df_b_idx.columns:
+          df_b_idx[c] = df_l_idx[c]
         else:
-          df_temp = pd.read_excel(f)
-        if len(df_temp) > 5:
-          df = df_temp
-          break
-      except Exception:
-        pass
-  return df
+          df_b_idx.update(df_l_idx[[c]])
+
+    novos_tickers = df_l_idx.index.difference(df_b_idx.index)
+    if not novos_tickers.empty:
+      df_novos = df_l_idx.loc[novos_tickers]
+      df_b_idx = pd.concat([df_b_idx, df_novos], axis=0)
+
+    df_fiis = df_b_idx.reset_index()
+  elif not df_base.empty:
+    df_fiis = df_base
+  elif not df_live.empty:
+    df_fiis = df_live
+  else:
+    df_fiis = pd.DataFrame()
+
+  # Garantir presenca de todas as colunas
+  cols_padrao = {
+      "Tipo de fundo": "Híbrido",
+      "Segmento de Atuação": "Outros",
+      "Cotação": 0.0,
+      "P/VP": 0.0,
+      "DY 12M Acumulado": 0.0,
+      "Vacância": 0.0,
+      "Quantidade de Imóveis": 0,
+      "Multi-inquilino": "Não",
+      "Quantidade de CRIs": 0,
+      "Para FII de Papel % em CRIs": 0.0,
+      "Liquidez diária": 0.0,
+      "Patrimônio Líquido": 0.0,
+      "Tempo de listagem": 0,
+      "Tipo de Gestão": "Ativa",
+      "Administrador": "N/A",
+      "Taxa de adm": "N/A",
+      "Taxa de Performance": "Isento",
+      "Benchmark": "CDI",
+  }
+  for col, val_default in cols_padrao.items():
+    if col not in df_fiis.columns:
+      df_fiis[col] = val_default
+
+  return df_fiis
 
 
 df_cofre = load_cofre_acoes()
@@ -174,7 +305,6 @@ if not df_acoes.empty:
     if col in df_acoes.columns:
       df_acoes[col] = df_acoes[col].apply(limpar_num)
 
-  # Correção de escala caso cotações venham multiplicadas por 100 de planilhas locais antigas
   if "Cotação" in df_acoes.columns and not df_acoes.empty:
     if df_acoes["Cotação"].median() > 500:
       df_acoes["Cotação"] = df_acoes["Cotação"] / 100.0
@@ -214,7 +344,6 @@ if not df_fiis.empty:
     if col in df_fiis.columns:
       df_fiis[col] = df_fiis[col].apply(limpar_num)
 
-  # Correção de escala caso cotações venham multiplicadas por 100 de planilhas locais antigas
   if "Cotação" in df_fiis.columns and not df_fiis.empty:
     if df_fiis["Cotação"].median() > 500:
       df_fiis["Cotação"] = df_fiis["Cotação"] / 100.0
@@ -232,10 +361,7 @@ if not df_fiis.empty:
         )
     )
 
-  if "Quantidade de CRIs" not in df_fiis.columns:
-    df_fiis["Quantidade de CRIs"] = 0
-
-  if "Tipo de fundo" not in df_fiis.columns:
+  if "Tipo de fundo" not in df_fiis.columns or df_fiis["Tipo de fundo"].isnull().all():
     if "Segmento de Atuação" in df_fiis.columns:
 
       def classificar_tipo(seg):
@@ -262,16 +388,12 @@ if not df_fiis.empty:
       df_fiis["Tipo de fundo"] = df_fiis["Segmento de Atuação"].apply(
           classificar_tipo
       )
-    else:
-      df_fiis["Tipo de fundo"] = "Híbrido"
 
-  if "Multi-inquilino" not in df_fiis.columns:
+  if "Multi-inquilino" not in df_fiis.columns or df_fiis["Multi-inquilino"].isnull().all():
     if "Quantidade de Imóveis" in df_fiis.columns:
       df_fiis["Multi-inquilino"] = np.where(
           df_fiis["Quantidade de Imóveis"] > 1, "Sim", "Não"
       )
-    else:
-      df_fiis["Multi-inquilino"] = "Não"
 
   df_fiis["Desconto VP (%)"] = (1.0 - df_fiis.get("P/VP", 1.0)) * 100.0
   df_fiis["Rendimento 12M (R$)"] = df_fiis.get("Cotação", 0) * (
