@@ -461,7 +461,7 @@ st.markdown(
 )
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL (FILTROS DE AÇÕES E FIIS)
+# BARRA LATERAL (FILTROS DE AÇÕES E FIIS COM BLINDAGEM CONTRA NULOS)
 # -----------------------------------------------------------------------------
 st.sidebar.title("🛡️ Terminal Albarado")
 st.sidebar.caption("Scanner Fundamentalista B3 (Brapi)")
@@ -476,19 +476,26 @@ st.sidebar.button(
 st.sidebar.markdown("## 🎯 Filtros de Ações")
 
 tipos_acoes = (
-    list(df_acoes["Tipo"].unique()) if "Tipo" in df_acoes.columns else []
+    sorted([str(x) for x in df_acoes["Tipo"].unique() if pd.notna(x)])
+    if "Tipo" in df_acoes.columns
+    else []
 )
 segmentos_acoes = (
-    list(df_acoes["Segmento de Listagem"].unique())
+    sorted(
+        [
+            str(x)
+            for x in df_acoes["Segmento de Listagem"].unique()
+            if pd.notna(x)
+        ]
+    )
     if "Segmento de Listagem" in df_acoes.columns
     else []
 )
-if "Setor" in df_acoes.columns:
-  setores_acoes = sorted(
-      [str(x) for x in df_acoes["Setor"].unique() if pd.notna(x)]
-  )
-else:
-  setores_acoes = []
+setores_acoes = (
+    sorted([str(x) for x in df_acoes["Setor"].unique() if pd.notna(x)])
+    if "Setor" in df_acoes.columns
+    else []
+)
 
 
 def limpar_filtros_acoes():
@@ -585,36 +592,36 @@ margem_seg_min = st.sidebar.slider(
     "19. Margem de Segurança Mín. (%)", -100.0, 100.0, key="margem_seg_min"
 )
 
-# 2. FILTROS DE FIIS
+# 2. FILTROS DE FIIS (BLINDADOS)
 st.sidebar.markdown("---")
 st.sidebar.markdown("## 🏢 Filtros de FIIs")
 
 tipos_fii = (
-    list(df_fiis["Tipo de fundo"].unique())
+    sorted([str(x) for x in df_fiis["Tipo de fundo"].unique() if pd.notna(x)])
     if "Tipo de fundo" in df_fiis.columns
     else []
 )
-
-# CORREÇÃO DA ORDENAÇÃO DE SEGMENTOS DE FIIs (FILTRANDO VALORES NULOS/NAN)
-if "Segmento de Atuação" in df_fiis.columns:
-  segmentos_fii = sorted(
-      [str(x) for x in df_fiis["Segmento de Atuação"].unique() if pd.notna(x)]
-  )
-else:
-  segmentos_fii = []
-
+segmentos_fii = (
+    sorted(
+        [str(x) for x in df_fiis["Segmento de Atuação"].unique() if pd.notna(x)]
+    )
+    if "Segmento de Atuação" in df_fiis.columns
+    else []
+)
 gestoes_fii = (
-    list(df_fiis["Tipo de Gestão"].unique())
+    sorted([str(x) for x in df_fiis["Tipo de Gestão"].unique() if pd.notna(x)])
     if "Tipo de Gestão" in df_fiis.columns
     else []
 )
 multi_fii = (
-    list(df_fiis["Multi-inquilino"].unique())
+    sorted(
+        [str(x) for x in df_fiis["Multi-inquilino"].unique() if pd.notna(x)]
+    )
     if "Multi-inquilino" in df_fiis.columns
     else []
 )
 admins_fii = (
-    sorted(list(df_fiis["Administrador"].unique()))
+    sorted([str(x) for x in df_fiis["Administrador"].unique() if pd.notna(x)])
     if "Administrador" in df_fiis.columns
     else []
 )
