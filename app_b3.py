@@ -594,11 +594,15 @@ tipos_fii = (
     if "Tipo de fundo" in df_fiis.columns
     else []
 )
-segmentos_fii = (
-    sorted(list(df_fiis["Segmento de Atuação"].unique()))
-    if "Segmento de Atuação" in df_fiis.columns
-    else []
-)
+
+# CORREÇÃO DA ORDENAÇÃO DE SEGMENTOS DE FIIs (FILTRANDO VALORES NULOS/NAN)
+if "Segmento de Atuação" in df_fiis.columns:
+  segmentos_fii = sorted(
+      [str(x) for x in df_fiis["Segmento de Atuação"].unique() if pd.notna(x)]
+  )
+else:
+  segmentos_fii = []
+
 gestoes_fii = (
     list(df_fiis["Tipo de Gestão"].unique())
     if "Tipo de Gestão" in df_fiis.columns
