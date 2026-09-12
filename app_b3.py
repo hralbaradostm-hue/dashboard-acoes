@@ -11,7 +11,12 @@ st.set_page_config(
 )
 
 
-@st.cache_data
+# Botão para forçar a limpeza de cache quando a planilha for atualizada
+def limpar_cache_global():
+  st.cache_data.clear()
+
+
+@st.cache_data(ttl=600)  # Expira o cache automaticamente a cada 10 minutos
 def load_cofre_acoes():
   try:
     return pd.read_excel("cofre_lucros.xlsx")
@@ -19,7 +24,7 @@ def load_cofre_acoes():
     return pd.DataFrame()
 
 
-@st.cache_data
+@st.cache_data(ttl=600)
 def load_acoes_data():
   try:
     df = pd.read_excel("acoes_b3.xlsx")
@@ -59,7 +64,7 @@ def load_acoes_data():
   return df
 
 
-@st.cache_data
+@st.cache_data(ttl=600)
 def load_fiis_data_v6():
   try:
     return pd.read_excel("fiis_b3.xlsx")
@@ -72,7 +77,7 @@ df_acoes = load_acoes_data()
 df_fiis = load_fiis_data_v6()
 
 if not df_fiis.empty:
-  # --- TRATAMENTO SEGURO DAS COLUNAS NUMÉRICAS DOS FIIS ---
+  # Tratamento numérico seguro
   cols_numericas = [
       "Cotação",
       "P/VP",
@@ -85,7 +90,6 @@ if not df_fiis.empty:
       "Quantidade de Imóveis",
       "Para FII de Papel % em CRIs",
   ]
-
   for col in cols_numericas:
     if col in df_fiis.columns:
       if df_fiis[col].dtype == "object":
@@ -98,7 +102,6 @@ if not df_fiis.empty:
         )
       df_fiis[col] = pd.to_numeric(df_fiis[col], errors="coerce").fillna(0.0)
 
-  # Tratamento de valores None / Nulos na Taxa de Performance
   if "Taxa de Performance" in df_fiis.columns:
     df_fiis["Taxa de Performance"] = (
         df_fiis["Taxa de Performance"]
@@ -136,7 +139,7 @@ if not df_fiis.empty:
     df_fiis["Desconto VP (%)"] = (1 - df_fiis["P/VP"]) * 100
 
 # -----------------------------------------------------------------------------
-# DESIGN SYSTEM INSTITUCIONAL (SaaS)
+# DESIGN SYSTEM INSTITUCIONAL
 # -----------------------------------------------------------------------------
 st.markdown(
     """
@@ -145,53 +148,34 @@ st.markdown(
     footer {visibility: hidden;}
     [data-testid="stHeader"] { background-color: transparent; }
     [data-testid="stStatusWidget"] { visibility: hidden; display: none; }
-    
-    .stApp {
-        background-color: #0f172a;
-        color: #f8fafc;
-    }
-    
-    [data-testid="stSidebar"] {
-        background-color: #1e293b;
-        border-right: 1px solid #334155;
-    }
-    
+    .stApp { background-color: #0f172a; color: #f8fafc; }
+    [data-testid="stSidebar"] { background-color: #1e293b; border-right: 1px solid #334155; }
     .metric-card {
         background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        border: 1px solid #334155;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        margin-bottom: 10px;
+        border: 1px solid #334155; padding: 20px; border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); text-align: center; margin-bottom: 10px;
     }
-    .metric-title {
-        font-size: 13px;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 600;
-    }
-    .metric-value {
-        font-size: 26px;
-        font-weight: 700;
-        color: #38bdf8;
-        margin-top: 5px;
-    }
+    .metric-title { font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+    .metric-value { font-size: 26px; font-weight: 700; color: #38bdf8; margin-top: 5px; }
     </style>
 """,
     unsafe_allow_html=True,
 )
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL (FILTROS DE AÇÕES E FIIS)
+# BARRA LATERAL (FILTROS)
 # -----------------------------------------------------------------------------
 st.sidebar.title("🛡️ Terminal Albarado")
 st.sidebar.caption("Scanner Fundamentalista B3")
 
+st.sidebar.button(
+    "🧹 Recarregar Base & Limpar Cache",
+    on_click=limpar_cache_global,
+    use_container_width=True,
+)
+
 # 1. FILTROS DE AÇÕES
 st.sidebar.markdown("## 🎯 Filtros de Ações")
-
 tipos_acoes = (
     list(df_acoes["Tipo"].unique()) if "Tipo" in df_acoes.columns else []
 )
@@ -208,10 +192,10 @@ setores_acoes = (
 
 
 def limpar_filtros_acoes():
-  st.session_state.tipo_filtro = tipos_acoes
-  st.session_state.seg_filtro = segmentos_acoes
+  st.session_state.tipo_filtro = []
+  st.session_state.seg_filtro = []
   st.session_state.gov_filtro = "Ambos"
-  st.session_state.setor_filtro = setores_acoes
+  st.session_state.setor_filtro = []
   st.session_state.liq_min = 0.0
   st.session_state.pat_min = 0.0
   st.session_state.tag_min = 0
@@ -345,11 +329,11 @@ taxas_perf_fii = (
 
 
 def limpar_filtros_fiis():
-  st.session_state.fii_tipo = tipos_fii
-  st.session_state.fii_seg = segmentos_fii
-  st.session_state.fii_gestao = gestoes_fii
-  st.session_state.fii_multi = multi_fii
-  st.session_state.fii_admin = admins_fii
+  st.session_state.fii_tipo = []
+  st.session_state.fii_seg = []
+  st.session_state.fii_gestao = []
+  st.session_state.fii_multi = []
+  st.session_state.fii_admin = []
   st.session_state.fii_taxa_adm = []
   st.session_state.fii_taxa_perf = []
   st.session_state.fii_pvp = (0.0, 2.0)
@@ -428,16 +412,13 @@ fii_taxa_perf_filtro = st.sidebar.multiselect(
 )
 
 # -----------------------------------------------------------------------------
-# CORPO PRINCIPAL DO DASHBOARD
+# CORPO PRINCIPAL
 # -----------------------------------------------------------------------------
 st.title("🛡️ Prudence Invest | Terminal Albarado")
 st.markdown("---")
 
-# =============================================================================
-# SEÇÃO 1: SCANNER DE AÇÕES B3
-# =============================================================================
+# SCANNER DE AÇÕES
 st.subheader("📈 Scanner Fundamentalista de Ações")
-
 cond_acoes = pd.Series(True, index=df_acoes.index)
 if "Tipo" in df_acoes.columns and tipo_filtro:
   cond_acoes &= df_acoes["Tipo"].isin(tipo_filtro)
@@ -510,128 +491,57 @@ df_acoes_filtrado = df_acoes_filtrado[
     [c for c in colunas_exib_acoes if c in df_acoes_filtrado.columns]
 ]
 
-total_acoes = len(df_acoes_filtrado)
-media_dy_acoes = (
-    df_acoes_filtrado["Dividend Yield"].mean()
-    if (total_acoes > 0 and "Dividend Yield" in df_acoes_filtrado.columns)
-    else 0
-)
-mediana_margem_acoes = (
-    df_acoes_filtrado["Margem de Segurança (%)"].median()
-    if (total_acoes > 0 and "Margem de Segurança (%)" in df_acoes_filtrado.columns)
-    else 0
-)
-media_roe_acoes = (
-    df_acoes_filtrado["ROE"].mean()
-    if (total_acoes > 0 and "ROE" in df_acoes_filtrado.columns)
-    else 0
-)
-
 c1, c2, c3, c4 = st.columns(4)
 with c1:
   st.markdown(
       '<div class="metric-card"><div class="metric-title">🎯 Ações'
-      f' Aprovadas</div><div class="metric-value">{total_acoes}</div></div>',
+      f' Aprovadas</div><div class="metric-value">{len(df_acoes_filtrado)}</div></div>',
       unsafe_allow_html=True,
   )
 with c2:
+  dy_a = (
+      df_acoes_filtrado["Dividend Yield"].mean()
+      if (
+          len(df_acoes_filtrado) > 0
+          and "Dividend Yield" in df_acoes_filtrado.columns
+      )
+      else 0
+  )
   st.markdown(
       '<div class="metric-card"><div class="metric-title">💰 Média de'
-      f' Yield</div><div class="metric-value">{media_dy_acoes:.2f}%</div></div>',
+      f' Yield</div><div class="metric-value">{dy_a:.2f}%</div></div>',
       unsafe_allow_html=True,
   )
 with c3:
+  mg_a = (
+      df_acoes_filtrado["Margem de Segurança (%)"].median()
+      if (
+          len(df_acoes_filtrado) > 0
+          and "Margem de Segurança (%)" in df_acoes_filtrado.columns
+      )
+      else 0
+  )
   st.markdown(
       '<div class="metric-card"><div class="metric-title">🛡️ Margem'
-      f' Mediana</div><div class="metric-value">{mediana_margem_acoes:.1f}%</div></div>',
+      f' Mediana</div><div class="metric-value">{mg_a:.1f}%</div></div>',
       unsafe_allow_html=True,
   )
 with c4:
+  roe_a = (
+      df_acoes_filtrado["ROE"].mean()
+      if (len(df_acoes_filtrado) > 0 and "ROE" in df_acoes_filtrado.columns)
+      else 0
+  )
   st.markdown(
       '<div class="metric-card"><div class="metric-title">📊 ROE'
-      f' Médio</div><div class="metric-value">{media_roe_acoes:.2f}%</div></div>',
+      f' Médio</div><div class="metric-value">{roe_a:.2f}%</div></div>',
       unsafe_allow_html=True,
   )
 
 st.markdown("<br>", unsafe_allow_html=True)
-st.dataframe(
-    df_acoes_filtrado,
-    column_config={
-        "Cotação": st.column_config.NumberColumn(format="R$ %.2f"),
-        "Preço Teto (6%)": st.column_config.NumberColumn(format="R$ %.2f"),
-        "Dividendo Pago (R$)": st.column_config.NumberColumn(format="R$ %.2f"),
-        "Margem de Segurança (%)": st.column_config.NumberColumn(
-            format="%.2f %%"
-        ),
-        "Liquidez Diária": st.column_config.NumberColumn(format="R$ %.2f"),
-        "Patrimônio Líquido": st.column_config.NumberColumn(format="R$ %.2f"),
-        "Tag Along (%)": st.column_config.NumberColumn(format="%.0f %%"),
-        "Free Float (%)": st.column_config.NumberColumn(format="%.2f %%"),
-        "ROE": st.column_config.NumberColumn(format="%.2f %%"),
-        "ROIC": st.column_config.NumberColumn(format="%.2f %%"),
-        "Margem Líquida": st.column_config.NumberColumn(format="%.2f %%"),
-        "Margem EBIT": st.column_config.NumberColumn(format="%.2f %%"),
-        "Dividend Yield": st.column_config.NumberColumn(format="%.2f %%"),
-        "Cresc. 5 Anos (%)": st.column_config.NumberColumn(format="%.2f %%"),
-        "Yield + CAGR (%)": st.column_config.NumberColumn(format="%.2f %%"),
-        "P/L": st.column_config.NumberColumn(format="%.2f x"),
-        "P/VP": st.column_config.NumberColumn(format="%.2f x"),
-        "Dívida Líquida/EBIT": st.column_config.NumberColumn(format="%.2f x"),
-    },
-    hide_index=True,
-)
+st.dataframe(df_acoes_filtrado, hide_index=True)
 
-# =============================================================================
-# SEÇÃO 2: RAIO-X HISTÓRICO
-# =============================================================================
-st.markdown("---")
-st.subheader("📊 Raio-X Histórico: Lucros e Dividendos (Ações)")
-
-if total_acoes > 0 and "Ticker" in df_acoes_filtrado.columns:
-  acao_sel = st.selectbox(
-      "Escolha uma ação aprovada para o Raio-X:",
-      df_acoes_filtrado["Ticker"].tolist(),
-      key="select_acao_rx",
-  )
-  if acao_sel:
-    col1, col2 = st.columns(2)
-    with col1:
-      st.markdown("**💰 Evolução do Lucro Líquido (Cofre Local)**")
-      if (
-          not df_cofre.empty
-          and "Ticker" in df_cofre.columns
-          and acao_sel in df_cofre["Ticker"].values
-      ):
-        df_lucro = df_cofre[df_cofre["Ticker"] == acao_sel].copy()
-        if "Ano" in df_lucro.columns and "Lucro Líquido" in df_lucro.columns:
-          df_lucro.set_index("Ano", inplace=True)
-          st.line_chart(
-              pd.DataFrame({"Lucro Líquido (R$)": df_lucro["Lucro Líquido"]}),
-              use_container_width=True,
-          )
-        else:
-          st.warning("Dados incompletos no cofre.")
-      else:
-        st.warning("Lucro não encontrado no cofre local.")
-
-    with col2:
-      st.markdown("**💸 Histórico Máximo de Dividendos (Ao Vivo)**")
-      try:
-        hist_div = yf.Ticker(f"{acao_sel}.SA").dividends
-        if not hist_div.empty:
-          div_anual = hist_div.groupby(hist_div.index.year).sum()
-          st.line_chart(
-              pd.DataFrame({"Dividendos Pagos (R$)": div_anual}),
-              use_container_width=True,
-          )
-        else:
-          st.warning("Nenhum histórico disponível.")
-      except Exception:
-        st.warning("Erro ao consultar Yahoo Finance.")
-
-# =============================================================================
-# SEÇÃO 3: SCANNER FUNDAMENTALISTA DE FIIS
-# =============================================================================
+# SCANNER DE FIIS
 st.markdown("---")
 st.subheader("🏢 Scanner Fundamentalista de FIIs (Fundos Imobiliários)")
 
@@ -747,77 +657,4 @@ if not df_fiis.empty:
     )
 
   st.markdown("<br>", unsafe_allow_html=True)
-
-  if total_fiis > 0:
-
-    def conv_excel_fiis(df_e):
-      buf = io.BytesIO()
-      with pd.ExcelWriter(buf, engine="openpyxl") as w:
-        df_e.to_excel(w, index=False, sheet_name="FIIs")
-      return buf.getvalue()
-
-    _, col_btn_fii = st.columns([4, 1])
-    with col_btn_fii:
-      st.download_button(
-          "📥 Baixar FIIs (Excel)",
-          data=conv_excel_fiis(df_fiis_filtrado),
-          file_name="FIIs_Albarado.xlsx",
-          mime=(
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          ),
-          use_container_width=True,
-      )
-
-  st.markdown("<br>", unsafe_allow_html=True)
-
-  st.dataframe(
-      df_fiis_filtrado,
-      column_config={
-          "Cotação": st.column_config.NumberColumn(format="R$ %.2f"),
-          "P/VP": st.column_config.NumberColumn(format="%.2f x"),
-          "Desconto VP (%)": st.column_config.NumberColumn(format="%.2f %%"),
-          "DY 12M Acumulado": st.column_config.NumberColumn(format="%.2f %%"),
-          "Rendimento 12M (R$)": st.column_config.NumberColumn(
-              format="R$ %.2f"
-          ),
-          "Preço Teto (9%)": st.column_config.NumberColumn(format="R$ %.2f"),
-          "Margem Teto (%)": st.column_config.NumberColumn(format="%.2f %%"),
-          "Vacância": st.column_config.NumberColumn(format="%.2f %%"),
-          "Quantidade de CRIs": st.column_config.NumberColumn(
-              format="%d CRIs"
-          ),
-          "Para FII de Papel % em CRIs": st.column_config.NumberColumn(
-              format="%.2f %%"
-          ),
-          "Liquidez diária": st.column_config.NumberColumn(format="R$ %.2f"),
-          "Patrimônio Líquido": st.column_config.NumberColumn(
-              format="R$ %.2f"
-          ),
-          "Quantidade de Imóveis": st.column_config.NumberColumn(
-              format="%d imóveis"
-          ),
-          "Tempo de listagem": st.column_config.NumberColumn(format="%d anos"),
-      },
-      hide_index=True,
-  )
-
-st.markdown(
-    """
-    <div style='
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: #0f172a;
-        color: #64748b;
-        text-align: center;
-        font-size: 14px;
-        padding: 6px 0;
-        border-top: 1px solid #1e293b;
-        z-index: 99999;
-    '>
-        © 2026 Prudence Invest. Todos os direitos reservados.
-    </div>
-    """,
-    unsafe_allow_html=True,
-)
+  st.dataframe(df_fiis_filtrado, hide_index=True)
