@@ -12,11 +12,13 @@ warnings.filterwarnings("ignore")
 logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 
 # -----------------------------------------------------------------------------
-# CONFIGURAÇÃO DA PÁGINA
+# CONFIGURAÇÃO DA PÁGINA E CHAVE BRAPI
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="Terminal Albarado | Prudence Invest", layout="wide"
 )
+
+BRAPI_TOKEN = "sk_cd7bcb7a9ea454fedd7f8f2b4fcb6d9039c7958a0eb4e26e"
 
 HEADERS = {
     "User-Agent": (
@@ -80,25 +82,30 @@ def load_acoes_data():
     except Exception:
       pass
 
-  # 2. Dados online ao vivo do Fundamentus
+  # 2. Dados oficiais via Brapi API (Ações)
   df_live = pd.DataFrame()
   try:
-    url = "https://www.fundamentus.com.br/resultado.php"
-    res = requests.get(url, headers=HEADERS, timeout=12)
-    res.encoding = "latin-1"
-    tables = pd.read_html(io.StringIO(res.text), decimal=",", thousands=".")
-    if tables:
-      raw_df = tables[0]
+    url = f"https://brapi.dev/api/quote/list?type=stock&token={BRAPI_TOKEN}"
+    res = requests.get(url, timeout=15)
+    data = res.json()
+    stocks = data.get("stocks", [])
+    if stocks:
+      df_live = pd.DataFrame(stocks)
       col_map = {
-          "Papel": "Ticker",
-          "Div.Yield": "Dividend Yield",
-          "Marg.Ebit": "Margem EBIT",
-          "Marg.Líq": "Margem Líquida",
-          "Liq.2meses": "Liquidez Diária",
-          "Patrim.Liq": "Patrimônio Líquido",
-          "Cresc.Rec.5a": "Cresc. 5 Anos (%)",
+          "stock": "Ticker",
+          "name": "Empresa",
+          "close": "Cotação",
+          "volume": "Liquidez Diária",
+          "marketCap": "Patrimônio Líquido",
+          "pe": "P/L",
+          "vp": "P/VP",
+          "dividendYield": "Dividend Yield",
       }
-      df_live = raw_df.rename(columns=col_map).copy()
+      df_live = df_live.rename(columns=col_map)
+      if "Dividend Yield" in df_live.columns:
+        df_live["Dividend Yield"] = (
+            df_live["Dividend Yield"].fillna(0) * 100.0
+        )
   except Exception:
     pass
 
@@ -115,13 +122,8 @@ def load_acoes_data():
         "P/L",
         "P/VP",
         "Dividend Yield",
-        "Margem EBIT",
-        "Margem Líquida",
-        "ROIC",
-        "ROE",
         "Liquidez Diária",
         "Patrimônio Líquido",
-        "Cresc. 5 Anos (%)",
     ]
     for c in cols_update:
       if c in df_l_idx.columns:
@@ -192,29 +194,28 @@ def load_fiis_data_v6():
     except Exception:
       pass
 
-  # 2. Dados online ao vivo do Fundamentus
+  # 2. Dados oficiais via Brapi API (FIIs)
   df_live = pd.DataFrame()
   try:
-    url = "https://www.fundamentus.com.br/fii_resultado.php"
-    res = requests.get(url, headers=HEADERS, timeout=12)
-    res.encoding = "latin-1"
-    tables = pd.read_html(io.StringIO(res.text), decimal=",", thousands=".")
-    if tables:
-      raw_df = tables[0]
+    url = f"https://brapi.dev/api/quote/list?type=fund&token={BRAPI_TOKEN}"
+    res = requests.get(url, timeout=15)
+    data = res.json()
+    funds = data.get("stocks", [])
+    if funds:
+      df_live = pd.DataFrame(funds)
       col_map = {
-          "Papel": "Ticker",
-          "Segmento": "Segmento de Atuação",
-          "Cotação": "Cotação",
-          "FFO Yield": "FFO Yield",
-          "Dividend Yield": "DY 12M Acumulado",
-          "P/VP": "P/VP",
-          "Valor de Mercado": "Patrimônio Líquido",
-          "Liquidez": "Liquidez diária",
-          "Qtd de imóveis": "Quantidade de Imóveis",
-          "Cap Rate": "Cap Rate",
-          "Vacância Média": "Vacância",
+          "stock": "Ticker",
+          "name": "Nome",
+          "close": "Cotação",
+          "volume": "Liquidez diária",
+          "marketCap": "Patrimônio Líquido",
+          "dividendYield": "DY 12M Acumulado",
       }
-      df_live = raw_df.rename(columns=col_map).copy()
+      df_live = df_live.rename(columns=col_map)
+      if "DY 12M Acumulado" in df_live.columns:
+        df_live["DY 12M Acumulado"] = (
+            df_live["DY 12M Acumulado"].fillna(0) * 100.0
+        )
   except Exception:
     pass
 
@@ -228,12 +229,9 @@ def load_fiis_data_v6():
 
     cols_update = [
         "Cotação",
-        "P/VP",
         "DY 12M Acumulado",
-        "Patrimônio Líquido",
         "Liquidez diária",
-        "Quantidade de Imóveis",
-        "Vacância",
+        "Patrimônio Líquido",
     ]
     for c in cols_update:
       if c in df_l_idx.columns:
@@ -466,7 +464,7 @@ st.markdown(
 # BARRA LATERAL (FILTROS DE AÇÕES E FIIS)
 # -----------------------------------------------------------------------------
 st.sidebar.title("🛡️ Terminal Albarado")
-st.sidebar.caption("Scanner Fundamentalista B3")
+st.sidebar.caption("Scanner Fundamentalista B3 (Brapi)")
 
 st.sidebar.button(
     "🧹 Recarregar Base & Limpar Cache",
@@ -485,8 +483,6 @@ segmentos_acoes = (
     if "Segmento de Listagem" in df_acoes.columns
     else []
 )
-
-# CORREÇÃO DA ORDENAÇÃO DE SETORES (FILTRANDO VALORES NULOS/NAN)
 if "Setor" in df_acoes.columns:
   setores_acoes = sorted(
       [str(x) for x in df_acoes["Setor"].unique() if pd.notna(x)]
