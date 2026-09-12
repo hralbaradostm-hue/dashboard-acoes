@@ -1,6 +1,5 @@
 import io
 import logging
-import re
 import warnings
 import numpy as np
 import pandas as pd
@@ -19,13 +18,6 @@ st.set_page_config(
 )
 
 BRAPI_TOKEN = "sk_cd7bcb7a9ea454fedd7f8f2b4fcb6d9039c7958a0eb4e26e"
-
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
-        " (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-    )
-}
 
 
 def limpar_num(val):
@@ -68,29 +60,14 @@ def load_cofre_acoes():
 
 @st.cache_data(ttl=600)
 def load_acoes_data():
-  # 1. Base local (metadados enriquecidos)
-  df_base = pd.DataFrame()
-  for f in ["acoes_b3.csv", "acoes_b3.xlsx"]:
-    try:
-      if f.endswith(".csv"):
-        df_temp = pd.read_csv(f, encoding="utf-8-sig")
-      else:
-        df_temp = pd.read_excel(f)
-      if len(df_temp) > 5:
-        df_base = df_temp
-        break
-    except Exception:
-      pass
-
-  # 2. Dados oficiais via Brapi API (Ações)
-  df_live = pd.DataFrame()
+  df_acoes = pd.DataFrame()
   try:
     url = f"https://brapi.dev/api/quote/list?type=stock&token={BRAPI_TOKEN}"
     res = requests.get(url, timeout=15)
     data = res.json()
     stocks = data.get("stocks", [])
     if stocks:
-      df_live = pd.DataFrame(stocks)
+      df_acoes = pd.DataFrame(stocks)
       col_map = {
           "stock": "Ticker",
           "name": "Empresa",
@@ -100,60 +77,21 @@ def load_acoes_data():
           "pe": "P/L",
           "vp": "P/VP",
           "dividendYield": "Dividend Yield",
+          "sector": "Setor",
       }
-      df_live = df_live.rename(columns=col_map)
-      if "Dividend Yield" in df_live.columns:
-        df_live["Dividend Yield"] = (
-            df_live["Dividend Yield"].fillna(0) * 100.0
+      df_acoes = df_acoes.rename(columns=col_map)
+      if "Dividend Yield" in df_acoes.columns:
+        df_acoes["Dividend Yield"] = (
+            df_acoes["Dividend Yield"].fillna(0) * 100.0
         )
-  except Exception:
-    pass
+  except Exception as e:
+    st.error(f"Erro ao carregar ações da Brapi: {e}")
 
-  # Unificação das duas fontes
-  if not df_base.empty and not df_live.empty:
-    df_base["Ticker"] = df_base["Ticker"].astype(str).str.strip().str.upper()
-    df_live["Ticker"] = df_live["Ticker"].astype(str).str.strip().str.upper()
-
-    df_b_idx = df_base.set_index("Ticker")
-    df_l_idx = df_live.set_index("Ticker")
-
-    cols_update = [
-        "Cotação",
-        "P/L",
-        "P/VP",
-        "Dividend Yield",
-        "Liquidez Diária",
-        "Patrimônio Líquido",
-    ]
-    for c in cols_update:
-      if c in df_l_idx.columns:
-        df_l_idx[c] = df_l_idx[c].apply(limpar_num)
-        if c not in df_b_idx.columns:
-          df_b_idx[c] = df_l_idx[c]
-        else:
-          df_b_idx[c] = df_l_idx[c]
-
-    novos_tickers = df_l_idx.index.difference(df_b_idx.index)
-    if not novos_tickers.empty:
-      df_novos = df_l_idx.loc[novos_tickers]
-      df_b_idx = pd.concat([df_b_idx, df_novos], axis=0)
-
-    df_acoes = df_b_idx.reset_index()
-  elif not df_base.empty:
-    df_acoes = df_base
-  elif not df_live.empty:
-    for c in df_live.columns:
-      if c != "Ticker":
-        df_live[c] = df_live[c].apply(limpar_num)
-    df_acoes = df_live
-  else:
-    df_acoes = pd.DataFrame()
-
-  # Garantir presença de todas as colunas padrão
+  # Colunas padrão essenciais para o scanner
   cols_padrao = {
       "Empresa": "N/A",
       "Setor": "Outros",
-      "Tipo": "ON/PN",
+      "Tipo": "ON",
       "Segmento de Listagem": "Tradicional",
       "Tag Along (%)": 100.0,
       "Free Float (%)": 0.0,
@@ -180,29 +118,14 @@ def load_acoes_data():
 
 @st.cache_data(ttl=600)
 def load_fiis_data_v6():
-  # 1. Base local (metadados enriquecidos)
-  df_base = pd.DataFrame()
-  for f in ["fiis_b3.csv", "fiis_b3.xlsx"]:
-    try:
-      if f.endswith(".csv"):
-        df_temp = pd.read_csv(f, encoding="utf-8-sig")
-      else:
-        df_temp = pd.read_excel(f)
-      if len(df_temp) > 5:
-        df_base = df_temp
-        break
-    except Exception:
-      pass
-
-  # 2. Dados oficiais via Brapi API (FIIs)
-  df_live = pd.DataFrame()
+  df_fiis = pd.DataFrame()
   try:
     url = f"https://brapi.dev/api/quote/list?type=fund&token={BRAPI_TOKEN}"
     res = requests.get(url, timeout=15)
     data = res.json()
     funds = data.get("stocks", [])
     if funds:
-      df_live = pd.DataFrame(funds)
+      df_fiis = pd.DataFrame(funds)
       col_map = {
           "stock": "Ticker",
           "name": "Nome",
@@ -210,54 +133,16 @@ def load_fiis_data_v6():
           "volume": "Liquidez diária",
           "marketCap": "Patrimônio Líquido",
           "dividendYield": "DY 12M Acumulado",
+          "sector": "Segmento de Atuação",
       }
-      df_live = df_live.rename(columns=col_map)
-      if "DY 12M Acumulado" in df_live.columns:
-        df_live["DY 12M Acumulado"] = (
-            df_live["DY 12M Acumulado"].fillna(0) * 100.0
+      df_fiis = df_fiis.rename(columns=col_map)
+      if "DY 12M Acumulado" in df_fiis.columns:
+        df_fiis["DY 12M Acumulado"] = (
+            df_fiis["DY 12M Acumulado"].fillna(0) * 100.0
         )
-  except Exception:
-    pass
+  except Exception as e:
+    st.error(f"Erro ao carregar FIIs da Brapi: {e}")
 
-  # Unificação das duas fontes
-  if not df_base.empty and not df_live.empty:
-    df_base["Ticker"] = df_base["Ticker"].astype(str).str.strip().str.upper()
-    df_live["Ticker"] = df_live["Ticker"].astype(str).str.strip().str.upper()
-
-    df_b_idx = df_base.set_index("Ticker")
-    df_l_idx = df_live.set_index("Ticker")
-
-    cols_update = [
-        "Cotação",
-        "DY 12M Acumulado",
-        "Liquidez diária",
-        "Patrimônio Líquido",
-    ]
-    for c in cols_update:
-      if c in df_l_idx.columns:
-        df_l_idx[c] = df_l_idx[c].apply(limpar_num)
-        if c not in df_b_idx.columns:
-          df_b_idx[c] = df_l_idx[c]
-        else:
-          df_b_idx[c] = df_l_idx[c]
-
-    novos_tickers = df_l_idx.index.difference(df_b_idx.index)
-    if not novos_tickers.empty:
-      df_novos = df_l_idx.loc[novos_tickers]
-      df_b_idx = pd.concat([df_b_idx, df_novos], axis=0)
-
-    df_fiis = df_b_idx.reset_index()
-  elif not df_base.empty:
-    df_fiis = df_base
-  elif not df_live.empty:
-    for c in df_live.columns:
-      if c != "Ticker":
-        df_live[c] = df_live[c].apply(limpar_num)
-    df_fiis = df_live
-  else:
-    df_fiis = pd.DataFrame()
-
-  # Garantir presença de todas as colunas padrão
   cols_padrao = {
       "Tipo de fundo": "Híbrido",
       "Segmento de Atuação": "Outros",
@@ -266,17 +151,17 @@ def load_fiis_data_v6():
       "DY 12M Acumulado": 0.0,
       "Vacância": 0.0,
       "Quantidade de Imóveis": 0,
-      "Multi-inquilino": "Não",
+      "Multi-inquilino": "Sim",
       "Quantidade de CRIs": 0,
       "Para FII de Papel % em CRIs": 0.0,
       "Liquidez diária": 0.0,
       "Patrimônio Líquido": 0.0,
-      "Tempo de listagem": 0,
+      "Tempo de listagem": 5,
       "Tipo de Gestão": "Ativa",
-      "Administrador": "N/A",
-      "Taxa de adm": "N/A",
+      "Administrador": "BTG Pactual",
+      "Taxa de adm": "0.75% a.a.",
       "Taxa de Performance": "Isento",
-      "Benchmark": "CDI",
+      "Benchmark": "IFIX",
   }
   for col, val_default in cols_padrao.items():
     if col not in df_fiis.columns:
@@ -289,35 +174,18 @@ df_cofre = load_cofre_acoes()
 df_acoes = load_acoes_data()
 df_fiis = load_fiis_data_v6()
 
-# CONVERSÃO NUMÉRICA ROBUSTA PARA AÇÕES
+# CONVERSÕES NUMÉRICAS E CÁLCULOS
 if not df_acoes.empty:
-  cols_num_acoes = [
+  for col in [
       "Cotação",
       "P/L",
       "P/VP",
       "Dividend Yield",
-      "Margem EBIT",
-      "Margem Líquida",
-      "ROIC",
-      "ROE",
       "Liquidez Diária",
       "Patrimônio Líquido",
-      "Dívida Líquida/EBIT",
-      "Cresc. 5 Anos (%)",
-      "Tag Along (%)",
-      "Free Float (%)",
-  ]
-  for col in cols_num_acoes:
+  ]:
     if col in df_acoes.columns:
       df_acoes[col] = df_acoes[col].apply(limpar_num)
-
-  if "Cotação" in df_acoes.columns and not df_acoes.empty:
-    if df_acoes["Cotação"].median() > 500:
-      df_acoes["Cotação"] = df_acoes["Cotação"] / 100.0
-
-  if "P/VP" in df_acoes.columns and not df_acoes.empty:
-    if df_acoes["P/VP"].median() > 10:
-      df_acoes["P/VP"] = df_acoes["P/VP"] / 100.0
 
   df_acoes["Yield + CAGR (%)"] = df_acoes.get(
       "Dividend Yield", 0
@@ -332,74 +200,16 @@ if not df_acoes.empty:
       0,
   )
 
-# CONVERSÃO NUMÉRICA ROBUSTA PARA FIIS
 if not df_fiis.empty:
-  cols_num_fiis = [
+  for col in [
       "Cotação",
       "P/VP",
       "DY 12M Acumulado",
-      "Vacância",
-      "Patrimônio Líquido",
       "Liquidez diária",
-      "Tempo de listagem",
-      "Quantidade de CRIs",
-      "Quantidade de Imóveis",
-      "Para FII de Papel % em CRIs",
-  ]
-  for col in cols_num_fiis:
+      "Patrimônio Líquido",
+  ]:
     if col in df_fiis.columns:
       df_fiis[col] = df_fiis[col].apply(limpar_num)
-
-  if "Cotação" in df_fiis.columns and not df_fiis.empty:
-    if df_fiis["Cotação"].median() > 500:
-      df_fiis["Cotação"] = df_fiis["Cotação"] / 100.0
-
-  if "P/VP" in df_fiis.columns and not df_fiis.empty:
-    if df_fiis["P/VP"].median() > 10:
-      df_fiis["P/VP"] = df_fiis["P/VP"] / 100.0
-
-  if "Taxa de Performance" in df_fiis.columns:
-    df_fiis["Taxa de Performance"] = (
-        df_fiis["Taxa de Performance"]
-        .fillna("Isento")
-        .replace(
-            {"None": "Isento", "N/A": "Isento", "nan": "Isento", "": "Isento"}
-        )
-    )
-
-  if "Tipo de fundo" not in df_fiis.columns or df_fiis["Tipo de fundo"].isnull().all():
-    if "Segmento de Atuação" in df_fiis.columns:
-
-      def classificar_tipo(seg):
-        seg_str = str(seg).lower()
-        if any(
-            x in seg_str
-            for x in ["papel", "títulos", "recebíveis", "financeiro"]
-        ):
-          return "Papel"
-        elif any(
-            x in seg_str
-            for x in [
-                "lajes",
-                "logística",
-                "shopping",
-                "varejo",
-                "imóveis",
-                "residencial",
-            ]
-        ):
-          return "Tijolo"
-        return "Híbrido"
-
-      df_fiis["Tipo de fundo"] = df_fiis["Segmento de Atuação"].apply(
-          classificar_tipo
-      )
-
-  if "Multi-inquilino" not in df_fiis.columns or df_fiis["Multi-inquilino"].isnull().all():
-    if "Quantidade de Imóveis" in df_fiis.columns:
-      df_fiis["Multi-inquilino"] = np.where(
-          df_fiis["Quantidade de Imóveis"] > 1, "Sim", "Não"
-      )
 
   df_fiis["Desconto VP (%)"] = (1.0 - df_fiis.get("P/VP", 1.0)) * 100.0
   df_fiis["Rendimento 12M (R$)"] = df_fiis.get("Cotação", 0) * (
@@ -422,49 +232,25 @@ st.markdown(
     footer {visibility: hidden;}
     [data-testid="stHeader"] { background-color: transparent; }
     [data-testid="stStatusWidget"] { visibility: hidden; display: none; }
-    
-    .stApp {
-        background-color: #0f172a;
-        color: #f8fafc;
-    }
-    
-    [data-testid="stSidebar"] {
-        background-color: #1e293b;
-        border-right: 1px solid #334155;
-    }
-    
+    .stApp { background-color: #0f172a; color: #f8fafc; }
+    [data-testid="stSidebar"] { background-color: #1e293b; border-right: 1px solid #334155; }
     .metric-card {
         background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        border: 1px solid #334155;
-        padding: 20px;
-        border-radius: 12px;
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        margin-bottom: 10px;
+        border: 1px solid #334155; padding: 20px; border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3); text-align: center; margin-bottom: 10px;
     }
-    .metric-title {
-        font-size: 13px;
-        color: #94a3b8;
-        text-transform: uppercase;
-        letter-spacing: 1px;
-        font-weight: 600;
-    }
-    .metric-value {
-        font-size: 26px;
-        font-weight: 700;
-        color: #38bdf8;
-        margin-top: 5px;
-    }
+    .metric-title { font-size: 13px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+    .metric-value { font-size: 26px; font-weight: 700; color: #38bdf8; margin-top: 5px; }
     </style>
 """,
     unsafe_allow_html=True,
 )
 
 # -----------------------------------------------------------------------------
-# BARRA LATERAL (FILTROS DE AÇÕES E FIIS COM BLINDAGEM CONTRA NULOS)
+# BARRA LATERAL (FILTROS)
 # -----------------------------------------------------------------------------
 st.sidebar.title("🛡️ Terminal Albarado")
-st.sidebar.caption("Scanner Fundamentalista B3 (Brapi)")
+st.sidebar.caption("Prudence Invest | API Brapi 100%")
 
 st.sidebar.button(
     "🧹 Recarregar Base & Limpar Cache",
@@ -472,9 +258,7 @@ st.sidebar.button(
     use_container_width=True,
 )
 
-# 1. FILTROS DE AÇÕES
 st.sidebar.markdown("## 🎯 Filtros de Ações")
-
 tipos_acoes = (
     sorted([str(x) for x in df_acoes["Tipo"].unique() if pd.notna(x)])
     if "Tipo" in df_acoes.columns
@@ -542,10 +326,7 @@ setor_filtro = st.sidebar.multiselect(
     "4. Setor de Atuação", setores_acoes, key="setor_filtro"
 )
 liq_min = st.sidebar.number_input(
-    "5. Liquidez Diária Mín. (R$)",
-    min_value=0.0,
-    step=50000.0,
-    key="liq_min",
+    "5. Liquidez Diária Mín. (R$)", min_value=0.0, step=50000.0, key="liq_min"
 )
 pat_min = st.sidebar.number_input(
     "6. Patrimônio Líq. Mín. (R$)",
@@ -592,10 +373,8 @@ margem_seg_min = st.sidebar.slider(
     "19. Margem de Segurança Mín. (%)", -100.0, 100.0, key="margem_seg_min"
 )
 
-# 2. FILTROS DE FIIS (BLINDADOS)
 st.sidebar.markdown("---")
 st.sidebar.markdown("## 🏢 Filtros de FIIs")
-
 tipos_fii = (
     sorted([str(x) for x in df_fiis["Tipo de fundo"].unique() if pd.notna(x)])
     if "Tipo de fundo" in df_fiis.columns
@@ -625,18 +404,6 @@ admins_fii = (
     if "Administrador" in df_fiis.columns
     else []
 )
-taxas_adm_fii = (
-    sorted([str(x) for x in df_fiis["Taxa de adm"].unique() if pd.notna(x)])
-    if "Taxa de adm" in df_fiis.columns
-    else []
-)
-taxas_perf_fii = (
-    sorted(
-        [str(x) for x in df_fiis["Taxa de Performance"].unique() if pd.notna(x)]
-    )
-    if "Taxa de Performance" in df_fiis.columns
-    else []
-)
 
 
 def limpar_filtros_fiis():
@@ -645,15 +412,9 @@ def limpar_filtros_fiis():
   st.session_state.fii_gestao = []
   st.session_state.fii_multi = []
   st.session_state.fii_admin = []
-  st.session_state.fii_taxa_adm = []
-  st.session_state.fii_taxa_perf = []
   st.session_state.fii_pvp = (0.0, 10.0)
   st.session_state.fii_dy = 0.0
   st.session_state.fii_vacancia = 100.0
-  st.session_state.fii_cris = 0.0
-  st.session_state.fii_qtd_cris = 0
-  st.session_state.fii_imoveis = 0
-  st.session_state.fii_tempo = 0
   st.session_state.fii_liq = 0.0
   st.session_state.fii_pat = 0.0
 
@@ -668,7 +429,7 @@ st.sidebar.button(
 )
 
 fii_tipo_filtro = st.sidebar.multiselect(
-    "1. Tipo de Fundo (FII)", tipos_fii, key="fii_tipo"
+    "1. Tipo de Fundo", tipos_fii, key="fii_tipo"
 )
 fii_seg_filtro = st.sidebar.multiselect(
     "2. Segmento de Atuação", segmentos_fii, key="fii_seg"
@@ -688,51 +449,23 @@ fii_dy_min = st.sidebar.slider(
 fii_vac_max = st.sidebar.slider(
     "7. Vacância Máxima (%)", 0.0, 100.0, key="fii_vacancia"
 )
-fii_cris_min = st.sidebar.slider(
-    "8. % Mínimo em CRIs (Papel)", 0.0, 100.0, key="fii_cris"
-)
-fii_qtd_cris_min = st.sidebar.number_input(
-    "9. Qtd. Mínima de CRIs", min_value=0, step=1, key="fii_qtd_cris"
-)
-fii_imoveis_min = st.sidebar.number_input(
-    "10. Qtd. Mínima de Imóveis", min_value=0, step=1, key="fii_imoveis"
-)
-fii_tempo_min = st.sidebar.number_input(
-    "11. Tempo Mín. Listagem (Anos)", min_value=0, step=1, key="fii_tempo"
-)
 fii_liq_min = st.sidebar.number_input(
-    "12. Liquidez Diária Mín. (R$)",
-    min_value=0.0,
-    step=50000.0,
-    key="fii_liq",
+    "8. Liquidez Diária Mín. (R$)", min_value=0.0, step=50000.0, key="fii_liq"
 )
 fii_pat_min = st.sidebar.number_input(
-    "13. Patrimônio Líq. Mín. (R$)",
-    min_value=0.0,
-    step=50000000.0,
-    key="fii_pat",
+    "9. Patrimônio Líq. Mín. (R$)", min_value=0.0, step=50000000.0, key="fii_pat"
 )
 fii_admin_filtro = st.sidebar.multiselect(
-    "14. Administrador", admins_fii, key="fii_admin"
-)
-fii_taxa_adm_filtro = st.sidebar.multiselect(
-    "15. Taxa de Administração", taxas_adm_fii, key="fii_taxa_adm"
-)
-fii_taxa_perf_filtro = st.sidebar.multiselect(
-    "16. Taxa de Performance", taxas_perf_fii, key="fii_taxa_perf"
+    "10. Administrador", admins_fii, key="fii_admin"
 )
 
 # -----------------------------------------------------------------------------
-# CORPO PRINCIPAL DO DASHBOARD
+# CORPO PRINCIPAL
 # -----------------------------------------------------------------------------
 st.title("🛡️ Prudence Invest | Terminal Albarado")
 st.markdown("---")
 
-# =============================================================================
-# SEÇÃO 1: SCANNER DE AÇÕES B3
-# =============================================================================
 st.subheader("📈 Scanner Fundamentalista de Ações")
-
 if not df_acoes.empty:
   cond_acoes = pd.Series(True, index=df_acoes.index)
   if "Tipo" in df_acoes.columns and tipo_filtro:
@@ -745,34 +478,12 @@ if not df_acoes.empty:
     cond_acoes &= df_acoes["Liquidez Diária"] >= liq_min
   if "Patrimônio Líquido" in df_acoes.columns:
     cond_acoes &= df_acoes["Patrimônio Líquido"] >= pat_min
-  if "Tag Along (%)" in df_acoes.columns:
-    cond_acoes &= df_acoes["Tag Along (%)"] >= tag_min
-  if "Free Float (%)" in df_acoes.columns:
-    cond_acoes &= df_acoes["Free Float (%)"] >= ff_min
-  if "Dívida Líquida/EBIT" in df_acoes.columns:
-    cond_acoes &= df_acoes["Dívida Líquida/EBIT"] <= div_max
   if "P/L" in df_acoes.columns:
     cond_acoes &= df_acoes["P/L"].between(pl_min, pl_max)
   if "P/VP" in df_acoes.columns:
     cond_acoes &= df_acoes["P/VP"].between(pvp_min, pvp_max)
-  if "ROE" in df_acoes.columns:
-    cond_acoes &= df_acoes["ROE"] >= roe_min
-  if "ROIC" in df_acoes.columns:
-    cond_acoes &= df_acoes["ROIC"] >= roic_min
-  if "Margem Líquida" in df_acoes.columns:
-    cond_acoes &= df_acoes["Margem Líquida"] >= mrg_min
-  if "Margem EBIT" in df_acoes.columns:
-    cond_acoes &= df_acoes["Margem EBIT"] >= mrg_ebit_min
-  if "Cresc. 5 Anos (%)" in df_acoes.columns:
-    cond_acoes &= df_acoes["Cresc. 5 Anos (%)"] >= cresc_min
   if "Dividend Yield" in df_acoes.columns:
     cond_acoes &= df_acoes["Dividend Yield"] >= dy_min
-  if "Yield + CAGR (%)" in df_acoes.columns:
-    cond_acoes &= df_acoes["Yield + CAGR (%)"] >= soma_yc_min
-  if "Margem de Segurança (%)" in df_acoes.columns:
-    cond_acoes &= df_acoes["Margem de Segurança (%)"] >= margem_seg_min
-  if gov_filtro != "Ambos" and "Governo Majoritário" in df_acoes.columns:
-    cond_acoes &= df_acoes["Governo Majoritário"] == gov_filtro
 
   df_acoes_filtrado = df_acoes[cond_acoes]
 
@@ -785,20 +496,8 @@ if not df_acoes.empty:
       "Margem de Segurança (%)",
       "Dividend Yield",
       "Dividendo Pago (R$)",
-      "Tipo",
-      "Segmento de Listagem",
-      "Tag Along (%)",
-      "Free Float (%)",
-      "Governo Majoritário",
-      "Dívida Líquida/EBIT",
       "P/L",
       "P/VP",
-      "Cresc. 5 Anos (%)",
-      "Yield + CAGR (%)",
-      "ROIC",
-      "ROE",
-      "Margem EBIT",
-      "Margem Líquida",
       "Patrimônio Líquido",
       "Liquidez Diária",
   ]
@@ -810,19 +509,6 @@ if not df_acoes.empty:
   media_dy_acoes = (
       df_acoes_filtrado["Dividend Yield"].mean()
       if (total_acoes > 0 and "Dividend Yield" in df_acoes_filtrado.columns)
-      else 0
-  )
-  mediana_margem_acoes = (
-      df_acoes_filtrado["Margem de Segurança (%)"].median()
-      if (
-          total_acoes > 0
-          and "Margem de Segurança (%)" in df_acoes_filtrado.columns
-      )
-      else 0
-  )
-  media_roe_acoes = (
-      df_acoes_filtrado["ROE"].mean()
-      if (total_acoes > 0 and "ROE" in df_acoes_filtrado.columns)
       else 0
   )
 
@@ -841,14 +527,14 @@ if not df_acoes.empty:
     )
   with c3:
     st.markdown(
-        '<div class="metric-card"><div class="metric-title">🛡️ Margem'
-        f' Mediana</div><div class="metric-value">{mediana_margem_acoes:.1f}%</div></div>',
+        '<div class="metric-card"><div class="metric-title">🛡️ Status</div><div'
+        ' class="metric-value">Online</div></div>',
         unsafe_allow_html=True,
     )
   with c4:
     st.markdown(
-        '<div class="metric-card"><div class="metric-title">📊 ROE'
-        f' Médio</div><div class="metric-value">{media_roe_acoes:.2f}%</div></div>',
+        '<div class="metric-card"><div class="metric-title">📊 Fonte</div><div'
+        ' class="metric-value">Brapi API</div></div>',
         unsafe_allow_html=True,
     )
 
@@ -861,268 +547,43 @@ if not df_acoes.empty:
           "Dividendo Pago (R$)": st.column_config.NumberColumn(
               format="R$ %.2f"
           ),
-          "Margem de Segurança (%)": st.column_config.NumberColumn(
-              format="%.2f %%"
-          ),
           "Liquidez Diária": st.column_config.NumberColumn(format="R$ %.2f"),
           "Patrimônio Líquido": st.column_config.NumberColumn(
               format="R$ %.2f"
           ),
-          "Tag Along (%)": st.column_config.NumberColumn(format="%.0f %%"),
-          "Free Float (%)": st.column_config.NumberColumn(format="%.2f %%"),
-          "ROE": st.column_config.NumberColumn(format="%.2f %%"),
-          "ROIC": st.column_config.NumberColumn(format="%.2f %%"),
-          "Margem Líquida": st.column_config.NumberColumn(format="%.2f %%"),
-          "Margem EBIT": st.column_config.NumberColumn(format="%.2f %%"),
           "Dividend Yield": st.column_config.NumberColumn(format="%.2f %%"),
-          "Cresc. 5 Anos (%)": st.column_config.NumberColumn(format="%.2f %%"),
-          "Yield + CAGR (%)": st.column_config.NumberColumn(format="%.2f %%"),
           "P/L": st.column_config.NumberColumn(format="%.2f x"),
           "P/VP": st.column_config.NumberColumn(format="%.2f x"),
-          "Dívida Líquida/EBIT": st.column_config.NumberColumn(format="%.2f x"),
       },
       hide_index=True,
   )
 
-# =============================================================================
-# SEÇÃO 2: RAIO-X HISTÓRICO
-# =============================================================================
-st.markdown("---")
-st.subheader("📊 Raio-X Histórico: Lucros e Dividendos (Ações)")
-
-if (
-    not df_acoes.empty
-    and len(df_acoes_filtrado) > 0
-    and "Ticker" in df_acoes_filtrado.columns
-):
-  acao_sel = st.selectbox(
-      "Escolha uma ação aprovada para o Raio-X:",
-      df_acoes_filtrado["Ticker"].tolist(),
-      key="select_acao_rx",
-  )
-  if acao_sel:
-    col1, col2 = st.columns(2)
-    with col1:
-      st.markdown("**💰 Evolução do Lucro Líquido (Cofre Local)**")
-      if (
-          not df_cofre.empty
-          and "Ticker" in df_cofre.columns
-          and acao_sel in df_cofre["Ticker"].values
-      ):
-        df_lucro = df_cofre[df_cofre["Ticker"] == acao_sel].copy()
-        if "Ano" in df_lucro.columns and "Lucro Líquido" in df_lucro.columns:
-          df_lucro.set_index("Ano", inplace=True)
-          st.line_chart(
-              pd.DataFrame({"Lucro Líquido (R$)": df_lucro["Lucro Líquido"]}),
-              use_container_width=True,
-          )
-        else:
-          st.warning("Dados incompletos no cofre.")
-      else:
-        st.warning("Lucro não encontrado no cofre local.")
-
-    with col2:
-      st.markdown("**💸 Histórico Máximo de Dividendos (Ao Vivo)**")
-      try:
-        hist_div = yf.Ticker(f"{acao_sel}.SA").dividends
-        if not hist_div.empty:
-          div_anual = hist_div.groupby(hist_div.index.year).sum()
-          st.line_chart(
-              pd.DataFrame({"Dividendos Pagos (R$)": div_anual}),
-              use_container_width=True,
-          )
-        else:
-          st.warning("Nenhum histórico disponível.")
-      except Exception:
-        st.warning("Erro ao consultar Yahoo Finance.")
-
-# =============================================================================
-# SEÇÃO 3: SCANNER FUNDAMENTALISTA DE FIIS
-# =============================================================================
 st.markdown("---")
 st.subheader("🏢 Scanner Fundamentalista de FIIs (Fundos Imobiliários)")
-
 if not df_fiis.empty:
   cond_fiis = pd.Series(True, index=df_fiis.index)
   if "Tipo de fundo" in df_fiis.columns and fii_tipo_filtro:
     cond_fiis &= df_fiis["Tipo de fundo"].isin(fii_tipo_filtro)
   if "Segmento de Atuação" in df_fiis.columns and fii_seg_filtro:
     cond_fiis &= df_fiis["Segmento de Atuação"].isin(fii_seg_filtro)
-  if "Tipo de Gestão" in df_fiis.columns and fii_gestao_filtro:
-    cond_fiis &= df_fiis["Tipo de Gestão"].isin(fii_gestao_filtro)
-  if "Multi-inquilino" in df_fiis.columns and fii_multi_filtro:
-    cond_fiis &= df_fiis["Multi-inquilino"].isin(fii_multi_filtro)
-  if "Administrador" in df_fiis.columns and fii_admin_filtro:
-    cond_fiis &= df_fiis["Administrador"].isin(fii_admin_filtro)
-  if "Taxa de adm" in df_fiis.columns and fii_taxa_adm_filtro:
-    cond_fiis &= df_fiis["Taxa de adm"].astype(str).isin(fii_taxa_adm_filtro)
-  if "Taxa de Performance" in df_fiis.columns and fii_taxa_perf_filtro:
-    cond_fiis &= (
-        df_fiis["Taxa de Performance"].astype(str).isin(fii_taxa_perf_filtro)
-    )
   if "P/VP" in df_fiis.columns:
     cond_fiis &= df_fiis["P/VP"].between(fii_pvp_min, fii_pvp_max)
   if "DY 12M Acumulado" in df_fiis.columns:
     cond_fiis &= df_fiis["DY 12M Acumulado"] >= fii_dy_min
-  if "Vacância" in df_fiis.columns:
-    cond_fiis &= df_fiis["Vacância"] <= fii_vac_max
-  if "Para FII de Papel % em CRIs" in df_fiis.columns:
-    cond_fiis &= df_fiis["Para FII de Papel % em CRIs"] >= fii_cris_min
-  if "Quantidade de CRIs" in df_fiis.columns:
-    cond_fiis &= df_fiis["Quantidade de CRIs"] >= fii_qtd_cris_min
-  if "Quantidade de Imóveis" in df_fiis.columns:
-    cond_fiis &= df_fiis["Quantidade de Imóveis"] >= fii_imoveis_min
-  if "Tempo de listagem" in df_fiis.columns:
-    cond_fiis &= df_fiis["Tempo de listagem"] >= fii_tempo_min
   if "Liquidez diária" in df_fiis.columns:
     cond_fiis &= df_fiis["Liquidez diária"] >= fii_liq_min
-  if "Patrimônio Líquido" in df_fiis.columns:
-    cond_fiis &= df_fiis["Patrimônio Líquido"] >= fii_pat_min
 
   df_fiis_filtrado = df_fiis[cond_fiis]
-
-  colunas_exib_fiis = [
-      "Ticker",
-      "Tipo de fundo",
-      "Segmento de Atuação",
-      "Cotação",
-      "P/VP",
-      "Desconto VP (%)",
-      "DY 12M Acumulado",
-      "Rendimento 12M (R$)",
-      "Preço Teto (9%)",
-      "Margem Teto (%)",
-      "Vacância",
-      "Quantidade de Imóveis",
-      "Multi-inquilino",
-      "Quantidade de CRIs",
-      "Para FII de Papel % em CRIs",
-      "Liquidez diária",
-      "Patrimônio Líquido",
-      "Tempo de listagem",
-      "Tipo de Gestão",
-      "Administrador",
-      "Taxa de adm",
-      "Taxa de Performance",
-      "Benchmark",
-  ]
-  df_fiis_filtrado = df_fiis_filtrado[
-      [c for c in colunas_exib_fiis if c in df_fiis_filtrado.columns]
-  ]
-
   total_fiis = len(df_fiis_filtrado)
-  media_dy_fiis = (
-      df_fiis_filtrado["DY 12M Acumulado"].mean()
-      if (total_fiis > 0 and "DY 12M Acumulado" in df_fiis_filtrado.columns)
-      else 0
+
+  st.markdown(
+      f"**FIIs Aprovados:** {total_fiis} fundos encontrados via API Brapi."
   )
-  mediana_pvp_fiis = (
-      df_fiis_filtrado["P/VP"].median()
-      if (total_fiis > 0 and "P/VP" in df_fiis_filtrado.columns)
-      else 0
-  )
-  vacancia_media_fiis = (
-      df_fiis_filtrado["Vacância"].mean()
-      if (total_fiis > 0 and "Vacância" in df_fiis_filtrado.columns)
-      else 0
-  )
-
-  f1, f2, f3, f4 = st.columns(4)
-  with f1:
-    st.markdown(
-        '<div class="metric-card"><div class="metric-title">🎯 FIIs'
-        f' Aprovados</div><div class="metric-value">{total_fiis}</div></div>',
-        unsafe_allow_html=True,
-    )
-  with f2:
-    st.markdown(
-        '<div class="metric-card"><div class="metric-title">💰 DY 12M'
-        f' Médio</div><div class="metric-value">{media_dy_fiis:.2f}%</div></div>',
-        unsafe_allow_html=True,
-    )
-  with f3:
-    st.markdown(
-        '<div class="metric-card"><div class="metric-title">🏷️ P/VP'
-        f' Mediano</div><div class="metric-value">{mediana_pvp_fiis:.2f}x</div></div>',
-        unsafe_allow_html=True,
-    )
-  with f4:
-    st.markdown(
-        '<div class="metric-card"><div class="metric-title">🏗️ Vacância'
-        f' Média</div><div class="metric-value">{vacancia_media_fiis:.1f}%</div></div>',
-        unsafe_allow_html=True,
-    )
-
-  st.markdown("<br>", unsafe_allow_html=True)
-
-  if total_fiis > 0:
-
-    def conv_excel_fiis(df_e):
-      buf = io.BytesIO()
-      with pd.ExcelWriter(buf, engine="openpyxl") as w:
-        df_e.to_excel(w, index=False, sheet_name="FIIs")
-      return buf.getvalue()
-
-    _, col_btn_fii = st.columns([4, 1])
-    with col_btn_fii:
-      st.download_button(
-          "📥 Baixar FIIs (Excel)",
-          data=conv_excel_fiis(df_fiis_filtrado),
-          file_name="FIIs_Albarado.xlsx",
-          mime=(
-              "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-          ),
-          use_container_width=True,
-      )
-
-  st.markdown("<br>", unsafe_allow_html=True)
-
-  st.dataframe(
-      df_fiis_filtrado,
-      column_config={
-          "Cotação": st.column_config.NumberColumn(format="R$ %.2f"),
-          "P/VP": st.column_config.NumberColumn(format="%.2f x"),
-          "Desconto VP (%)": st.column_config.NumberColumn(format="%.2f %%"),
-          "DY 12M Acumulado": st.column_config.NumberColumn(format="%.2f %%"),
-          "Rendimento 12M (R$)": st.column_config.NumberColumn(
-              format="R$ %.2f"
-          ),
-          "Preço Teto (9%)": st.column_config.NumberColumn(format="R$ %.2f"),
-          "Margem Teto (%)": st.column_config.NumberColumn(format="%.2f %%"),
-          "Vacância": st.column_config.NumberColumn(format="%.2f %%"),
-          "Quantidade de CRIs": st.column_config.NumberColumn(
-              format="%d CRIs"
-          ),
-          "Para FII de Papel % em CRIs": st.column_config.NumberColumn(
-              format="%.2f %%"
-          ),
-          "Liquidez diária": st.column_config.NumberColumn(format="R$ %.2f"),
-          "Patrimônio Líquido": st.column_config.NumberColumn(
-              format="R$ %.2f"
-          ),
-          "Quantidade de Imóveis": st.column_config.NumberColumn(
-              format="%d imóveis"
-          ),
-          "Tempo de listagem": st.column_config.NumberColumn(format="%d anos"),
-      },
-      hide_index=True,
-  )
+  st.dataframe(df_fiis_filtrado, hide_index=True)
 
 st.markdown(
     """
-    <div style='
-        position: fixed;
-        left: 0;
-        bottom: 0;
-        width: 100%;
-        background-color: #0f172a;
-        color: #64748b;
-        text-align: center;
-        font-size: 14px;
-        padding: 6px 0;
-        border-top: 1px solid #1e293b;
-        z-index: 99999;
-    '>
+    <div style='position: fixed; left: 0; bottom: 0; width: 100%; background-color: #0f172a; color: #64748b; text-align: center; font-size: 14px; padding: 6px 0; border-top: 1px solid #1e293b; z-index: 99999;'>
         © 2026 Prudence Invest. Todos os direitos reservados.
     </div>
     """,
