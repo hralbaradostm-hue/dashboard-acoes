@@ -67,34 +67,84 @@ def load_cofre_acoes():
 @st.cache_data(ttl=600)
 def load_acoes_data():
   df = pd.DataFrame()
-  for f in ["acoes_b3.csv", "acoes_b3.xlsx"]:
-    try:
-      if f.endswith(".csv"):
-        df_temp = pd.read_csv(f, encoding="utf-8-sig")
-      else:
-        df_temp = pd.read_excel(f)
-      if len(df_temp) > 5:
-        df = df_temp
-        break
-    except Exception:
-      pass
+  # 1. Tenta buscar dados ao vivo do Fundamentus
+  try:
+    url = "https://www.fundamentus.com.br/resultado.php"
+    res = requests.get(url, headers=HEADERS, timeout=12)
+    res.encoding = "latin-1"
+    tables = pd.read_html(io.StringIO(res.text), decimal=",", thousands=".")
+    if tables:
+      raw_df = tables[0]
+      col_map = {
+          "Papel": "Ticker",
+          "Div.Yield": "Dividend Yield",
+          "Marg.Ebit": "Margem EBIT",
+          "Marg.Líq": "Margem Líquida",
+          "Liq.2meses": "Liquidez Diária",
+          "Patrim.Liq": "Patrimônio Líquido",
+          "Cresc.Rec.5a": "Cresc. 5 Anos (%)",
+      }
+      df = raw_df.rename(columns=col_map).copy()
+  except Exception:
+    df = pd.DataFrame()
+
+  # 2. Fallback para arquivos locais
+  if df.empty:
+    for f in ["acoes_b3.csv", "acoes_b3.xlsx"]:
+      try:
+        if f.endswith(".csv"):
+          df_temp = pd.read_csv(f, encoding="utf-8-sig")
+        else:
+          df_temp = pd.read_excel(f)
+        if len(df_temp) > 5:
+          df = df_temp
+          break
+      except Exception:
+        pass
   return df
 
 
 @st.cache_data(ttl=600)
 def load_fiis_data_v6():
   df = pd.DataFrame()
-  for f in ["fiis_b3.csv", "fiis_b3.xlsx"]:
-    try:
-      if f.endswith(".csv"):
-        df_temp = pd.read_csv(f, encoding="utf-8-sig")
-      else:
-        df_temp = pd.read_excel(f)
-      if len(df_temp) > 5:
-        df = df_temp
-        break
-    except Exception:
-      pass
+  # 1. Tenta buscar dados ao vivo do Fundamentus
+  try:
+    url = "https://www.fundamentus.com.br/fii_resultado.php"
+    res = requests.get(url, headers=HEADERS, timeout=12)
+    res.encoding = "latin-1"
+    tables = pd.read_html(io.StringIO(res.text), decimal=",", thousands=".")
+    if tables:
+      raw_df = tables[0]
+      col_map = {
+          "Papel": "Ticker",
+          "Segmento": "Segmento de Atuação",
+          "Cotação": "Cotação",
+          "FFO Yield": "FFO Yield",
+          "Dividend Yield": "DY 12M Acumulado",
+          "P/VP": "P/VP",
+          "Valor de Mercado": "Patrimônio Líquido",
+          "Liquidez": "Liquidez diária",
+          "Qtd de imóveis": "Quantidade de Imóveis",
+          "Cap Rate": "Cap Rate",
+          "Vacância Média": "Vacância",
+      }
+      df = raw_df.rename(columns=col_map).copy()
+  except Exception:
+    df = pd.DataFrame()
+
+  # 2. Fallback para arquivos locais
+  if df.empty:
+    for f in ["fiis_b3.csv", "fiis_b3.xlsx"]:
+      try:
+        if f.endswith(".csv"):
+          df_temp = pd.read_csv(f, encoding="utf-8-sig")
+        else:
+          df_temp = pd.read_excel(f)
+        if len(df_temp) > 5:
+          df = df_temp
+          break
+      except Exception:
+        pass
   return df
 
 
@@ -124,16 +174,25 @@ if not df_acoes.empty:
     if col in df_acoes.columns:
       df_acoes[col] = df_acoes[col].apply(limpar_num)
 
+  # Correção de escala caso cotações venham multiplicadas por 100 de planilhas locais antigas
+  if "Cotação" in df_acoes.columns and not df_acoes.empty:
+    if df_acoes["Cotação"].median() > 500:
+      df_acoes["Cotação"] = df_acoes["Cotação"] / 100.0
+
+  if "P/VP" in df_acoes.columns and not df_acoes.empty:
+    if df_acoes["P/VP"].median() > 10:
+      df_acoes["P/VP"] = df_acoes["P/VP"] / 100.0
+
   df_acoes["Yield + CAGR (%)"] = df_acoes.get(
       "Dividend Yield", 0
   ) + df_acoes.get("Cresc. 5 Anos (%)", 0)
   df_acoes["Dividendo Pago (R$)"] = df_acoes.get("Cotação", 0) * (
-      df_acoes.get("Dividend Yield", 0) / 100
+      df_acoes.get("Dividend Yield", 0) / 100.0
   )
   df_acoes["Preço Teto (6%)"] = df_acoes["Dividendo Pago (R$)"] / 0.06
   df_acoes["Margem de Segurança (%)"] = np.where(
       df_acoes.get("Cotação", 0) > 0,
-      ((df_acoes["Preço Teto (6%)"] / df_acoes["Cotação"]) - 1) * 100,
+      ((df_acoes["Preço Teto (6%)"] / df_acoes["Cotação"]) - 1.0) * 100.0,
       0,
   )
 
@@ -155,6 +214,15 @@ if not df_fiis.empty:
     if col in df_fiis.columns:
       df_fiis[col] = df_fiis[col].apply(limpar_num)
 
+  # Correção de escala caso cotações venham multiplicadas por 100 de planilhas locais antigas
+  if "Cotação" in df_fiis.columns and not df_fiis.empty:
+    if df_fiis["Cotação"].median() > 500:
+      df_fiis["Cotação"] = df_fiis["Cotação"] / 100.0
+
+  if "P/VP" in df_fiis.columns and not df_fiis.empty:
+    if df_fiis["P/VP"].median() > 10:
+      df_fiis["P/VP"] = df_fiis["P/VP"] / 100.0
+
   if "Taxa de Performance" in df_fiis.columns:
     df_fiis["Taxa de Performance"] = (
         df_fiis["Taxa de Performance"]
@@ -167,16 +235,54 @@ if not df_fiis.empty:
   if "Quantidade de CRIs" not in df_fiis.columns:
     df_fiis["Quantidade de CRIs"] = 0
 
+  if "Tipo de fundo" not in df_fiis.columns:
+    if "Segmento de Atuação" in df_fiis.columns:
+
+      def classificar_tipo(seg):
+        seg_str = str(seg).lower()
+        if any(
+            x in seg_str
+            for x in ["papel", "títulos", "recebíveis", "financeiro"]
+        ):
+          return "Papel"
+        elif any(
+            x in seg_str
+            for x in [
+                "lajes",
+                "logística",
+                "shopping",
+                "varejo",
+                "imóveis",
+                "residencial",
+            ]
+        ):
+          return "Tijolo"
+        return "Híbrido"
+
+      df_fiis["Tipo de fundo"] = df_fiis["Segmento de Atuação"].apply(
+          classificar_tipo
+      )
+    else:
+      df_fiis["Tipo de fundo"] = "Híbrido"
+
+  if "Multi-inquilino" not in df_fiis.columns:
+    if "Quantidade de Imóveis" in df_fiis.columns:
+      df_fiis["Multi-inquilino"] = np.where(
+          df_fiis["Quantidade de Imóveis"] > 1, "Sim", "Não"
+      )
+    else:
+      df_fiis["Multi-inquilino"] = "Não"
+
+  df_fiis["Desconto VP (%)"] = (1.0 - df_fiis.get("P/VP", 1.0)) * 100.0
   df_fiis["Rendimento 12M (R$)"] = df_fiis.get("Cotação", 0) * (
-      df_fiis.get("DY 12M Acumulado", 0) / 100
+      df_fiis.get("DY 12M Acumulado", 0) / 100.0
   )
   df_fiis["Preço Teto (9%)"] = df_fiis["Rendimento 12M (R$)"] / 0.09
   df_fiis["Margem Teto (%)"] = np.where(
       df_fiis.get("Cotação", 0) > 0,
-      ((df_fiis["Preço Teto (9%)"] / df_fiis["Cotação"]) - 1) * 100,
-      0,
+      ((df_fiis["Preço Teto (9%)"] / df_fiis["Cotação"]) - 1.0) * 100.0,
+      -100.0,
   )
-  df_fiis["Desconto VP (%)"] = (1 - df_fiis.get("P/VP", 1)) * 100
 
 # -----------------------------------------------------------------------------
 # DESIGN SYSTEM INSTITUCIONAL (SaaS)
@@ -568,7 +674,10 @@ if not df_acoes.empty:
   )
   mediana_margem_acoes = (
       df_acoes_filtrado["Margem de Segurança (%)"].median()
-      if (total_acoes > 0 and "Margem de Segurança (%)" in df_acoes_filtrado.columns)
+      if (
+          total_acoes > 0
+          and "Margem de Segurança (%)" in df_acoes_filtrado.columns
+      )
       else 0
   )
   media_roe_acoes = (
