@@ -12,7 +12,7 @@ warnings.filterwarnings("ignore")
 logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 
 # -----------------------------------------------------------------------------
-# CONFIGURAÇÃO E CARREGAMENTO DE DADOS
+# CONFIGURAÇÃO DA PÁGINA
 # -----------------------------------------------------------------------------
 st.set_page_config(
     page_title="Terminal Albarado | Prudence Invest", layout="wide"
@@ -32,13 +32,15 @@ def limpar_num(val):
   if isinstance(val, (int, float)):
     return float(val)
   s = str(val).replace("%", "").replace("R$", "").replace(" ", "").strip()
+  if not s:
+    return 0.0
   if "," in s:
     s = s.replace(".", "").replace(",", ".")
   else:
     parts = s.split(".")
     if len(parts) > 2:
       s = "".join(parts)
-    elif len(parts) == 2 and len(parts[1]) == 3:
+    elif len(parts) == 2 and len(parts[1]) == 3 and len(parts[0]) <= 3:
       s = "".join(parts)
   try:
     return float(s)
@@ -52,179 +54,47 @@ def limpar_cache_global():
 
 @st.cache_data(ttl=600)
 def load_cofre_acoes():
-  try:
-    return pd.read_excel("cofre_lucros.xlsx")
-  except Exception:
-    return pd.DataFrame()
+  for f in ["cofre_lucros.csv", "cofre_lucros.xlsx"]:
+    try:
+      if f.endswith(".csv"):
+        return pd.read_csv(f, encoding="utf-8-sig")
+      return pd.read_excel(f)
+    except Exception:
+      pass
+  return pd.DataFrame()
 
 
 @st.cache_data(ttl=600)
 def load_acoes_data():
   df = pd.DataFrame()
-  # 1. Tenta carregar do Excel local
-  try:
-    df_local = pd.read_excel("acoes_b3.xlsx")
-    if len(df_local) > 5:
-      df = df_local
-  except Exception:
-    pass
-
-  # 2. Fallback ao vivo se o Excel não existir ou tiver poucos dados
-  if df.empty:
+  for f in ["acoes_b3.csv", "acoes_b3.xlsx"]:
     try:
-      url = "https://www.fundamentus.com.br/resultado.php"
-      res = requests.get(url, headers=HEADERS, timeout=12)
-      res.encoding = "latin-1"
-      tables = pd.read_html(io.StringIO(res.text))
-      raw_df = tables[0]
-
-      col_map = {
-          "Papel": "Ticker",
-          "Cotação": "Cotação",
-          "P/L": "P/L",
-          "P/VP": "P/VP",
-          "Div.Yield": "Dividend Yield",
-          "Mrg Ebit": "Margem EBIT",
-          "Mrg. Liq.": "Margem Líquida",
-          "ROIC": "ROIC",
-          "ROE": "ROE",
-          "Liq.2meses": "Liquidez Diária",
-          "Patrim. Liq": "Patrimônio Líquido",
-          "Dív.Brut/ Patrim.": "Dívida Líquida/EBIT",
-          "Cres. Rec.5a": "Cresc. 5 Anos (%)",
-      }
-      df = raw_df.rename(columns=col_map).copy()
-
-      for col in [
-          "Cotação",
-          "P/L",
-          "P/VP",
-          "Dividend Yield",
-          "Margem EBIT",
-          "Margem Líquida",
-          "ROIC",
-          "ROE",
-          "Liquidez Diária",
-          "Patrimônio Líquido",
-          "Dívida Líquida/EBIT",
-          "Cresc. 5 Anos (%)",
-      ]:
-        if col in df.columns:
-          df[col] = df[col].apply(limpar_num)
-
-      df["Empresa"] = df["Ticker"]
-      df["Setor"] = "Diversos"
-      df["Tipo"] = df["Ticker"].apply(
-          lambda t: (
-              "ON"
-              if str(t).endswith("3")
-              else ("PN" if str(t).endswith("4") else "UNIT")
-          )
-      )
-      df["Segmento de Listagem"] = "Novo Mercado"
-      df["Tag Along (%)"] = 100
-      df["Free Float (%)"] = 25.0
-      df["Governo Majoritário"] = "Não"
+      if f.endswith(".csv"):
+        df_temp = pd.read_csv(f, encoding="utf-8-sig")
+      else:
+        df_temp = pd.read_excel(f)
+      if len(df_temp) > 5:
+        df = df_temp
+        break
     except Exception:
-      return pd.DataFrame()
-
-  if "Patrimônio Líquido" in df.columns:
-    df = df[df["Patrimônio Líquido"] > 0].copy()
-
-  if "Dividend Yield" in df.columns and "Cresc. 5 Anos (%)" in df.columns:
-    df["Yield + CAGR (%)"] = df["Dividend Yield"] + df["Cresc. 5 Anos (%)"]
-  else:
-    df["Yield + CAGR (%)"] = 0.0
-
-  if "Cotação" in df.columns and "Dividend Yield" in df.columns:
-    df["Dividendo Pago (R$)"] = df["Cotação"] * (df["Dividend Yield"] / 100)
-  else:
-    df["Dividendo Pago (R$)"] = 0.0
-
-  if "Dividendo Pago (R$)" in df.columns:
-    df["Preço Teto (6%)"] = df["Dividendo Pago (R$)"] / 0.06
-  else:
-    df["Preço Teto (6%)"] = 0.0
-
-  if "Preço Teto (6%)" in df.columns and "Cotação" in df.columns:
-    df["Margem de Segurança (%)"] = df.apply(
-        lambda row: (
-            ((row["Preço Teto (6%)"] / row["Cotação"]) - 1) * 100
-            if row["Cotação"] > 0
-            else 0
-        ),
-        axis=1,
-    )
-  else:
-    df["Margem de Segurança (%)"] = 0.0
-
+      pass
   return df
 
 
 @st.cache_data(ttl=600)
 def load_fiis_data_v6():
   df = pd.DataFrame()
-  try:
-    df_local = pd.read_excel("fiis_b3.xlsx")
-    if len(df_local) > 5:
-      df = df_local
-  except Exception:
-    pass
-
-  if df.empty:
+  for f in ["fiis_b3.csv", "fiis_b3.xlsx"]:
     try:
-      url = "https://www.fundamentus.com.br/fii_resultado.php"
-      res = requests.get(url, headers=HEADERS, timeout=12)
-      res.encoding = "latin-1"
-      tables = pd.read_html(io.StringIO(res.text))
-      raw_df = tables[0]
-
-      col_map = {
-          "Papel": "Ticker",
-          "Segmento": "Segmento de Atuação",
-          "Cotação": "Cotação",
-          "FFO Yield": "FFO Yield",
-          "Dividend Yield": "DY 12M Acumulado",
-          "P/VP": "P/VP",
-          "Valor de Mercado": "Patrimônio Líquido",
-          "Liquidez": "Liquidez diária",
-          "Qtd de imóveis": "Quantidade de Imóveis",
-          "Cap Rate": "Cap Rate",
-          "Vacância Média": "Vacância",
-      }
-      df = raw_df.rename(columns=col_map).copy()
-
-      for col in [
-          "Cotação",
-          "DY 12M Acumulado",
-          "P/VP",
-          "Patrimônio Líquido",
-          "Liquidez diária",
-          "Quantidade de Imóveis",
-          "Vacância",
-      ]:
-        if col in df.columns:
-          df[col] = df[col].apply(limpar_num)
-
-      df["Tipo de fundo"] = df["Segmento de Atuação"].apply(
-          lambda s: (
-              "Papel"
-              if "títulos" in str(s).lower() or "cri" in str(s).lower()
-              else ("Tijolo" if "imóveis" in str(s).lower() else "Híbrido")
-          )
-      )
-      df["Tempo de listagem"] = 5
-      df["Administrador"] = "BTG Pactual / Outros"
-      df["Taxa de adm"] = "0.85% a.a."
-      df["Taxa de Performance"] = "Isento"
-      df["Benchmark"] = "IFIX"
-      df["Tipo de Gestão"] = "Ativa"
-      df["Multi-inquilino"] = "Sim"
-      df["Quantidade de CRIs"] = 0
-      df["Para FII de Papel % em CRIs"] = 0.0
+      if f.endswith(".csv"):
+        df_temp = pd.read_csv(f, encoding="utf-8-sig")
+      else:
+        df_temp = pd.read_excel(f)
+      if len(df_temp) > 5:
+        df = df_temp
+        break
     except Exception:
-      return pd.DataFrame()
-
+      pass
   return df
 
 
@@ -232,8 +102,44 @@ df_cofre = load_cofre_acoes()
 df_acoes = load_acoes_data()
 df_fiis = load_fiis_data_v6()
 
+# CONVERSÃO NUMÉRICA ROBUSTA PARA AÇÕES
+if not df_acoes.empty:
+  cols_num_acoes = [
+      "Cotação",
+      "P/L",
+      "P/VP",
+      "Dividend Yield",
+      "Margem EBIT",
+      "Margem Líquida",
+      "ROIC",
+      "ROE",
+      "Liquidez Diária",
+      "Patrimônio Líquido",
+      "Dívida Líquida/EBIT",
+      "Cresc. 5 Anos (%)",
+      "Tag Along (%)",
+      "Free Float (%)",
+  ]
+  for col in cols_num_acoes:
+    if col in df_acoes.columns:
+      df_acoes[col] = df_acoes[col].apply(limpar_num)
+
+  df_acoes["Yield + CAGR (%)"] = df_acoes.get(
+      "Dividend Yield", 0
+  ) + df_acoes.get("Cresc. 5 Anos (%)", 0)
+  df_acoes["Dividendo Pago (R$)"] = df_acoes.get("Cotação", 0) * (
+      df_acoes.get("Dividend Yield", 0) / 100
+  )
+  df_acoes["Preço Teto (6%)"] = df_acoes["Dividendo Pago (R$)"] / 0.06
+  df_acoes["Margem de Segurança (%)"] = np.where(
+      df_acoes.get("Cotação", 0) > 0,
+      ((df_acoes["Preço Teto (6%)"] / df_acoes["Cotação"]) - 1) * 100,
+      0,
+  )
+
+# CONVERSÃO NUMÉRICA ROBUSTA PARA FIIS
 if not df_fiis.empty:
-  cols_numericas = [
+  cols_num_fiis = [
       "Cotação",
       "P/VP",
       "DY 12M Acumulado",
@@ -245,17 +151,9 @@ if not df_fiis.empty:
       "Quantidade de Imóveis",
       "Para FII de Papel % em CRIs",
   ]
-  for col in cols_numericas:
+  for col in cols_num_fiis:
     if col in df_fiis.columns:
-      if df_fiis[col].dtype == "object":
-        df_fiis[col] = (
-            df_fiis[col]
-            .astype(str)
-            .str.replace("%", "", regex=False)
-            .str.replace(",", ".", regex=False)
-            .str.strip()
-        )
-      df_fiis[col] = pd.to_numeric(df_fiis[col], errors="coerce").fillna(0.0)
+      df_fiis[col] = df_fiis[col].apply(limpar_num)
 
   if "Taxa de Performance" in df_fiis.columns:
     df_fiis["Taxa de Performance"] = (
@@ -269,29 +167,16 @@ if not df_fiis.empty:
   if "Quantidade de CRIs" not in df_fiis.columns:
     df_fiis["Quantidade de CRIs"] = 0
 
-  if "Patrimônio Líquido" in df_fiis.columns:
-    df_fiis = df_fiis[df_fiis["Patrimônio Líquido"] > 0].copy()
-
-  if "DY 12M Acumulado" in df_fiis.columns and "Cotação" in df_fiis.columns:
-    df_fiis["Rendimento 12M (R$)"] = df_fiis["Cotação"] * (
-        df_fiis["DY 12M Acumulado"] / 100
-    )
-
-  if "Rendimento 12M (R$)" in df_fiis.columns:
-    df_fiis["Preço Teto (9%)"] = df_fiis["Rendimento 12M (R$)"] / 0.09
-
-  if "Preço Teto (9%)" in df_fiis.columns and "Cotação" in df_fiis.columns:
-    df_fiis["Margem Teto (%)"] = df_fiis.apply(
-        lambda row: (
-            ((row["Preço Teto (9%)"] / row["Cotação"]) - 1) * 100
-            if row["Cotação"] > 0
-            else 0
-        ),
-        axis=1,
-    )
-
-  if "P/VP" in df_fiis.columns:
-    df_fiis["Desconto VP (%)"] = (1 - df_fiis["P/VP"]) * 100
+  df_fiis["Rendimento 12M (R$)"] = df_fiis.get("Cotação", 0) * (
+      df_fiis.get("DY 12M Acumulado", 0) / 100
+  )
+  df_fiis["Preço Teto (9%)"] = df_fiis["Rendimento 12M (R$)"] / 0.09
+  df_fiis["Margem Teto (%)"] = np.where(
+      df_fiis.get("Cotação", 0) > 0,
+      ((df_fiis["Preço Teto (9%)"] / df_fiis["Cotação"]) - 1) * 100,
+      0,
+  )
+  df_fiis["Desconto VP (%)"] = (1 - df_fiis.get("P/VP", 1)) * 100
 
 # -----------------------------------------------------------------------------
 # DESIGN SYSTEM INSTITUCIONAL (SaaS)
@@ -516,7 +401,7 @@ def limpar_filtros_fiis():
   st.session_state.fii_admin = []
   st.session_state.fii_taxa_adm = []
   st.session_state.fii_taxa_perf = []
-  st.session_state.fii_pvp = (0.0, 2.0)
+  st.session_state.fii_pvp = (0.0, 10.0)
   st.session_state.fii_dy = 0.0
   st.session_state.fii_vacancia = 100.0
   st.session_state.fii_cris = 0.0
@@ -549,7 +434,7 @@ fii_multi_filtro = st.sidebar.multiselect(
     "4. Multi-inquilino", multi_fii, key="fii_multi"
 )
 fii_pvp_min, fii_pvp_max = st.sidebar.slider(
-    "5. Faixa de P/VP", 0.0, 2.0, key="fii_pvp"
+    "5. Faixa de P/VP", 0.0, 10.0, key="fii_pvp"
 )
 fii_dy_min = st.sidebar.slider(
     "6. DY 12M Acumulado Mín. (%)", 0.0, 25.0, key="fii_dy"
