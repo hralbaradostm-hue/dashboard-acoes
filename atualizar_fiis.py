@@ -22,7 +22,6 @@ headers = {
 # -----------------------------------------------------------------------------
 # 0. DICIONÁRIO DE SEGURANÇA (TOP FIIs DO MERCADO)
 # -----------------------------------------------------------------------------
-# Garante 100% de precisão para os fundos mais negociados
 MASTER_FII_DATA = {
     "MXRF11": {
         "admin": "BTG PACTUAL SERVIÇOS FINANCEIROS S.A. DTVM",
@@ -175,7 +174,6 @@ admins = []
 for ticker in df_main["Ticker"]:
   t = str(ticker).replace("$", "").strip().upper()
 
-  # 1. Busca Administrador (Prioridade: Master Dict -> CVM -> Padrão)
   if t in MASTER_FII_DATA:
     admin_val = MASTER_FII_DATA[t]["admin"]
   elif t in mapa_admin_cvm:
@@ -183,7 +181,6 @@ for ticker in df_main["Ticker"]:
   else:
     admin_val = "BTG Pactual / Outros"
 
-  # 2. Busca Tempo de Listagem (Prioridade: Master Dict -> CVM -> Padrão)
   if t in MASTER_FII_DATA:
     anos_calc = max(1, ano_atual - MASTER_FII_DATA[t]["ano_inicio"])
   elif t in mapa_tempo_cvm:
@@ -246,9 +243,47 @@ df_main["Taxa de Performance"] = df_main["Taxa de Performance"].fillna(
     "Isento"
 )
 
+# -----------------------------------------------------------------------------
+# 5. SANITIZAÇÃO E LIMPEZA DE COLUNAS NUMÉRICAS
+# -----------------------------------------------------------------------------
+cols_numericas = [
+    "Cotação",
+    "FFO Yield",
+    "DY 12M Acumulado",
+    "P/VP",
+    "Patrimônio Líquido",
+    "Qtd imoveis",
+    "Quantidade de Imóveis",
+    "Preço M2",
+    "Aluguel M2",
+    "Cap Rate",
+    "Vacância",
+    "Liquidez diária",
+    "Tempo de listagem",
+    "Quantidade de CRIs",
+    "Para FII de Papel % em CRIs",
+]
+
+for col in cols_numericas:
+  if col in df_main.columns:
+    if df_main[col].dtype == "object":
+      df_main[col] = (
+          df_main[col]
+          .astype(str)
+          .str.replace("%", "", regex=False)
+          .str.replace("R$", "", regex=False)
+          .str.replace(".", "", regex=False)
+          .str.replace(",", ".", regex=False)
+          .str.strip()
+      )
+    df_main[col] = pd.to_numeric(df_main[col], errors="coerce").fillna(0.0)
+
 # Salva a planilha final limpa e consolidada
 df_main.to_excel("fiis_b3.xlsx", index=False)
-print("\n✅ SUCESSO! A planilha 'fiis_b3.xlsx' foi gerada com sucesso.")
+print(
+    "\n✅ SUCESSO! A planilha 'fiis_b3.xlsx' foi gerada com dados numéricos"
+    " sanitizados."
+)
 
 # -----------------------------------------------------------------------------
 # VERIFICAÇÃO AUTOMÁTICA DOS FIIs PRINCIPAIS
@@ -256,6 +291,6 @@ print("\n✅ SUCESSO! A planilha 'fiis_b3.xlsx' foi gerada com sucesso.")
 print("\n=== 🔍 CONFIRMAÇÃO DOS FIIs PRINCIPAIS ===")
 check_tickers = ["BTLG11", "HGLG11", "KNIP11", "MXRF11", "XPML11"]
 df_check = df_main[df_main["Ticker"].isin(check_tickers)][
-    ["Ticker", "Administrador", "Tempo de listagem"]
+    ["Ticker", "Administrador", "Tempo de listagem", "DY 12M Acumulado", "P/VP"]
 ]
 print(df_check.to_string(index=False))

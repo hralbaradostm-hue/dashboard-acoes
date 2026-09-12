@@ -72,6 +72,32 @@ df_acoes = load_acoes_data()
 df_fiis = load_fiis_data_v6()
 
 if not df_fiis.empty:
+  # --- TRATAMENTO SEGURO DAS COLUNAS NUMÉRICAS DOS FIIS ---
+  cols_numericas = [
+      "Cotação",
+      "P/VP",
+      "DY 12M Acumulado",
+      "Vacância",
+      "Patrimônio Líquido",
+      "Liquidez diária",
+      "Tempo de listagem",
+      "Quantidade de CRIs",
+      "Quantidade de Imóveis",
+      "Para FII de Papel % em CRIs",
+  ]
+
+  for col in cols_numericas:
+    if col in df_fiis.columns:
+      if df_fiis[col].dtype == "object":
+        df_fiis[col] = (
+            df_fiis[col]
+            .astype(str)
+            .str.replace("%", "", regex=False)
+            .str.replace(",", ".", regex=False)
+            .str.strip()
+        )
+      df_fiis[col] = pd.to_numeric(df_fiis[col], errors="coerce").fillna(0.0)
+
   # Tratamento de valores None / Nulos na Taxa de Performance
   if "Taxa de Performance" in df_fiis.columns:
     df_fiis["Taxa de Performance"] = (
