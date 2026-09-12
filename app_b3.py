@@ -125,7 +125,6 @@ def load_acoes_data():
     ]
     for c in cols_update:
       if c in df_l_idx.columns:
-        # Limpa dados live antes de atualizar
         df_l_idx[c] = df_l_idx[c].apply(limpar_num)
         if c not in df_b_idx.columns:
           df_b_idx[c] = df_l_idx[c]
@@ -238,7 +237,6 @@ def load_fiis_data_v6():
     ]
     for c in cols_update:
       if c in df_l_idx.columns:
-        # Limpa dados live antes de atualizar
         df_l_idx[c] = df_l_idx[c].apply(limpar_num)
         if c not in df_b_idx.columns:
           df_b_idx[c] = df_l_idx[c]
@@ -487,11 +485,14 @@ segmentos_acoes = (
     if "Segmento de Listagem" in df_acoes.columns
     else []
 )
-setores_acoes = (
-    sorted(list(df_acoes["Setor"].unique()))
-    if "Setor" in df_acoes.columns
-    else []
-)
+
+# CORREÇÃO DA ORDENAÇÃO DE SETORES (FILTRANDO VALORES NULOS/NAN)
+if "Setor" in df_acoes.columns:
+  setores_acoes = sorted(
+      [str(x) for x in df_acoes["Setor"].unique() if pd.notna(x)]
+  )
+else:
+  setores_acoes = []
 
 
 def limpar_filtros_acoes():
