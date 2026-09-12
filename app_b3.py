@@ -32,7 +32,7 @@ def limpar_num(val):
   if isinstance(val, (int, float)):
     return float(val)
   s = str(val).replace("%", "").replace("R$", "").replace(" ", "").strip()
-  if not s:
+  if not s or s == "-":
     return 0.0
   if "," in s:
     s = s.replace(".", "").replace(",", ".")
@@ -102,7 +102,7 @@ def load_acoes_data():
   except Exception:
     pass
 
-  # Unificação das duas fontes sem perder colunas
+  # Unificação das duas fontes
   if not df_base.empty and not df_live.empty:
     df_base["Ticker"] = df_base["Ticker"].astype(str).str.strip().str.upper()
     df_live["Ticker"] = df_live["Ticker"].astype(str).str.strip().str.upper()
@@ -125,10 +125,12 @@ def load_acoes_data():
     ]
     for c in cols_update:
       if c in df_l_idx.columns:
+        # Limpa dados live antes de atualizar
+        df_l_idx[c] = df_l_idx[c].apply(limpar_num)
         if c not in df_b_idx.columns:
           df_b_idx[c] = df_l_idx[c]
         else:
-          df_b_idx.update(df_l_idx[[c]])
+          df_b_idx[c] = df_l_idx[c]
 
     novos_tickers = df_l_idx.index.difference(df_b_idx.index)
     if not novos_tickers.empty:
@@ -139,11 +141,14 @@ def load_acoes_data():
   elif not df_base.empty:
     df_acoes = df_base
   elif not df_live.empty:
+    for c in df_live.columns:
+      if c != "Ticker":
+        df_live[c] = df_live[c].apply(limpar_num)
     df_acoes = df_live
   else:
     df_acoes = pd.DataFrame()
 
-  # Garantir presenca de todas as colunas
+  # Garantir presença de todas as colunas padrão
   cols_padrao = {
       "Empresa": "N/A",
       "Setor": "Outros",
@@ -214,7 +219,7 @@ def load_fiis_data_v6():
   except Exception:
     pass
 
-  # Unificação das duas fontes sem perder colunas
+  # Unificação das duas fontes
   if not df_base.empty and not df_live.empty:
     df_base["Ticker"] = df_base["Ticker"].astype(str).str.strip().str.upper()
     df_live["Ticker"] = df_live["Ticker"].astype(str).str.strip().str.upper()
@@ -233,10 +238,12 @@ def load_fiis_data_v6():
     ]
     for c in cols_update:
       if c in df_l_idx.columns:
+        # Limpa dados live antes de atualizar
+        df_l_idx[c] = df_l_idx[c].apply(limpar_num)
         if c not in df_b_idx.columns:
           df_b_idx[c] = df_l_idx[c]
         else:
-          df_b_idx.update(df_l_idx[[c]])
+          df_b_idx[c] = df_l_idx[c]
 
     novos_tickers = df_l_idx.index.difference(df_b_idx.index)
     if not novos_tickers.empty:
@@ -247,11 +254,14 @@ def load_fiis_data_v6():
   elif not df_base.empty:
     df_fiis = df_base
   elif not df_live.empty:
+    for c in df_live.columns:
+      if c != "Ticker":
+        df_live[c] = df_live[c].apply(limpar_num)
     df_fiis = df_live
   else:
     df_fiis = pd.DataFrame()
 
-  # Garantir presenca de todas as colunas
+  # Garantir presença de todas as colunas padrão
   cols_padrao = {
       "Tipo de fundo": "Híbrido",
       "Segmento de Atuação": "Outros",
