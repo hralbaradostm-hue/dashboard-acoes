@@ -10,7 +10,7 @@ import requests
 warnings.filterwarnings("ignore")
 logging.getLogger("yfinance").setLevel(logging.CRITICAL)
 
-print("🚀 Iniciando atualização completa e unificada da base de FIIs...")
+print("🚀 Iniciando atualização completa e corrigida da base de FIIs...")
 
 headers = {
     "User-Agent": (
@@ -18,6 +18,30 @@ headers = {
         " (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
     )
 }
+
+
+def limpar_num(val):
+  """Função auxiliar para converter valores formatados em float seguro."""
+  if pd.isna(val) or val is None:
+    return 0.0
+  if isinstance(val, (int, float)):
+    return float(val)
+  s = str(val).replace("%", "").replace("R$", "").replace(" ", "").strip()
+  if not s:
+    return 0.0
+  if "," in s:
+    s = s.replace(".", "").replace(",", ".")
+  else:
+    parts = s.split(".")
+    if len(parts) > 2:
+      s = "".join(parts)
+    elif len(parts) == 2 and len(parts[1]) == 3:
+      s = "".join(parts)
+  try:
+    return float(s)
+  except Exception:
+    return 0.0
+
 
 # -----------------------------------------------------------------------------
 # 0. DICIONÁRIO DE SEGURANÇA (TOP FIIs DO MERCADO)
@@ -45,37 +69,52 @@ MASTER_FII_DATA = {
 }
 
 # -----------------------------------------------------------------------------
-# 1. RASPAGEM BASE DO FUNDAMENTUS
+# 1. RASPAGEM E MAPEAMENTO DIRETO DO FUNDAMENTUS
 # -----------------------------------------------------------------------------
-print("\n[1/4] Baixando cotações e dados financeiros do Fundamentus...")
+print("\n[1/4] Baixando cotações e dados reais do Fundamentus...")
 url_fundamentus = "https://www.fundamentus.com.br/fii_resultado.php"
 
 try:
   res = requests.get(url_fundamentus, headers=headers, timeout=15)
   res.encoding = "latin-1"
-  tables = pd.read_html(io.StringIO(res.text), decimal=",", thousands=".")
+  tables = pd.read_html(io.StringIO(res.text))
   raw_df = tables[0]
 
-  if raw_df.shape[1] >= 12:
-    df_main = raw_df.iloc[:, :12].copy()
-    df_main.columns = [
-        "Ticker",
-        "Segmento de Atuação",
-        "Cotação",
-        "FFO Yield",
-        "DY 12M Acumulado",
-        "P/VP",
-        "Patrimônio Líquido",
-        "Qtd imoveis",
-        "Preço M2",
-        "Aluguel M2",
-        "Cap Rate",
-        "Vacância",
-    ]
-  else:
-    df_main = raw_df.copy()
+  col_map = {
+      "Papel": "Ticker",
+      "Segmento": "Segmento de Atuação",
+      "Cotação": "Cotação",
+      "FFO Yield": "FFO Yield",
+      "Dividend Yield": "DY 12M Acumulado",
+      "P/VP": "P/VP",
+      "Valor de Mercado": "Patrimônio Líquido",
+      "Liquidez": "Liquidez diária",
+      "Qtd de imóveis": "Qtd imoveis",
+      "Preço / m2": "Preço M2",
+      "Aluguel / m2": "Aluguel M2",
+      "Cap Rate": "Cap Rate",
+      "Vacância Média": "Vacância",
+  }
 
-  df_main["Liquidez diária"] = 1500000.0
+  df_main = raw_df.rename(columns=col_map).copy()
+
+  cols_to_clean = [
+      "Cotação",
+      "FFO Yield",
+      "DY 12M Acumulado",
+      "P/VP",
+      "Patrimônio Líquido",
+      "Liquidez diária",
+      "Qtd imoveis",
+      "Preço M2",
+      "Aluguel M2",
+      "Cap Rate",
+      "Vacância",
+  ]
+  for c in cols_to_clean:
+    if c in df_main.columns:
+      df_main[c] = df_main[c].apply(limpar_num)
+
   df_main["Tipo de fundo"] = df_main["Segmento de Atuação"].apply(
       lambda s: (
           "Papel"
@@ -83,7 +122,10 @@ try:
           else ("Tijolo" if "imóveis" in str(s).lower() else "Híbrido")
       )
   )
-  print(f"  ✅ {len(df_main)} FIIs capturados no Fundamentus.")
+  print(
+      f"  ✅ {len(df_main)} FIIs capturados com DY e Liquidez reais do"
+      " Fundamentus."
+  )
 except Exception as e:
   print(f"⚠️ Aviso: Falha no Fundamentus ({e}). Usando base local.")
   df_main = pd.read_excel("fiis_b3.xlsx")
@@ -157,15 +199,12 @@ try:
       if ano_reg:
         mapa_tempo_cvm[t_code] = max(1, ano_atual - ano_reg)
 
-  print(
-      f"  ✅ CVM mapeada com sucesso! ({len(mapa_admin_cvm)} administradores e"
-      f" {len(mapa_tempo_cvm)} datas)."
-  )
+  print(f"  ✅ CVM mapeada ({len(mapa_admin_cvm)} administradores).")
 except Exception as e:
-  print(f"⚠️ Aviso: Não foi possível ler a CVM ({e}).")
+  print(f"⚠️ Aviso: Erro na leitura CVM ({e}).")
 
 # -----------------------------------------------------------------------------
-# 3. CONSOLIDAÇÃO DOS DADOS QUALITATIVOS E TEMPO DE LISTAGEM
+# 3. CONSOLIDAÇÃO DOS DADOS E TEMPO DE LISTAGEM
 # -----------------------------------------------------------------------------
 print("\n[3/4] Aplicando cruzamento de dados...")
 tempos_reais = []
@@ -195,9 +234,9 @@ df_main["Administrador"] = admins
 df_main["Tempo de listagem"] = tempos_reais
 
 # -----------------------------------------------------------------------------
-# 4. TAXAS, BENCHMARKS E REGRAS QUALITATIVAS
+# 4. QUALITATIVOS E TAXAS
 # -----------------------------------------------------------------------------
-print("\n[4/4] Estruturando taxas de adm, performance e benchmarks...")
+print("\n[4/4] Estruturando taxas e atributos qualitativos...")
 
 
 def aplicar_qualitativos(row):
@@ -243,54 +282,24 @@ df_main["Taxa de Performance"] = df_main["Taxa de Performance"].fillna(
     "Isento"
 )
 
-# -----------------------------------------------------------------------------
-# 5. SANITIZAÇÃO E LIMPEZA DE COLUNAS NUMÉRICAS
-# -----------------------------------------------------------------------------
-cols_numericas = [
-    "Cotação",
-    "FFO Yield",
-    "DY 12M Acumulado",
-    "P/VP",
-    "Patrimônio Líquido",
-    "Qtd imoveis",
-    "Quantidade de Imóveis",
-    "Preço M2",
-    "Aluguel M2",
-    "Cap Rate",
-    "Vacância",
-    "Liquidez diária",
-    "Tempo de listagem",
-    "Quantidade de CRIs",
-    "Para FII de Papel % em CRIs",
-]
-
-for col in cols_numericas:
-  if col in df_main.columns:
-    if df_main[col].dtype == "object":
-      df_main[col] = (
-          df_main[col]
-          .astype(str)
-          .str.replace("%", "", regex=False)
-          .str.replace("R$", "", regex=False)
-          .str.replace(".", "", regex=False)
-          .str.replace(",", ".", regex=False)
-          .str.strip()
-      )
-    df_main[col] = pd.to_numeric(df_main[col], errors="coerce").fillna(0.0)
-
-# Salva a planilha final limpa e consolidada
+# Salva a planilha final totalmente corrigida
 df_main.to_excel("fiis_b3.xlsx", index=False)
-print(
-    "\n✅ SUCESSO! A planilha 'fiis_b3.xlsx' foi gerada com dados numéricos"
-    " sanitizados."
-)
+print("\n✅ SUCESSO! A planilha 'fiis_b3.xlsx' foi gerada e corrigida.")
 
 # -----------------------------------------------------------------------------
 # VERIFICAÇÃO AUTOMÁTICA DOS FIIs PRINCIPAIS
 # -----------------------------------------------------------------------------
-print("\n=== 🔍 CONFIRMAÇÃO DOS FIIs PRINCIPAIS ===")
+print("\n=== 🔍 CONFIRMAÇÃO DOS DADOS REAIS DOS FIIs PRINCIPAIS ===")
 check_tickers = ["BTLG11", "HGLG11", "KNIP11", "MXRF11", "XPML11"]
 df_check = df_main[df_main["Ticker"].isin(check_tickers)][
-    ["Ticker", "Administrador", "Tempo de listagem", "DY 12M Acumulado", "P/VP"]
+    [
+        "Ticker",
+        "Cotação",
+        "DY 12M Acumulado",
+        "P/VP",
+        "Quantidade de Imóveis",
+        "Tempo de listagem",
+        "Administrador",
+    ]
 ]
 print(df_check.to_string(index=False))
